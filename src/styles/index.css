@@ -96,7 +96,6 @@ svg:hover {
  */
 button.button-primary,
 span.button-primary button,
-.controls,
 input {
   background-color: var(--background-button);
   font-size: 1em;

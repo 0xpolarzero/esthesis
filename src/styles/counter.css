@@ -10,6 +10,7 @@
 
   display: grid;
   grid-template-columns: 1fr auto;
+  align-items: center;
   opacity: 1;
   transition: all 0.2s ease-in-out;
 }
@@ -21,6 +22,19 @@
 
 .counter.hidden {
   opacity: 0;
+}
+
+.counter .controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.counter .controls svg.disabled {
+  opacity: 0.5;
+}
+.counter .controls svg.disabled:hover {
+  cursor: var(--cursor);
 }
 
 @media (min-width: 768px) {
