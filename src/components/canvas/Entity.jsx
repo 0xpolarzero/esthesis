@@ -11,7 +11,7 @@ const Entity = () => {
   const theme = stores.useConfig((state) => state.theme);
   const ref = useRef(null);
 
-  const vertexShader = vertexShaders[0];
+  const vertexShader = vertexShaders['work'];
 
   const count = 1000;
   const radius = 2;
