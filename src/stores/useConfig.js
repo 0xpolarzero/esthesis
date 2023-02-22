@@ -1,6 +1,5 @@
 import { create } from 'zustand';
 import { ConfigProvider, theme as antdTheme } from 'antd';
-import config from '@/data';
 
 /**
  * @notice Set up providers
