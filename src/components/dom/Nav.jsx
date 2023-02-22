@@ -3,7 +3,6 @@ import { useRouter } from 'next/router';
 import { Divider, Dropdown } from 'antd';
 import { AiOutlineMenu } from 'react-icons/ai';
 import { CiLight, CiDark } from 'react-icons/ci';
-import { RxPlay, RxSpeakerLoud, RxSpeakerOff } from 'react-icons/rx';
 import stores from '@/stores';
 import config from '@/data';
 import hooks from '@/hooks';
@@ -12,12 +11,6 @@ const Nav = () => {
   const { theme, updateTheme } = stores.useConfig((state) => ({
     theme: state.theme,
     updateTheme: state.updateTheme,
-  }));
-  const { start, started, audioOff, toggleMute } = stores.useAudio((state) => ({
-    start: state.start,
-    started: state.started,
-    audioOff: state.suspended,
-    toggleMute: state.toggleMute,
   }));
 
   return (
@@ -33,35 +26,6 @@ const Nav = () => {
           <CiDark size={20} onClick={() => updateTheme('light')} />
         ) : (
           <CiLight size={20} onClick={() => updateTheme('dark')} />
-        )}
-        <Divider type='vertical' />
-        {started ? (
-          audioOff ? (
-            <RxSpeakerOff size={20} onClick={toggleMute} />
-          ) : (
-            <RxSpeakerLoud size={20} onClick={toggleMute} />
-          )
-        ) : (
-          <>
-            <RxPlay
-              size={20}
-              onClick={() =>
-                start({
-                  name: 'test name',
-                  url: 'https://catalogworks.b-cdn.net/ipfs/QmVUXBTmEhZJok9hqrWhArFLcFSe9GeSsB7U23kZxokZCR',
-                })
-              }
-            />
-            <RxPlay
-              size={20}
-              onClick={() =>
-                start({
-                  name: 'test name',
-                  url: 'https://arweave.net/_vLxu-ASiBA7o1xJ99kOVfQIYQ3IXBB8JKRgAopZJ24',
-                })
-              }
-            />
-          </>
         )}
       </div>
     </header>

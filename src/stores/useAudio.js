@@ -28,6 +28,14 @@ export default create((set, get) => ({
     const { ready, init, playing, createAnalyser } = get();
     if (!ready) init();
 
+    // If just playing again after pause
+    if (playing && playing.data.url === data.url) {
+      playing.audio.play();
+      set({ suspended: false });
+      return;
+    }
+
+    // If playing another song
     if (playing) playing.audio.pause();
 
     const audio = new Audio(data.url);
@@ -42,49 +50,32 @@ export default create((set, get) => ({
     set({ playing: { audio, data }, suspended: false });
   },
 
-  update: (audioObject) => {
-    const { sources, started, createAnalyser } = get();
-    if (!started) return;
+  stop: () => {
+    const { playing } = get();
+    if (!playing) return;
 
-    // Don't start again if it's the same
-    // e.g. returning to _experience from another page
-    const index = config.audio.files.findIndex((v) => v === audioObject) || 0;
-    const alreadyplayingIndex = sources.findIndex(
-      (ref) => ref?.current?.volume === 1,
-    );
-    if (index === alreadyplayingIndex) return;
-
-    sources.forEach((ref, i) => {
-      if (!ref?.current) return;
-
-      if (i === index) {
-        ref.current.volume = 1;
-        ref.current.currentTime = 0;
-      } else {
-        ref.current.volume = 0;
-      }
-    });
-
-    createAnalyser();
+    playing.audio.pause();
+    set({ suspended: true });
   },
 
-  toggleMute: () => {
-    const { audioContext } = get();
+  navigate: (direction) => {
+    const { playing, sources, start } = get();
+    if (!playing) return;
 
-    if (audioContext.state === 'suspended') {
-      audioContext.resume();
-      set({ suspended: false });
-    } else {
-      audioContext.suspend();
-      set({ suspended: true });
-    }
+    const index = sources.findIndex((s) => s.url === playing.data.url);
+    if (index === -1) return;
+
+    // Should not happen but just in case
+    const newSource = sources[direction === 'next' ? index + 1 : index - 1];
+    if (!newSource) return;
+
+    start(newSource);
   },
 
   /*
    * Analyser
    */
   createAnalyser: (audio) => {
-    console.log('createAnalyser', audio);
     const { audioContext } = get();
 
     const source = audioContext.createMediaElementSource(audio);
