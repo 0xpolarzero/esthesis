@@ -9,6 +9,10 @@ const Scene = dynamic(() => import('@/components/canvas/Scene'), { ssr: true });
 
 export default function App({ Component, pageProps = { title: 'polarzero' } }) {
   const initTheme = stores.useConfig((state) => state.initTheme);
+  const { fetchTracks, fetchRemainingTracks } = stores.useSpinamp((state) => ({
+    fetchTracks: state.fetchTracks,
+    fetchRemainingTracks: state.fetchRemainingTracks,
+  }));
 
   const layout = useRef();
   const loader = useRef();
@@ -18,7 +22,9 @@ export default function App({ Component, pageProps = { title: 'polarzero' } }) {
       loader.current.classList.add('hidden');
 
     initTheme();
-  }, [initTheme]);
+    fetchTracks();
+    fetchRemainingTracks();
+  }, [initTheme, fetchTracks, fetchRemainingTracks]);
 
   return (
     <>
