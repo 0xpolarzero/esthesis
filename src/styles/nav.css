@@ -9,6 +9,7 @@
   max-width: 1600px;
   padding: 0.8rem 1.2rem;
   display: flex;
+  justify-content: space-between;
   align-items: center;
   gap: 1em;
   z-index: 10;
@@ -42,7 +43,7 @@
 
 .nav .links {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
   gap: 1em;
 }
@@ -82,17 +83,9 @@
   transform: rotate(90deg);
 }
 
-/* Language */
-.nav .language {
-  display: flex;
-  gap: 0.5em;
-  align-items: center;
-}
-
 @media (min-width: 768px) {
   .nav {
     padding: 1rem 2rem;
-    justify-content: space-between;
   }
   .nav .links {
     gap: 2em;

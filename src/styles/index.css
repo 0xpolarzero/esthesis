@@ -2,7 +2,7 @@
 
 /* Local */
 @import './nav.css';
-@import './counter.css';
+@import './controls.css';
 
 :root {
   --font-main: 'Source Code Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI',

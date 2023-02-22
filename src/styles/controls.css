@@ -1,4 +1,4 @@
-.counter {
+.controls {
   backdrop-filter: blur(10px);
   position: fixed;
   left: 50%;
@@ -15,30 +15,30 @@
   transition: all 0.2s ease-in-out;
 }
 
-.counter:hover {
+.controls:hover {
   backdrop-filter: blur(8px);
   background: rgba(var(--background-main-rgb), 0.6);
 }
 
-.counter.hidden {
+.controls.hidden {
   opacity: 0;
 }
 
-.counter .controls {
+.controls .buttons {
   display: flex;
   align-items: center;
   gap: 1rem;
 }
 
-.counter .controls svg.disabled {
+.controls .buttons svg.disabled {
   opacity: 0.5;
 }
-.counter .controls svg.disabled:hover {
+.controls .buttons svg.disabled:hover {
   cursor: var(--cursor);
 }
 
 @media (min-width: 768px) {
-  .counter {
+  .controls {
     padding: 1.5rem 2rem;
   }
 }
