@@ -6,35 +6,40 @@ export default create((set, get) => ({
   sources: [],
   setSources: (sources) => set({ sources }),
   analyser: null,
-  started: false,
+  ready: false,
   suspended: true,
+  playing: null,
 
   // ! Don't use sources, instead just audio with 1 file
   // ! On init, return false if no audio
 
+  // maybe addSource & removeSource that do both in player and in array
+  // playing that takes some id of the playing song to display the right logo
+  // if click on play of another song, add it beginning of the array and play it so it keeps the queue
+  // when next song is playing, should remove from sources array if it exists
+
   /*
    * Audio
    */
-  init: () => {
-    const { sources, started, createAnalyser } = get();
-    if (started) return;
+  init: () => set({ audioContext: new AudioContext(), ready: true }),
+  reset: () => set({ ready: false, suspended: true, playing: null }),
 
-    const audioContext = new AudioContext();
+  start: (data) => {
+    const { ready, init, playing, createAnalyser } = get();
+    if (!ready) init();
 
-    sources.forEach((ref, index) => {
-      // Only play the first one
-      if (ref?.current) {
-        if (index !== 0) ref.current.volume = 0;
-        ref.current.play();
-      }
-    });
+    if (playing) playing.audio.pause();
 
-    set({ audioContext, started: true, suspended: false });
-    createAnalyser();
-  },
+    const audio = new Audio(data.url);
+    audio.volume = 1;
+    audio.loop = true;
+    audio.preload = 'none';
+    audio.crossOrigin = 'anonymous';
+    audio.play();
 
-  reset: () => {
-    set({ started: false, suspended: true });
+    createAnalyser(audio);
+
+    set({ playing: { audio, data }, suspended: false });
   },
 
   update: (audioObject) => {
@@ -78,15 +83,13 @@ export default create((set, get) => ({
   /*
    * Analyser
    */
-  createAnalyser: () => {
-    const { audioContext, sources } = get();
-    const index = sources.findIndex((ref) => ref?.current?.volume === 1) || 0;
+  createAnalyser: (audio) => {
+    console.log('createAnalyser', audio);
+    const { audioContext } = get();
 
-    const source = audioContext.createMediaElementSource(
-      sources[index]?.current,
-    );
+    const source = audioContext.createMediaElementSource(audio);
     const analyser = audioContext.createAnalyser();
-    analyser.fftSize = 1024;
+    analyser.fftSize = 2048;
 
     source.connect(analyser);
     analyser.connect(audioContext.destination);

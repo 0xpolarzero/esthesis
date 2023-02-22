@@ -13,8 +13,8 @@ const Nav = () => {
     theme: state.theme,
     updateTheme: state.updateTheme,
   }));
-  const { init, started, audioOff, toggleMute } = stores.useAudio((state) => ({
-    init: state.init,
+  const { start, started, audioOff, toggleMute } = stores.useAudio((state) => ({
+    start: state.start,
     started: state.started,
     audioOff: state.suspended,
     toggleMute: state.toggleMute,
@@ -22,7 +22,9 @@ const Nav = () => {
 
   return (
     <header className='nav'>
-      <div className='title'></div>
+      <div className='title'>
+        sound<span className='emphasize'>swarm</span>
+      </div>
 
       <div className='links'>
         {/* <Links /> */}
@@ -40,7 +42,26 @@ const Nav = () => {
             <RxSpeakerLoud size={20} onClick={toggleMute} />
           )
         ) : (
-          <RxPlay size={20} onClick={init} />
+          <>
+            <RxPlay
+              size={20}
+              onClick={() =>
+                start({
+                  name: 'test name',
+                  url: 'https://catalogworks.b-cdn.net/ipfs/QmVUXBTmEhZJok9hqrWhArFLcFSe9GeSsB7U23kZxokZCR',
+                })
+              }
+            />
+            <RxPlay
+              size={20}
+              onClick={() =>
+                start({
+                  name: 'test name',
+                  url: 'https://arweave.net/_vLxu-ASiBA7o1xJ99kOVfQIYQ3IXBB8JKRgAopZJ24',
+                })
+              }
+            />
+          </>
         )}
       </div>
     </header>
