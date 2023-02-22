@@ -1,9 +1,11 @@
-import Counter from './Counter';
+import Controls from './Controls';
+import TrackSelector from './TrackSelector';
 
 const Global = () => {
   return (
     <>
-      <Counter />
+      <TrackSelector />
+      <Controls />
     </>
   );
 };
