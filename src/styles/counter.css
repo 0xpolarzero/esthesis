@@ -1,0 +1,30 @@
+.counter {
+  backdrop-filter: blur(10px);
+  position: fixed;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  padding: 0.8rem 1.2rem;
+  width: 100%;
+  max-width: 1600px;
+
+  display: grid;
+  grid-template-columns: 1fr auto;
+  opacity: 1;
+  transition: all 0.2s ease-in-out;
+}
+
+.counter:hover {
+  backdrop-filter: blur(8px);
+  background: rgba(var(--background-main-rgb), 0.6);
+}
+
+.counter.hidden {
+  opacity: 0;
+}
+
+@media (min-width: 768px) {
+  .counter {
+    padding: 1.5rem 2rem;
+  }
+}
