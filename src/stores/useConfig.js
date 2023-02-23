@@ -17,12 +17,12 @@ const lightProperties = [
   { '--text-link-hover': '#747bff' },
   { '--background-button': '#f9f9f9' },
   { '--button-border': 'rgba(0, 0, 0, 0.1)' },
-  {
-    '--cursor': `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"><circle cx="10" cy="10" r="10" fill="%23101010B3" /></svg>') 5 5, auto`,
-  },
-  {
-    '--cursor-hover': `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"><circle cx="10" cy="10" r="10" fill="%23101010FF" /></svg>') 5 5, auto`,
-  },
+  // {
+  //   '--cursor': `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"><circle cx="10" cy="10" r="10" fill="%23101010B3" /></svg>') 5 5, auto`,
+  // },
+  // {
+  //   '--cursor-hover': `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"><circle cx="10" cy="10" r="10" fill="%23101010FF" /></svg>') 5 5, auto`,
+  // },
 ];
 
 const darkProperties = [
@@ -34,12 +34,12 @@ const darkProperties = [
   { '--text-link-hover': '#535bf2' },
   { '--background-button': '#1a1a1a' },
   { '--button-border': 'rgba(255, 255, 255, 0.1)' },
-  {
-    '--cursor': `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"><circle cx="10" cy="10" r="10" fill="%23e9e9e9B3" /></svg>') 5 5, auto`,
-  },
-  {
-    '--cursor-hover': `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"><circle cx="10" cy="10" r="10" fill="%23e9e9e9FF" /></svg>') 5 5, auto`,
-  },
+  // {
+  //   '--cursor': `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"><circle cx="10" cy="10" r="10" fill="%23e9e9e9B3" /></svg>') 5 5, auto`,
+  // },
+  // {
+  //   '--cursor-hover': `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"><circle cx="10" cy="10" r="10" fill="%23e9e9e9FF" /></svg>') 5 5, auto`,
+  // },
 ];
 
 export default create((set, get) => ({

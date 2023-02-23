@@ -41,6 +41,9 @@
 .track-selector .track-row__title.active {
   color: var(--text-link);
 }
+.track-selector .track-row__title:hover {
+  cursor: var(--cursor-hover);
+}
 
 /* Antd */
 /* .ant-table-cell {
