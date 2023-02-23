@@ -6,6 +6,18 @@
   z-index: 1;
 }
 
+.track-selector .library .ant-collapse-header {
+  position: fixed;
+  backdrop-filter: blur(10px);
+}
+.track-selector .library .ant-collapse-header-text {
+  padding-right: 1rem;
+}
+
+.track-selector .library .ant-collapse-content-box {
+  padding-top: 3rem !important;
+}
+
 .track-selector .library.desktop .ant-collapse-content-box {
   display: grid;
   grid-template-columns: 1fr auto auto auto;
@@ -16,6 +28,8 @@
   display: grid;
   grid-template-columns: 1fr;
   gap: 1rem;
+  /* max-height: 100%; */
+  /* overflow: scroll; */
 }
 
 /* Row */

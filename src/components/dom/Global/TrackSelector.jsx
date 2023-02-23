@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Collapse, Table, Tooltip } from 'antd';
 import stores from '@/stores';
 import hooks from '@/hooks';
@@ -18,17 +18,32 @@ const TrackSelector = () => {
     }),
   );
   const start = stores.useAudio((state) => state.start);
-  const { isMobile } = hooks.useWindowSize();
+  const { isMobile, windowSize } = hooks.useWindowSize();
+  const ref = useRef(null);
 
   const chooseTrack = (track) => {
     console.log('choosing track', track);
     start(track);
   };
 
+  useEffect(() => {
+    // Keep the width of the panel header in sync with the width of the panel
+    // content
+    if (!ref.current) return;
+
+    const header = ref.current.querySelector('.ant-collapse-header');
+    const content = ref.current.querySelector('.ant-collapse-content-box');
+
+    if (!header || !content) return;
+
+    header.style.width = `${content.offsetWidth}px`;
+  }, [windowSize]);
+
   return (
     <div className='track-selector'>
       <Collapse bordered={false} defaultActiveKey={['1']}>
         <Panel
+          ref={ref}
           header='Library'
           key='1'
           className={`library ${isMobile ? 'mobile' : 'desktop'}`}>

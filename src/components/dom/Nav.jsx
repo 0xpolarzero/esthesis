@@ -1,7 +1,7 @@
 import { Fragment, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { Divider, Dropdown } from 'antd';
-import { AiOutlineMenu } from 'react-icons/ai';
+import { Divider, Dropdown, Tooltip } from 'antd';
+import { AiOutlineInfoCircle, AiOutlineMenu } from 'react-icons/ai';
 import { CiLight, CiDark } from 'react-icons/ci';
 import stores from '@/stores';
 import config from '@/data';
@@ -22,6 +22,21 @@ const Nav = () => {
       <div className='links'>
         {/* <Links /> */}
         {/* Icons */}
+        <Tooltip
+          title={
+            <>
+              Powered by{' '}
+              <a
+                href='https://www.spinamp.xyz/'
+                target='_blank'
+                rel='noreferrer'>
+                Spinamp
+              </a>
+            </>
+          }>
+          <AiOutlineInfoCircle size={20} />
+        </Tooltip>
+        <Divider type='vertical' />
         {theme === 'dark' ? (
           <CiDark size={20} onClick={() => updateTheme('light')} />
         ) : (
