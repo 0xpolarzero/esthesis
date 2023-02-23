@@ -44,7 +44,7 @@ const TrackSelector = () => {
       <Collapse bordered={false} defaultActiveKey={['1']}>
         <Panel
           ref={ref}
-          header='Library'
+          header='sound'
           key='1'
           className={`library ${isMobile ? 'mobile' : 'desktop'}`}>
           {tracks?.items

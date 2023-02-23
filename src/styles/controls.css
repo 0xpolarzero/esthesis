@@ -46,8 +46,28 @@
   -webkit-overflow-scrolling: touch !important;
 }
 
+/* Slider (progress) */
+.controls .slider {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 0.2rem;
+  background: rgba(var(--text-main-rgb), 0.1);
+  border-radius: 0.2rem;
+  overflow: hidden;
+}
+
+.controls .slider .progress {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: var(--text-link);
+  border-radius: 0.2rem;
+}
+
 @media (min-width: 768px) {
   .controls {
-    padding: 1.5rem 2rem;
+    padding: 1rem 2rem;
   }
 }

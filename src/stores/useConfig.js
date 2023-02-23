@@ -11,6 +11,7 @@ import { ConfigProvider, theme as antdTheme } from 'antd';
 const lightProperties = [
   { '--text-main': 'rgba(0, 0, 0, 0.8)' },
   { '--text-main-full': 'rgba(0, 0, 0, 1)' },
+  { '--text-main-rgb': '0, 0, 0' },
   { '--background-main': '#e9e9e9' },
   { '--background-main-rgb': '233, 233, 233' },
   { '--text-link-hover': '#747bff' },
@@ -27,6 +28,7 @@ const lightProperties = [
 const darkProperties = [
   { '--text-main': 'rgba(255, 255, 255, 0.87)' },
   { '--text-main-full': 'rgba(255, 255, 255, 1)' },
+  { '--text-main-rgb': '255, 255, 255' },
   { '--background-main': '#101010' },
   { '--background-main-rgb': '16, 16, 16' },
   { '--text-link-hover': '#535bf2' },

@@ -18,6 +18,7 @@
   /* Themes */
   --text-main: rgba(255, 255, 255, 0.87);
   --text-main-full: rgba(255, 255, 255, 1);
+  --text-main-rgb: 255, 255, 255;
   --background-main: #101010;
   --background-main-rgb: 16, 16, 16;
 

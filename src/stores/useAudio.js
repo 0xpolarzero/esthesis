@@ -7,7 +7,9 @@ export default create((set, get) => ({
   analyser: null,
   ready: false,
   suspended: true,
+  // Current song
   playing: null,
+  duration: 0,
 
   /*
    * Audio
@@ -27,7 +29,12 @@ export default create((set, get) => ({
     }
 
     // If playing another song
-    if (playing) playing.audio.pause();
+    if (playing) {
+      playing.audio.pause();
+      // Remove any listener
+      playing?.audio.removeEventListener('loadedmetadata', () => {});
+      set({ duration: 0 });
+    }
 
     const audio = new Audio(data.lossyAudioUrl);
     audio.volume = 1;
@@ -36,9 +43,17 @@ export default create((set, get) => ({
     audio.crossOrigin = 'anonymous';
     audio.play();
 
+    // Except that we won't have the duration until the song is loaded
+    audio.addEventListener('loadedmetadata', () => {
+      set({ duration: audio.duration });
+    });
+
     createAnalyser(audio);
 
-    set({ playing: { audio, data }, suspended: false });
+    set({
+      playing: { audio, data },
+      suspended: false,
+    });
   },
 
   play: () => {

@@ -4,6 +4,7 @@ import { MdOutlineSkipPrevious, MdOutlineSkipNext } from 'react-icons/md';
 import stores from '@/stores';
 import hooks from '@/hooks';
 import { useEffect, useRef, useState } from 'react';
+import Duration from '../Utils/Duration';
 
 const Controls = () => {
   const { play, pause, navigate, suspended, playing } = stores.useAudio(
@@ -16,13 +17,9 @@ const Controls = () => {
     }),
   );
   const tracks = stores.useSpinamp((state) => state.tracks);
-  const { isMobile } = hooks.useWindowSize();
 
   const [existPrev, setExistPrev] = useState(false);
   const [existNext, setExistNext] = useState(false);
-  const [isTitleOverflow, setIsTitleOverflow] = useState(false);
-
-  const ref = useRef(null);
 
   useEffect(() => {
     if (!playing || !tracks) return;
@@ -49,11 +46,6 @@ const Controls = () => {
     }
   }, [playing, tracks]);
 
-  useEffect(() => {
-    if (!ref.current) return;
-    setIsTitleOverflow(ref.current.offsetWidth < ref.current.scrollWidth);
-  }, [playing]);
-
   return (
     <div className='controls'>
       {playing ? <Title playing={playing} /> : '_select a track'}
@@ -76,6 +68,7 @@ const Controls = () => {
           className={existNext ? '' : 'disabled'}
         />
       </div>
+      <Slider />
     </div>
   );
 };
@@ -85,13 +78,39 @@ const Title = ({ playing }) => {
 
   return (
     <div className='scroll'>
-      {playing.data.title}
+      {playing.data.title} {isMobile ? <Duration /> : null}
       {isMobile ? null : (
         <>
           <Divider type='vertical' style={{ margin: '0 2rem' }} />
           {playing.data.artist.name}
+          <Divider type='vertical' style={{ margin: '0 2rem' }} />
+          <span style={{ opacity: 0.7 }}>
+            <Duration />
+          </span>
         </>
       )}
+    </div>
+  );
+};
+
+const Slider = () => {
+  const playing = stores.useAudio((state) => state.playing);
+  // playing.audio.currentTime, playing.audio.duration
+  const [percent, setPercent] = useState(0);
+
+  useEffect(() => {
+    if (!playing) return;
+
+    const interval = setInterval(() => {
+      setPercent((playing.audio.currentTime / playing.audio.duration) * 100);
+    }, 100);
+
+    return () => clearInterval(interval);
+  }, [playing]);
+
+  return (
+    <div className='slider'>
+      <div className='progress' style={{ width: `${percent}%` }} />
     </div>
   );
 };
