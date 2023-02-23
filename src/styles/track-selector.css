@@ -1,0 +1,35 @@
+.track-selector {
+  justify-self: flex-start;
+  width: 100%;
+  max-width: 1600px;
+  overflow: scroll;
+  z-index: 1;
+}
+
+.track-selector .library.desktop .ant-collapse-content-box {
+  display: grid;
+  grid-template-columns: 1fr auto auto auto;
+  gap: 0.5rem 2rem;
+}
+
+.track-selector .library.mobile .ant-collapse-content-box {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+/* Row */
+.track-selector .track-row__title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.track-selector .track-row__title.active {
+  color: var(--text-link);
+}
+
+/* Antd */
+/* .ant-table-cell {
+  border-start-start-radius: 0 !important;
+  border-start-end-radius: 0 !important;
+} */
