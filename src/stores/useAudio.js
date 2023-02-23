@@ -1,22 +1,13 @@
 import { create } from 'zustand';
+import useSpinamp from './useSpinamp';
 import config from '@/data';
 
 export default create((set, get) => ({
   audioContext: null,
-  sources: [],
-  setSources: (sources) => set({ sources }),
   analyser: null,
   ready: false,
   suspended: true,
   playing: null,
-
-  // ! Don't use sources, instead just audio with 1 file
-  // ! On init, return false if no audio
-
-  // maybe addSource & removeSource that do both in player and in array
-  // playing that takes some id of the playing song to display the right logo
-  // if click on play of another song, add it beginning of the array and play it so it keeps the queue
-  // when next song is playing, should remove from sources array if it exists
 
   /*
    * Audio
@@ -29,7 +20,7 @@ export default create((set, get) => ({
     if (!ready) init();
 
     // If just playing again after pause
-    if (playing && playing.data.url === data.url) {
+    if (playing && playing.data.id === data.id) {
       playing.audio.play();
       set({ suspended: false });
       return;
@@ -38,7 +29,7 @@ export default create((set, get) => ({
     // If playing another song
     if (playing) playing.audio.pause();
 
-    const audio = new Audio(data.url);
+    const audio = new Audio(data.lossyAudioUrl);
     audio.volume = 1;
     audio.loop = true;
     audio.preload = 'none';
@@ -50,7 +41,15 @@ export default create((set, get) => ({
     set({ playing: { audio, data }, suspended: false });
   },
 
-  stop: () => {
+  play: () => {
+    const { playing } = get();
+    if (!playing) return;
+
+    playing.audio.play();
+    set({ suspended: false });
+  },
+
+  pause: () => {
     const { playing } = get();
     if (!playing) return;
 
@@ -59,14 +58,16 @@ export default create((set, get) => ({
   },
 
   navigate: (direction) => {
-    const { playing, sources, start } = get();
-    if (!playing) return;
+    const { playing, start } = get();
+    const { tracks } = useSpinamp.getState();
+    if (!playing || !tracks?.items) return;
 
-    const index = sources.findIndex((s) => s.url === playing.data.url);
+    const index = tracks.items.findIndex((s) => s.id === playing.data.id);
     if (index === -1) return;
 
+    const newSource =
+      tracks.items[direction === 'next' ? index + 1 : index - 1];
     // Should not happen but just in case
-    const newSource = sources[direction === 'next' ? index + 1 : index - 1];
     if (!newSource) return;
 
     start(newSource);

@@ -6,14 +6,14 @@ import hooks from '@/hooks';
 import { useEffect, useState } from 'react';
 
 const Controls = () => {
-  const { startAudio, stopAudio, navigate, suspended, playing, sources } =
+  const { startAudio, play, pause, navigate, suspended, playing } =
     stores.useAudio((state) => ({
       startAudio: state.start,
-      stopAudio: state.stop,
+      play: state.play,
+      pause: state.pause,
       navigate: state.navigate,
       suspended: state.suspended,
       playing: state.playing,
-      sources: state.sources,
     }));
   const tracks = stores.useSpinamp((state) => state.tracks);
   const { isMobile } = hooks.useWindowSize();
@@ -22,14 +22,17 @@ const Controls = () => {
   const [existNext, setExistNext] = useState(false);
 
   useEffect(() => {
-    if (!playing) return;
+    if (!playing || !tracks) return;
 
-    const index = sources.findIndex((item) => item.url === playing.data.url);
+    const index = tracks.items?.findIndex(
+      (item) => item.id === playing.data.id,
+    );
+    console.log(index);
     if (index === -1) {
       setExistPrev(false);
       setExistNext(false);
     } else {
-      if (index < sources.length - 1) {
+      if (index < tracks.items?.length - 1) {
         setExistNext(true);
       } else {
         setExistNext(false);
@@ -41,7 +44,7 @@ const Controls = () => {
         setExistPrev(false);
       }
     }
-  }, [playing, sources]);
+  }, [playing, tracks]);
 
   useEffect(() => {
     console.log(tracks);
@@ -52,11 +55,11 @@ const Controls = () => {
       {playing ? (
         <div>
           <span>
-            {playing.data.name}
+            {playing.data.title}
             {isMobile ? null : (
               <>
                 <Divider type='vertical' style={{ margin: '0 2rem' }} />
-                {/* {activeMusic.date} */}other
+                {playing.data.artist.name}
               </>
             )}
           </span>
@@ -72,17 +75,9 @@ const Controls = () => {
         />
 
         {suspended ? (
-          <RiPlayFill
-            size={20}
-            onClick={() =>
-              startAudio({
-                name: 'test name',
-                url: 'https://arweave.net/_vLxu-ASiBA7o1xJ99kOVfQIYQ3IXBB8JKRgAopZJ24',
-              })
-            }
-          />
+          <RiPlayFill size={20} onClick={play} />
         ) : (
-          <RiPauseFill size={20} onClick={stopAudio} />
+          <RiPauseFill size={20} onClick={pause} />
         )}
 
         <MdOutlineSkipNext
