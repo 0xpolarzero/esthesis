@@ -1,4 +1,5 @@
 import { fetchAllTracks } from '@spinamp/spinamp-sdk';
+import { matchSorter } from 'match-sorter';
 import { create } from 'zustand';
 
 export default create((set, get) => ({
@@ -16,8 +17,6 @@ export default create((set, get) => ({
   hasPreviousPage: () => get().tracks.pageInfo.hasPreviousPage,
 
   // Search
-  search: '',
-  setSearch: (search) => set({ search }),
   unpaginatedTracks: [],
   loadingAllTracks: true,
   errorAllTracks: false,
@@ -25,7 +24,7 @@ export default create((set, get) => ({
   /**
    * @notice Fetch paginated tracks
    */
-  fetchTracks: async () => {
+  fetchTracks: async (pageReq) => {
     const { page, oldPages } = get();
 
     // Was this page already fetched?
@@ -78,10 +77,9 @@ export default create((set, get) => ({
     }
 
     // Set all tracks in one array for search
-    const unpaginatedTracks = Object.values(oldPages).reduce(
-      (acc, page) => [...acc, ...page.items],
-      [],
-    );
+    const unpaginatedTracks = Object.values(oldPages)
+      .reduce((acc, page) => [...acc, ...page.items], [])
+      .sort((a, b) => b.createdAt - a.createdAt);
 
     set({
       loadingAllTracks: false,
@@ -95,7 +93,29 @@ export default create((set, get) => ({
    * On first search, it will take some time to fetch all tracks,
    * then set all tracks so nothing will need to be fetched again even in paginated results
    */
-  onSearchTrack: async () => {
-    const { search, unpaginatedTracks } = get();
+  onSearchTrack: async (value) => {
+    const { unpaginatedTracks, oldPages } = get();
+    // If there is no search, display recent tracks
+    if (!value || value.length < 3) {
+      set({ tracks: oldPages[0] });
+      return;
+    }
+
+    const filtered = unpaginatedTracks.filter(
+      (track) =>
+        track.title.toLowerCase().includes(value.toLowerCase()) ||
+        track.artist.name.toLowerCase().includes(value.toLowerCase()),
+    );
+    // Sort by most accurate match
+    const sorted = matchSorter(filtered, value, {
+      keys: ['title', 'artist.name'],
+    });
+    console.log(sorted);
+
+    // Keep only the first 100 tracks
+    filtered.splice(100);
+
+    // Set tracks & remember them
+    set({ tracks: { items: filtered } });
   },
 }));

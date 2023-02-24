@@ -1,0 +1,26 @@
+.search {
+  margin: 0.5rem 0;
+}
+
+.library.mobile .search {
+}
+.library.desktop .search {
+  grid-column: span 4;
+}
+
+/* Options */
+.option-label.desktop::after {
+  position: absolute;
+  top: 0;
+  right: 1rem;
+  color: #fff;
+  background: var(--text-link);
+  padding: 0.1rem 0.5rem;
+  border-radius: 0.2rem;
+}
+.option-label.desktop.title::after {
+  content: 'song';
+}
+.option-label.desktop.artist::after {
+  content: 'artist';
+}

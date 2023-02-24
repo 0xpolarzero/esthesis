@@ -5,6 +5,7 @@ import hooks from '@/hooks';
 import ElapsedTime from '../Utils/ElapsedTime';
 import { RiPlayFill } from 'react-icons/ri';
 import Image from 'next/image';
+import Search from './Search';
 
 const { Panel } = Collapse;
 
@@ -47,6 +48,7 @@ const TrackSelector = () => {
           header='sound'
           key='1'
           className={`library ${isMobile ? 'mobile' : 'desktop'}`}>
+          <Search />
           {tracks?.items
             ? tracks.items.map((track) =>
                 // Render a card on mobile, a row on desktop
