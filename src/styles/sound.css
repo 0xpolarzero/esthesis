@@ -1,4 +1,4 @@
-.track-selector {
+.sound {
   justify-self: flex-start;
   width: 100%;
   max-width: 1600px;
@@ -6,25 +6,25 @@
   z-index: 1;
 }
 
-.track-selector .library .ant-collapse-header {
+.sound .library .ant-collapse-header {
   position: fixed;
   backdrop-filter: blur(10px);
 }
-.track-selector .library .ant-collapse-header-text {
+.sound .library .ant-collapse-header-text {
   padding-right: 1rem;
 }
 
-.track-selector .library .ant-collapse-content-box {
+.sound .library .ant-collapse-content-box {
   padding-top: 3rem !important;
 }
 
-.track-selector .library.desktop .ant-collapse-content-box {
+.sound .library.desktop .ant-collapse-content-box {
   display: grid;
   grid-template-columns: 1fr auto auto auto;
   gap: 0.5rem 2rem;
 }
 
-.track-selector .library.mobile .ant-collapse-content-box {
+.sound .library.mobile .ant-collapse-content-box {
   display: grid;
   grid-template-columns: 1fr;
   gap: 1rem;
@@ -33,15 +33,15 @@
 }
 
 /* Row */
-.track-selector .track-row__title {
+.sound .track-row__title {
   display: flex;
   align-items: center;
   gap: 0.5rem;
 }
-.track-selector .track-row__title.active {
+.sound .track-row__title.active {
   color: var(--text-link);
 }
-.track-selector .track-row__title:hover {
+.sound .track-row__title:hover {
   cursor: var(--cursor-hover);
 }
 

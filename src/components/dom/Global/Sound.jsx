@@ -9,7 +9,7 @@ import Search from './Search';
 
 const { Panel } = Collapse;
 
-const TrackSelector = () => {
+const Sound = () => {
   const { tracks, loadingTracks, errorTracks, fetchTracks } = stores.useSpinamp(
     (state) => ({
       tracks: state.tracks,
@@ -41,7 +41,7 @@ const TrackSelector = () => {
   }, [windowSize]);
 
   return (
-    <div className='track-selector'>
+    <div className='sound'>
       <Collapse bordered={false} defaultActiveKey={['1']}>
         <Panel
           ref={ref}
@@ -135,4 +135,4 @@ const TrackRow = ({ track, onClick }) => {
   );
 };
 
-export default TrackSelector;
+export default Sound;

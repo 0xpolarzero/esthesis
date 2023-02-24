@@ -1,10 +1,12 @@
 import Controls from './Controls';
-import TrackSelector from './TrackSelector';
+import Sound from './Sound';
+import Swarm from './Swarm';
 
 const Global = () => {
   return (
     <>
-      <TrackSelector />
+      <Sound />
+      <Swarm />
       <Controls />
     </>
   );
