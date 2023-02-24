@@ -77,11 +77,16 @@ const Controls = () => {
 
 const Title = ({ playing }) => {
   const duration = stores.useAudio((state) => state.duration);
-  const { isMobile, windowSize } = hooks.useWindowSize();
+  const { isMobile } = hooks.useWindowSize();
 
   return (
     <div className='scroll'>
-      {playing.data.title} {isMobile ? <Duration time={duration} /> : null}
+      {playing.data.title}{' '}
+      {isMobile ? (
+        <span style={{ opacity: 0.8 }}>
+          (<Duration time={duration} />)
+        </span>
+      ) : null}
       {isMobile ? null : (
         <>
           <Divider type='vertical' style={{ margin: '0 2rem' }} />

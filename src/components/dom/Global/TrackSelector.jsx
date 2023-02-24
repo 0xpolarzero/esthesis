@@ -93,7 +93,6 @@ const TrackRow = ({ track, onClick }) => {
               alt={`Album image for ${track.title} from ${track.artist.name}`}
               width={200}
               height={200}
-              // display 'loading' image while loading
               placeholder='blur'
               blurDataURL='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNMyflfDwAFWwJQh9q4ZQAAAABJRU5ErkJggg=='
             />
