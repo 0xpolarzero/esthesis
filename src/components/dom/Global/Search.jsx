@@ -1,20 +1,27 @@
 import { useEffect, useState } from 'react';
-import { AutoComplete, Input } from 'antd';
+import { AutoComplete, Input, Skeleton, Tooltip } from 'antd';
 import stores from '@/stores';
 import hooks from '@/hooks';
 
 const { Search: SearchBar } = Input;
 
 const Search = () => {
-  const { onSearchTrack, unpaginatedTracks, loadingAllTracks, errorAllTracks } =
-    stores.useSpinamp((state) => ({
-      onSearchTrack: state.onSearchTrack,
-      unpaginatedTracks: state.unpaginatedTracks,
-      loadingAllTracks: state.loadingAllTracks,
-      errorAllTracks: state.errorAllTracks,
-    }));
+  const {
+    tracks,
+    onSearchTrack,
+    unpaginatedTracks,
+    loadingAllTracks,
+    errorAllTracks,
+  } = stores.useSpinamp((state) => ({
+    tracks: state.tracks,
+    onSearchTrack: state.onSearchTrack,
+    unpaginatedTracks: state.unpaginatedTracks,
+    loadingAllTracks: state.loadingAllTracks,
+    errorAllTracks: state.errorAllTracks,
+  }));
   const { isMobile } = hooks.useWindowSize();
   const [options, setOptions] = useState([]);
+  const [searchValue, setSearchValue] = useState('');
 
   useEffect(() => {
     if (!unpaginatedTracks) return;
@@ -58,8 +65,23 @@ const Search = () => {
     setOptions(options);
   }, [unpaginatedTracks]);
 
-  if (errorAllTracks) return 'error';
-  if (loadingAllTracks || !options.length) return 'loading...';
+  if (errorAllTracks)
+    return (
+      <div className='search'>
+        Error loading all tracks. Search not available, try to reload the page.
+      </div>
+    );
+
+  if (loadingAllTracks || !options.length)
+    return (
+      <div className='search'>
+        <Skeleton.Input
+          style={{ width: isMobile ? '90%' : '100%' }}
+          size='small'
+          active
+        />
+      </div>
+    );
 
   return (
     <>
@@ -69,17 +91,36 @@ const Search = () => {
           style={{
             width: isMobile ? '90%' : '100%',
           }}
+          onSearch={onSearchTrack}
           onSelect={onSearchTrack}
           filterOption={(inputValue, option) =>
             option.value.toLowerCase().indexOf(inputValue.toLowerCase()) !== -1
-          }>
+          }
+          // disabled={loadingAllTracks || !options.length}
+        >
           <SearchBar
             size='medium'
             placeholder='Search a track or artist'
             allowClear
             onSearch={onSearchTrack}
+            onChange={(e) => setSearchValue(e.target.value)}
+            status={
+              searchValue.length !== 0 && searchValue.length < 3
+                ? 'warning'
+                : 'success'
+            }
           />
         </AutoComplete>
+        {searchValue.length !== 0 && searchValue.length < 3 ? (
+          <span className='status'>Enter at least 3 characters to search</span>
+        ) : null}
+        {/* Are there more than 100 results? */}
+        {searchValue.length >= 3 && tracks.items.length >= 100 ? (
+          <span>
+            Showing 100 most accurate results. Try to be more specific to get
+            better results.
+          </span>
+        ) : null}
       </div>
       {isMobile ? <span className='separator horizontal' /> : null}
     </>

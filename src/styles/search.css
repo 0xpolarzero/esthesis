@@ -1,5 +1,9 @@
 .search {
+  position: relative;
   margin: 0.5rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
 .library.mobile .search {
@@ -23,4 +27,12 @@
 }
 .option-label.desktop.artist::after {
   content: 'artist';
+}
+
+/* Status */
+.search .status {
+  position: absolute;
+  top: -1.5rem;
+  right: 2.5rem;
+  color: var(--text-warning);
 }

@@ -60,6 +60,7 @@ export default create((set, get) => ({
             ...antdTheme.defaultAlgorithm.token,
             fontFamily: 'var(--font-main)',
             colorPrimary: '#646cff',
+            colorWarning: '#ff9e00',
           },
         }}>
         {children}

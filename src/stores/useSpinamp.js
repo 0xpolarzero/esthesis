@@ -107,15 +107,11 @@ export default create((set, get) => ({
         track.artist.name.toLowerCase().includes(value.toLowerCase()),
     );
     // Sort by most accurate match
-    const sorted = matchSorter(filtered, value, {
+    const sorted = matchSorter(unpaginatedTracks, value, {
       keys: ['title', 'artist.name'],
-    });
-    console.log(sorted);
-
-    // Keep only the first 100 tracks
-    filtered.splice(100);
+    }).slice(0, 100);
 
     // Set tracks & remember them
-    set({ tracks: { items: filtered } });
+    set({ tracks: { items: sorted } });
   },
 }));

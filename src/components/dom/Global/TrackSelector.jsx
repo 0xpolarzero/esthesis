@@ -117,7 +117,14 @@ const TrackRow = ({ track, onClick }) => {
           href={track.websiteUrl}
           target='_blank'
           rel='noreferrer'>
-          {track.platformId}
+          {track.platformId.length > 20 ? (
+            <Tooltip title={track.platformId} arrow={false}>
+              {track.platformId.substring(0, 6)}...
+              {track.platformId.substring(track.platformId.length - 4)}
+            </Tooltip>
+          ) : (
+            track.platformId
+          )}
         </a>
       </div>
       <div className='track-row__date'>
