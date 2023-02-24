@@ -1,10 +1,12 @@
-import { Divider } from 'antd';
+import { useEffect, useRef, useState } from 'react';
+import { Divider, Tooltip } from 'antd';
 import { RiPlayFill, RiPauseFill } from 'react-icons/ri';
 import { MdOutlineSkipPrevious, MdOutlineSkipNext } from 'react-icons/md';
+import Utils from '../Utils';
 import stores from '@/stores';
 import hooks from '@/hooks';
-import { useEffect, useRef, useState } from 'react';
-import Duration from '../Utils/Duration';
+
+const { Duration } = Utils;
 
 const Controls = () => {
   const { play, pause, navigate, suspended, playing } = stores.useAudio(
@@ -74,18 +76,19 @@ const Controls = () => {
 };
 
 const Title = ({ playing }) => {
+  const duration = stores.useAudio((state) => state.duration);
   const { isMobile, windowSize } = hooks.useWindowSize();
 
   return (
     <div className='scroll'>
-      {playing.data.title} {isMobile ? <Duration /> : null}
+      {playing.data.title} {isMobile ? <Duration time={duration} /> : null}
       {isMobile ? null : (
         <>
           <Divider type='vertical' style={{ margin: '0 2rem' }} />
           {playing.data.artist.name}
           <Divider type='vertical' style={{ margin: '0 2rem' }} />
           <span style={{ opacity: 0.7 }}>
-            <Duration />
+            <Duration time={duration} />
           </span>
         </>
       )}
@@ -94,24 +97,63 @@ const Title = ({ playing }) => {
 };
 
 const Slider = () => {
-  const playing = stores.useAudio((state) => state.playing);
-  // playing.audio.currentTime, playing.audio.duration
+  const { playing, updateTime } = stores.useAudio((state) => ({
+    playing: state.playing,
+    updateTime: state.updateTime,
+  }));
   const [percent, setPercent] = useState(0);
 
-  useEffect(() => {
-    if (!playing) return;
+  const slider = useRef(null);
+  const interval = useRef(null);
 
-    const interval = setInterval(() => {
+  const scrollTimeline = (e) => {
+    if (!playing || !slider.current) return;
+    if (e.buttons !== 1) return;
+
+    setPercent((e.clientX / slider.current.offsetWidth) * 100);
+    stopInterval();
+  };
+
+  const updateTimeline = (e) => {
+    if (!playing || !slider.current) return;
+
+    updateTime(e, slider.current);
+    startInterval();
+  };
+
+  const startInterval = () => {
+    if (!playing || interval.current) return;
+
+    interval.current = setInterval(() => {
       setPercent((playing.audio.currentTime / playing.audio.duration) * 100);
     }, 100);
+  };
 
-    return () => clearInterval(interval);
+  const stopInterval = () => {
+    if (!playing || !interval.current) return;
+
+    clearInterval(interval.current);
+    interval.current = null;
+  };
+
+  useEffect(() => {
+    setPercent(0);
+    startInterval();
+    return () => stopInterval();
   }, [playing]);
 
   return (
-    <div className='slider'>
-      <div className='progress' style={{ width: `${percent}%` }} />
-    </div>
+    <Tooltip
+      title={playing ? <Duration time={playing.audio.currentTime} /> : null}>
+      <div
+        ref={slider}
+        onPointerMove={scrollTimeline}
+        onPointerUp={updateTimeline}
+        onPointerOut={startInterval}
+        className='slider'>
+        <div className='progress' style={{ width: `${percent}%` }} />
+      </div>
+    </Tooltip>
   );
 };
 

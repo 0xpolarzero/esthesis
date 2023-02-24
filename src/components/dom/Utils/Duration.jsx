@@ -1,18 +1,15 @@
-import stores from '@/stores';
-import { Skeleton } from 'antd';
 import { useEffect, useState } from 'react';
 
-const Duration = () => {
-  const duration = stores.useAudio((state) => state.duration);
+const Duration = ({ time }) => {
   const [minutes, setMinutes] = useState(0);
   const [seconds, setSeconds] = useState(0);
 
   useEffect(() => {
-    setMinutes(Math.floor(duration / 60));
-    setSeconds((duration % 60).toFixed(0));
-  }, [duration]);
+    setMinutes(Math.floor(time / 60));
+    setSeconds((time % 60).toFixed(0));
+  }, [time]);
 
-  if (duration === 0) return <span className='duration'>_</span>;
+  if (time === 0) return <span className='duration'>_</span>;
 
   return (
     <span className='duration'>

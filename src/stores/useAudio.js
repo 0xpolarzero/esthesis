@@ -88,6 +88,18 @@ export default create((set, get) => ({
     start(newSource);
   },
 
+  updateTime: (e, slider) => {
+    const { playing } = get();
+    if (!playing || !slider) return;
+
+    const { width, left } = slider.getBoundingClientRect();
+    const x = e.clientX - left;
+    const percent = (x / width) * 100;
+    const time = (percent * playing.audio.duration) / 100;
+
+    playing.audio.currentTime = time;
+  },
+
   /*
    * Analyser
    */
