@@ -1,11 +1,13 @@
-import { useEffect, useRef, useState } from 'react';
-import { Collapse, Table, Tooltip } from 'antd';
+import { useEffect, useRef } from 'react';
+import Image from 'next/image';
+import { Collapse, Tooltip } from 'antd';
+import { RiPlayFill } from 'react-icons/ri';
 import stores from '@/stores';
 import hooks from '@/hooks';
-import ElapsedTime from '../Utils/ElapsedTime';
-import { RiPlayFill } from 'react-icons/ri';
-import Image from 'next/image';
 import Search from './Search';
+import Utils from '../Utils';
+
+const { ElapsedTime, TableSkeleton } = Utils;
 
 const { Panel } = Collapse;
 
@@ -47,32 +49,41 @@ const Sound = () => {
           ref={ref}
           header='sound'
           key='1'
-          className={`library ${isMobile ? 'mobile' : 'desktop'}`}>
+          className={`panel ${isMobile ? 'mobile' : 'desktop'}`}>
           <Search />
-          {tracks?.items
-            ? tracks.items.map((track) =>
-                // Render a card on mobile, a row on desktop
-                isMobile ? (
-                  <>
-                    <div
-                      className='track-card'
-                      key={track.id}
-                      onClick={() => chooseTrack(track)}>
-                      <TrackRow track={track} />
-                    </div>
-                    {tracks.items.indexOf(track) !== tracks.items.length - 1 ? (
-                      <span className='separator horizontal' />
-                    ) : null}
-                  </>
-                ) : (
-                  <TrackRow
+          {tracks?.items ? (
+            tracks.items.map((track) =>
+              // Render a card on mobile, a row on desktop
+              isMobile ? (
+                <>
+                  <div
+                    className='track-card'
                     key={track.id}
-                    track={track}
-                    onClick={() => chooseTrack(track)}
-                  />
-                ),
-              )
-            : 'loading'}
+                    onClick={() => chooseTrack(track)}>
+                    <TrackRow track={track} />
+                  </div>
+                  {tracks.items.indexOf(track) !== tracks.items.length - 1 ? (
+                    <span className='separator horizontal' />
+                  ) : null}
+                </>
+              ) : (
+                <TrackRow
+                  key={track.id}
+                  track={track}
+                  onClick={() => chooseTrack(track)}
+                />
+              ),
+            )
+          ) : isMobile ? (
+            <TableSkeleton colCount={1} rowCount={10} noHeader={true} />
+          ) : (
+            <TableSkeleton
+              colCount={4}
+              rowCount={10}
+              style={{ gridColumn: 'span 4' }}
+              noHeader={true}
+            />
+          )}
         </Panel>
       </Collapse>
     </div>
