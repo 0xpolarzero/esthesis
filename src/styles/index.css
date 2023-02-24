@@ -4,6 +4,7 @@
 @import './nav.css';
 @import './controls.css';
 @import './sound.css';
+@import './swarm.css';
 @import './search.css';
 
 :root {
@@ -80,8 +81,8 @@ body,
   font-family: var(--font-main);
   width: 100%;
   height: 100%;
-  display: flex;
-  justify-content: center;
+  display: grid;
+  grid-template-rows: 1fr auto;
   padding: 4rem 1rem;
 
   transition: all 0.2s ease;

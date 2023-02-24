@@ -1,0 +1,23 @@
+.swarm {
+  justify-self: center;
+  width: 100%;
+  max-width: 1600px;
+  overflow: scroll;
+  z-index: 1;
+}
+
+.swarm .ant-collapse-header {
+  text-align: end;
+}
+
+.swarm .ant-collapse-content-box {
+  text-align: end;
+}
+
+/* Animation */
+.swarm .ant-collapse-item svg.ant-collapse-arrow {
+  transition: transform 0.25s ease;
+}
+.swarm .ant-collapse-item-active svg.ant-collapse-arrow {
+  transform: rotate(-90deg);
+}

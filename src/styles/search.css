@@ -6,9 +6,7 @@
   gap: 0.5rem;
 }
 
-.library.mobile .search {
-}
-.library.desktop .search {
+.panel.desktop .search {
   grid-column: span 4;
 }
 
