@@ -11,8 +11,49 @@
 }
 
 .swarm .ant-collapse-content-box {
-  text-align: end;
-  background: none;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.swarm .panel .wrapper {
+  display: grid;
+  gap: 1rem;
+  min-width: 300px;
+}
+.swarm .panel.mobile .wrapper {
+  gap: 0.5rem;
+  min-width: 100%;
+}
+
+.swarm .colors,
+.swarm .pattern,
+.swarm .count {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 1rem;
+}
+
+/* Count */
+.swarm .count .ant-slider {
+  grid-column: span 2;
+}
+.swarm .count .ant-switch {
+  justify-self: flex-end;
+}
+
+/* Link */
+.swarm .link {
+  margin-top: 2rem;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* Switch */
+.swarm .ant-switch {
+  max-width: 1rem !important;
 }
 
 /* Animation */

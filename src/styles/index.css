@@ -217,6 +217,20 @@ button.special:hover {
   border-color: var(--text-link-hover);
 }
 
+svg {
+  color: var(--text-main);
+  fill: var(--text-main);
+  stroke: var(--text-main);
+  opacity: 0.8;
+  transition: all 0.2s ease;
+}
+svg:hover {
+  opacity: 1;
+  color: var(--text-main-full);
+  fill: var(--text-main-full);
+  stroke: var(--text-main-full);
+}
+
 /* 
  * Text
  */
@@ -252,6 +266,12 @@ a.emphasize.min:hover {
 
 .italic {
   font-style: italic;
+}
+
+.with-icon {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 /* 
@@ -330,4 +350,11 @@ a.emphasize.min:hover {
   to {
     transform: rotate(360deg);
   }
+}
+
+/**
+  * Overrides
+  */
+.ant-select-dropdown {
+  z-index: 99999;
 }

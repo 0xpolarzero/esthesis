@@ -1,5 +1,14 @@
-import { Collapse, InputNumber, Select, Slider, Switch } from 'antd';
-import { AiOutlineCheck, AiOutlineClose, AiOutlineLeft } from 'react-icons/ai';
+import {
+  Collapse,
+  InputNumber,
+  Select,
+  Slider,
+  Switch,
+  Tabs,
+  Tooltip,
+} from 'antd';
+import { AiOutlineInfoCircle, AiOutlineLeft } from 'react-icons/ai';
+import { CiLight, CiDark } from 'react-icons/ci';
 import stores from '@/stores';
 import hooks from '@/hooks';
 import config from '@/data';
@@ -28,6 +37,7 @@ const Swarm = () => {
     setAllowDynamicCount: state.setAllowDynamicCount,
     setPattern: state.setPattern,
   }));
+  const updateTheme = stores.useConfig((state) => state.updateTheme);
   const { isMobile } = hooks.useWindowSize();
 
   useEffect(() => {
@@ -44,6 +54,7 @@ const Swarm = () => {
     <div className='swarm'>
       <Collapse
         bordered={false}
+        ghost
         defaultActiveKey={['1']}
         expandIcon={() => <AiOutlineLeft size={14} />}
         expandIconPosition='end'>
@@ -51,44 +62,73 @@ const Swarm = () => {
           header='swarm'
           key='1'
           className={`panel ${isMobile ? 'mobile' : 'desktop'}`}>
-          <Tab type='dark' />
-          <br />
-          <Tab type='light' />
-          <br />
-          <br />
-          <Select
-            defaultValue={pattern.name}
-            onChange={setPattern}
-            bordered={false}
-            options={SHADERS.vertex.map((v, i) => ({
-              value: i,
-              label: v.name,
-            }))}
-          />
-          <br />
-          <br />
-          Count
-          <br />
-          <Slider
-            min={COUNT.min}
-            max={COUNT.max}
-            value={count}
-            onChange={setCount}
-          />
-          <InputNumber
-            min={COUNT.min}
-            max={COUNT.max}
-            value={count}
-            onChange={setCount}
-          />
-          <br />
-          <br />
-          Allow dynamic count
-          <br />
-          <Switch checked={allowDynamicCount} onChange={setAllowDynamicCount} />
-          <br />
-          <br />
-          Create link
+          <div className='wrapper'>
+            {/* Colors */}
+            <Tabs
+              defaultActiveKey='1'
+              onChange={updateTheme}
+              items={[
+                {
+                  key: 'dark',
+                  label: <CiDark size={20} />,
+                  children: <Tab type='dark' />,
+                },
+                {
+                  key: 'light',
+                  label: <CiLight size={20} />,
+                  children: <Tab type='light' />,
+                },
+              ]}
+            />
+            <div className='separator horizontal' style={{ width: '100%' }} />
+            <div className='pattern'>
+              pattern
+              {/* Vertex shader */}
+              <Select
+                defaultValue={pattern.name}
+                onChange={setPattern}
+                bordered={false}
+                options={SHADERS.vertex.map((v, i) => ({
+                  value: i,
+                  label: v.name,
+                }))}
+              />
+            </div>
+            {/* Particles count */}
+            <div className='count'>
+              count
+              <InputNumber
+                min={COUNT.min}
+                max={COUNT.max}
+                value={count}
+                onChange={setCount}
+              />
+              <Slider
+                min={COUNT.min}
+                max={COUNT.max}
+                value={count}
+                onChange={setCount}
+              />
+              <span className='with-icon'>
+                allow dynamic count{' '}
+                <Tooltip title='if checked, the particles count will be affected by the frequencies of the music'>
+                  <AiOutlineInfoCircle size={20} />
+                </Tooltip>
+              </span>
+              <Switch
+                checked={allowDynamicCount}
+                onChange={setAllowDynamicCount}
+              />
+            </div>
+            <div className='link'>
+              <button className='button-primary special'>
+                generate shareable link
+              </button>
+              <Tooltip title='generate a link that points to an immersive render of this song, using the customized settings'>
+                <AiOutlineInfoCircle size={20} />
+              </Tooltip>
+            </div>
+          </div>
         </Panel>
       </Collapse>
     </div>
@@ -105,25 +145,23 @@ const Tab = ({ type }) => {
       setColorB: state.setColorB,
       setBackground: state.setBackground,
     }));
-  const theme = stores.useConfig((state) => state.theme);
 
   return (
-    <>
-      colors {type}
-      <br />
-      <input
-        type='color'
-        value={colorA[type]}
-        onChange={(e) => setColorA(e.target.value, type)}
-      />
-      <input
-        type='color'
-        value={colorB[type]}
-        onChange={(e) => setColorB(e.target.value, type)}
-      />
-      <br />
-      background {type}
-      <br />
+    <div className='colors'>
+      particles
+      <div>
+        <input
+          type='color'
+          value={colorA[type]}
+          onChange={(e) => setColorA(e.target.value, type)}
+        />
+        <input
+          type='color'
+          value={colorB[type]}
+          onChange={(e) => setColorB(e.target.value, type)}
+        />
+      </div>
+      background
       <input
         type='color'
         list={`colors-${type}`}
@@ -135,7 +173,7 @@ const Tab = ({ type }) => {
           <option key={c} value={c} />
         ))}
       </datalist>
-    </>
+    </div>
   );
 };
 
