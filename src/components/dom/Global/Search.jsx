@@ -100,7 +100,7 @@ const Search = () => {
         >
           <SearchBar
             size='medium'
-            placeholder='Search a track or artist'
+            placeholder='search a track or artist'
             allowClear
             onSearch={onSearchTrack}
             onChange={(e) => setSearchValue(e.target.value)}
@@ -112,12 +112,12 @@ const Search = () => {
           />
         </AutoComplete>
         {searchValue.length !== 0 && searchValue.length < 3 ? (
-          <span className='status'>Enter at least 3 characters to search</span>
+          <span className='status'>enter at least 3 characters to search</span>
         ) : null}
         {/* Are there more than 100 results? */}
         {searchValue.length >= 3 && tracks.items.length >= 100 ? (
           <span>
-            Showing 100 most accurate results. Try to be more specific to get
+            showing 100 most accurate results ; try to be more specific to get
             better results.
           </span>
         ) : null}

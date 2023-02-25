@@ -25,7 +25,7 @@ const Nav = () => {
         <Tooltip
           title={
             <>
-              Powered by{' '}
+              powered by{' '}
               <a
                 href='https://www.spinamp.xyz/'
                 target='_blank'
