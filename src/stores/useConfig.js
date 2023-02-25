@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { ConfigProvider, theme as antdTheme } from 'antd';
+import { ToastContainer } from 'react-toastify';
 import useSwarm from './useSwarm';
 
 /**
@@ -51,21 +52,29 @@ export default create((set, get) => ({
     const { theme } = get();
 
     return (
-      <ConfigProvider
-        theme={{
-          algorithm:
-            theme === 'dark'
-              ? antdTheme.darkAlgorithm
-              : antdTheme.defaultAlgorithm,
-          token: {
-            ...antdTheme.defaultAlgorithm.token,
-            fontFamily: 'var(--font-main)',
-            colorPrimary: '#646cff',
-            colorWarning: '#ff9e00',
-          },
-        }}>
-        {children}
-      </ConfigProvider>
+      <>
+        <ConfigProvider
+          theme={{
+            algorithm:
+              theme === 'dark'
+                ? antdTheme.darkAlgorithm
+                : antdTheme.defaultAlgorithm,
+            token: {
+              ...antdTheme.defaultAlgorithm.token,
+              fontFamily: 'var(--font-main)',
+              colorPrimary: '#646cff',
+              colorWarning: '#ff9e00',
+            },
+          }}>
+          {children}
+        </ConfigProvider>
+        <ToastContainer
+          position='bottom-left'
+          autoClose={5000}
+          newestOnTop
+          theme={theme}
+        />
+      </>
     );
   },
 
