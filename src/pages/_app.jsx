@@ -2,8 +2,10 @@ import { useEffect, useRef, useState } from 'react';
 import dynamic from 'next/dynamic';
 import Header from '@/config';
 import Layout from '@/components/dom/Layout';
-import '@/styles/index.css';
 import stores from '@/stores';
+import '@/styles/index.css';
+// Lib
+import 'react-toastify/dist/ReactToastify.css';
 
 const Scene = dynamic(() => import('@/components/canvas/Scene'), { ssr: true });
 
