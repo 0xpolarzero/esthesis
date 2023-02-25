@@ -1,37 +1,34 @@
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { useFrame } from '@react-three/fiber';
 import stores from '@/stores';
+import config from '@/data';
 
-import vertexShaders from './shaders/vertexShaders';
-import fragmentShader from './shaders/fragmentShader';
+const { colors } = config.swarm;
+const { count: COUNT, shaders } = config.options;
+const { vertex, fragment } = shaders;
 
 const Entity = () => {
   const getAnalyserData = stores.useAudio((state) => state.getAnalyserData);
   const theme = stores.useConfig((state) => state.theme);
+  const { colorA, colorB, pattern, count, allowDynamicCount } = stores.useSwarm(
+    (state) => ({
+      colorA: state.colorA,
+      colorB: state.colorB,
+      pattern: state.pattern,
+      count: state.count,
+      allowDynamicCount: state.allowDynamicCount,
+    }),
+  );
+  const [countExpanded, setCountExpanded] = useState(count);
   const ref = useRef(null);
 
-  const vertexShader = vertexShaders['work'];
-
-  const count = 1000;
   const radius = 2;
-  const colors = useMemo(() => {
-    return {
-      dark: [
-        [1.0, 1.0, 1.0],
-        [0.91, 0.91, 0.91],
-      ],
-      light: [
-        [0.06, 0.06, 0.06],
-        [0.02, 0.02, 0.02],
-      ],
-    };
-  }, []);
 
   const particlesPosition = useMemo(() => {
-    const positions = new Float32Array(count * 3);
+    const positions = new Float32Array(countExpanded * 3);
 
-    for (let i = 0; i < count; i++) {
+    for (let i = 0; i < countExpanded; i++) {
       const d = Math.sqrt(Math.random() - 0.5) * radius;
       const th = THREE.MathUtils.randFloatSpread(360);
       const phi = THREE.MathUtils.randFloatSpread(360);
@@ -44,7 +41,7 @@ const Entity = () => {
     }
 
     return positions;
-  }, [count, radius]);
+  }, [countExpanded, radius]);
 
   const uniforms = useMemo(
     () => ({
@@ -54,8 +51,8 @@ const Entity = () => {
       uRadius: {
         value: radius,
       },
-      uColorA: new THREE.Uniform(new THREE.Vector3(...colors['dark'][0])),
-      uColorB: new THREE.Uniform(new THREE.Vector3(...colors['dark'][1])),
+      uColorA: new THREE.Uniform(new THREE.Color(colors['dark'][0])),
+      uColorB: new THREE.Uniform(new THREE.Color(colors['dark'][1])),
       uGain: {
         value: 1.0,
       },
@@ -63,7 +60,7 @@ const Entity = () => {
         value: 1.0,
       },
     }),
-    [radius, colors],
+    [radius],
   );
 
   useFrame(({ clock }) => {
@@ -80,17 +77,39 @@ const Entity = () => {
     ref.current.material.uniforms.uGain.value = gainMultiplier;
     // as well as the brightness
     ref.current.material.uniforms.uBrighten.value = freqMultiplier;
+    // Increase the count of particles based on the frequency
+    if (!allowDynamicCount) return;
+    setCountExpanded(
+      count * freqMultiplier >= COUNT.max
+        ? COUNT.max
+        : (count * freqMultiplier).toFixed(0),
+    );
   });
 
+  // Colors
   useEffect(() => {
     if (!ref.current) return;
-    ref.current.material.uniforms.uColorA.value = new THREE.Vector3(
-      ...colors[theme][0],
+
+    ref.current.material.uniforms.uColorA.value = new THREE.Color(
+      colorA[theme],
     );
-    ref.current.material.uniforms.uColorB.value = new THREE.Vector3(
-      ...colors[theme][1],
+    ref.current.material.uniforms.uColorB.value = new THREE.Color(
+      colorB[theme],
     );
-  }, [theme, colors]);
+  }, [theme, colorA, colorB]);
+
+  // Pattern
+  useEffect(() => {
+    if (!ref.current) return;
+
+    ref.current.material.vertexShader = pattern.shader;
+    ref.current.material.needsUpdate = true;
+  }, [pattern]);
+
+  // Count
+  useEffect(() => {
+    setCountExpanded(count);
+  }, [count]);
 
   return (
     <points ref={ref} scale={1.5}>
@@ -105,8 +124,8 @@ const Entity = () => {
       <shaderMaterial
         blending={THREE.AdditiveBlending}
         depthWrite={false}
-        vertexShader={vertexShader}
-        fragmentShader={fragmentShader}
+        vertexShader={vertex[0].shader}
+        fragmentShader={fragment[0]}
         uniforms={uniforms}
       />
     </points>
