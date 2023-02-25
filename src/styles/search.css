@@ -5,6 +5,9 @@
   flex-direction: column;
   gap: 0.5rem;
 }
+.search * {
+  background: transparent !important;
+}
 
 .panel.desktop .search {
   grid-column: span 4;
