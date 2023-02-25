@@ -50,6 +50,12 @@
   align-items: center;
   gap: 1rem;
 }
+.swarm .panel.mobile .link {
+  grid-template-columns: 1fr auto;
+}
+.swarm .panel.mobile .link button:first-of-type {
+  grid-column: span 2;
+}
 
 /* Switch */
 .swarm .ant-switch {

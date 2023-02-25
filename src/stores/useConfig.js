@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { ConfigProvider, theme as antdTheme } from 'antd';
 import { ToastContainer } from 'react-toastify';
 import useSwarm from './useSwarm';
+import hooks from '@/hooks';
 
 /**
  * @notice Set up providers
@@ -50,6 +51,7 @@ export default create((set, get) => ({
    */
   Config: ({ children }) => {
     const { theme } = get();
+    const { isMobile } = hooks.useWindowSize();
 
     return (
       <>
@@ -69,7 +71,7 @@ export default create((set, get) => ({
           {children}
         </ConfigProvider>
         <ToastContainer
-          position='bottom-left'
+          position={isMobile ? 'top-left' : 'bottom-left'}
           autoClose={5000}
           newestOnTop
           theme={theme}

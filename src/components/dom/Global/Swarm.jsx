@@ -49,9 +49,10 @@ const Swarm = () => {
   const copyShareableLink = async () => {
     setIsCreatingLink(true);
     notification.current = toast.loading('Creating link...');
+
     const res = await createShareableLink();
     setIsCreatingLink(false);
-    console.log('here');
+
     if (res.error) {
       toast.update(notification.current, {
         render: res.message || 'An error occurred',
