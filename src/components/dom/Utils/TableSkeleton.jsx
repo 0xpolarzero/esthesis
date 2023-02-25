@@ -1,6 +1,12 @@
 import { Skeleton, Table } from 'antd';
 
-const TableSkeleton = ({ colCount, rowCount, style, noHeader = false }) => {
+const TableSkeleton = ({
+  colCount,
+  rowCount,
+  style,
+  rowStyle,
+  noHeader = false,
+}) => {
   const columns = Array(colCount)
     .fill()
     .map((_, i) => ({
@@ -9,7 +15,14 @@ const TableSkeleton = ({ colCount, rowCount, style, noHeader = false }) => {
       ),
       dataIndex: i,
       key: i,
-      render: () => <Skeleton active title={false} paragraph={{ rows: 1 }} />,
+      render: () => (
+        <Skeleton
+          active
+          title={false}
+          paragraph={{ rows: 1 }}
+          style={rowStyle}
+        />
+      ),
     }));
 
   const rows = Array(rowCount)
