@@ -44,7 +44,7 @@ const Sound = () => {
 
   return (
     <div className='sound'>
-      <Collapse bordered={false} defaultActiveKey={['1']}>
+      <Collapse bordered={false} ghost defaultActiveKey={['1']}>
         <Panel
           ref={ref}
           header='sound'
