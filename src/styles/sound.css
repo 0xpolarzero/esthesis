@@ -10,6 +10,7 @@
 .sound .panel .ant-collapse-header {
   position: fixed;
   backdrop-filter: blur(10px);
+  z-index: 1;
 }
 .sound .panel .ant-collapse-header-text {
   padding-right: 1rem;
@@ -47,7 +48,6 @@
 }
 
 /* Antd */
-/* .ant-table-cell {
-  border-start-start-radius: 0 !important;
-  border-start-end-radius: 0 !important;
-} */
+.sound .ant-skeleton-paragraph {
+  margin: 0;
+}

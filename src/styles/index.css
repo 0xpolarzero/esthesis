@@ -36,6 +36,12 @@
   --text-warning: #ff9e00;
   --button-shadow: rgba(0, 0, 0, 0.1);
 
+  /* toast */
+  --toastify-color-info: var(--text-link) !important;
+  --toastify-color-success: var(--text-success) !important;
+  --toastify-color-warning: var(--text-warning) !important;
+  --toastify-color-error: var(--text-error) !important;
+
   /* --cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"><circle cx="10" cy="10" r="10" fill="%23e9e9e9B3" /></svg>')
       5 5,
     auto;

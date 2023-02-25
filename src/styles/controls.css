@@ -15,7 +15,7 @@
   opacity: 1;
   transition: all 0.2s ease-in-out;
 
-  z-index: 10000;
+  z-index: 1000;
 }
 
 .controls:hover {
