@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { ConfigProvider, theme as antdTheme } from 'antd';
+import useSwarm from './useSwarm';
 
 /**
  * @notice Set up providers
@@ -8,11 +9,11 @@ import { ConfigProvider, theme as antdTheme } from 'antd';
 /**
  * @notice Themes
  */
-const lightProperties = [
+const getLightProperties = (background) => [
   { '--text-main': 'rgba(0, 0, 0, 0.8)' },
   { '--text-main-full': 'rgba(0, 0, 0, 1)' },
   { '--text-main-rgb': '0, 0, 0' },
-  { '--background-main': '#e9e9e9' },
+  { '--background-main': background },
   { '--background-main-rgb': '233, 233, 233' },
   { '--text-link-hover': '#747bff' },
   { '--background-button': '#f9f9f9' },
@@ -25,11 +26,11 @@ const lightProperties = [
   // },
 ];
 
-const darkProperties = [
+const getDarkProperties = (background) => [
   { '--text-main': 'rgba(255, 255, 255, 0.87)' },
   { '--text-main-full': 'rgba(255, 255, 255, 1)' },
   { '--text-main-rgb': '255, 255, 255' },
-  { '--background-main': '#101010' },
+  { '--background-main': background },
   { '--background-main-rgb': '16, 16, 16' },
   { '--text-link-hover': '#535bf2' },
   { '--background-button': '#1a1a1a' },
@@ -92,24 +93,17 @@ export default create((set, get) => ({
   // Update
   updateTheme: (newTheme) => {
     const { setLight, setDark } = get();
+    const { background } = useSwarm.getState();
 
-    const themeString =
-      typeof newTheme === 'string'
-        ? newTheme
-        : newTheme.light
-        ? 'light'
-        : 'dark';
-    let newBg = typeof newTheme === 'string' ? null : newTheme.hex;
-
-    set({ theme: themeString });
-    themeString === 'light' ? setLight() : setDark();
-    if (newBg)
-      document.documentElement.style.setProperty('--background-main', newBg);
+    newTheme === 'light'
+      ? setLight(background.light || '#e9e9e9')
+      : setDark(background.dark || '#101010');
+    set({ theme: newTheme });
   },
 
   // Light theme
-  setLight: () => {
-    lightProperties.forEach((property) => {
+  setLight: (background) => {
+    getLightProperties(background).forEach((property) => {
       const key = Object.keys(property)[0];
       const value = Object.values(property)[0];
 
@@ -118,8 +112,8 @@ export default create((set, get) => ({
   },
 
   // Dark theme
-  setDark: () => {
-    darkProperties.forEach((property) => {
+  setDark: (background) => {
+    getDarkProperties(background).forEach((property) => {
       const key = Object.keys(property)[0];
       const value = Object.values(property)[0];
 
