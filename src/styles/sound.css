@@ -7,11 +7,6 @@
   z-index: 1;
 }
 
-.sound .ant-collapse,
-.swarm .ant-collapse {
-  background: transparent !important;
-}
-
 .sound .panel .ant-collapse-header {
   position: fixed;
   backdrop-filter: blur(10px);

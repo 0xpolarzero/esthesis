@@ -22,8 +22,7 @@
   opacity: 0;
 }
 
-.nav a,
-.nav svg {
+.nav a {
   color: var(--text-main);
   text-decoration: none;
   cursor: pointer;
@@ -31,8 +30,7 @@
   transition: color 0.2s ease;
 }
 
-.nav a:hover,
-.nav svg:hover {
+.nav a:hover {
   color: var(--text-main-full);
 }
 
