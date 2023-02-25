@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import * as THREE from 'three';
+import useAudio from './useAudio';
 import useConfig from './useConfig';
 import config from '@/data';
 
@@ -50,4 +51,42 @@ export default create((set, get) => ({
   setCount: (count) =>
     isNaN(count) ? set({ count: COUNT.default }) : set({ count }),
   setAllowDynamicCount: (allow) => set({ allowDynamicCount: allow }),
+
+  // Link
+  createShareableLink: async () => {
+    const { colorA, colorB, background, pattern, count } = get();
+    const { playing } = useAudio.getState();
+
+    if (!playing)
+      return {
+        data: null,
+        error: true,
+        message: 'You need to choose a sound first',
+      };
+
+    const patternIndex = OPTIONS_SHADERS.vertex.findIndex(
+      (p) => p.name === pattern.name,
+    );
+    // 0 = colorA, 1 = colorB, 2 = background, 3 = pattern, 4 = count 5 = sound
+    const argsSwarm = `?0=${colorA.dark},${colorA.light}&1=${colorB.dark},${colorB.light}&2=${background.dark},${background.light}&3=${patternIndex}&4=${count}`;
+    const argsSound = `&5=${playing.data.id}`;
+    const args = `${argsSwarm}${argsSound}`;
+
+    // Call api to write to spreadsheet
+    const res = await fetch('/api/google-api', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        functionName: 'write',
+        args: [args],
+      }),
+    });
+
+    const data = await res.json();
+    const url = new URL(window.location.href);
+
+    return { data: `${url}${data}`, error: false, message: 'Success' };
+  },
 }));

@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from 'react';
 import {
   Collapse,
   InputNumber,
@@ -9,10 +10,10 @@ import {
 } from 'antd';
 import { AiOutlineInfoCircle, AiOutlineLeft } from 'react-icons/ai';
 import { CiLight, CiDark } from 'react-icons/ci';
+import { toast } from 'react-toastify';
 import stores from '@/stores';
 import hooks from '@/hooks';
 import config from '@/data';
-import { useEffect } from 'react';
 
 const { Panel } = Collapse;
 const {
@@ -29,6 +30,7 @@ const Swarm = () => {
     setCount,
     setAllowDynamicCount,
     setPattern,
+    createShareableLink,
   } = stores.useSwarm((state) => ({
     count: state.count,
     allowDynamicCount: state.allowDynamicCount,
@@ -36,9 +38,37 @@ const Swarm = () => {
     setCount: state.setCount,
     setAllowDynamicCount: state.setAllowDynamicCount,
     setPattern: state.setPattern,
+    createShareableLink: state.createShareableLink,
   }));
   const updateTheme = stores.useConfig((state) => state.updateTheme);
   const { isMobile } = hooks.useWindowSize();
+  const [isCreatingLink, setIsCreatingLink] = useState(false);
+
+  const notification = useRef(null);
+
+  const copyShareableLink = async () => {
+    setIsCreatingLink(true);
+    notification.current = toast.loading('Creating link...');
+    const res = await createShareableLink();
+    setIsCreatingLink(false);
+    console.log('here');
+    if (res.error) {
+      toast.update(notification.current, {
+        render: res.message || 'An error occurred',
+        type: 'error',
+        isLoading: false,
+        autoClose: 2000,
+      });
+    } else {
+      navigator.clipboard.writeText(res.data);
+      toast.update(notification.current, {
+        render: 'Link copied to clipboard',
+        type: 'info',
+        isLoading: false,
+        autoClose: 2000,
+      });
+    }
+  };
 
   useEffect(() => {
     // Set the count back to default after it's been initialized with the max value
@@ -55,7 +85,6 @@ const Swarm = () => {
       <Collapse
         bordered={false}
         ghost
-        defaultActiveKey={['1']}
         expandIcon={() => <AiOutlineLeft size={14} />}
         expandIconPosition='end'>
         <Panel
@@ -121,10 +150,14 @@ const Swarm = () => {
               />
             </div>
             <div className='link'>
-              <button className='button-primary special'>
-                generate shareable link
+              <button className='button-primary'>preview</button>
+              <button
+                className='button-primary special'
+                disabled={isCreatingLink}
+                onClick={copyShareableLink}>
+                copy shareable link
               </button>
-              <Tooltip title='generate a link that points to an immersive render of this song, using the customized settings'>
+              <Tooltip title='the link points to an immersive render of this song, using the customized settings'>
                 <AiOutlineInfoCircle size={20} />
               </Tooltip>
             </div>
