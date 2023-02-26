@@ -3,10 +3,10 @@ import { sheets, SHEET_ID } from '@/data/googleAPI';
 const handler = (req, res) => {
   console.log(req.body);
   try {
-    const { functionName, args } = req.body;
+    const { functionName, arg } = req.body;
 
     if (functionName === 'write') {
-      writeLink(args[0]).then((data) => {
+      writeLink(arg).then((data) => {
         if (data.success) {
           res.status(200).json(data.id);
         } else {
@@ -14,8 +14,12 @@ const handler = (req, res) => {
         }
       });
     } else if (functionName === 'retrieve') {
-      retrieveLink(args[0]).then((data) => {
-        res.status(200).json(data);
+      retrieveLink(arg).then((data) => {
+        if (!data) {
+          res.status(500).json({ statusCode: 500, message: 'error' });
+        } else {
+          res.status(200).json(data);
+        }
       });
     }
   } catch (err) {
