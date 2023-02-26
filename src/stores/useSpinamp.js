@@ -1,6 +1,7 @@
-import { fetchAllTracks } from '@spinamp/spinamp-sdk';
+import { fetchAllTracks, fetchTrackById } from '@spinamp/spinamp-sdk';
 import { matchSorter } from 'match-sorter';
 import { create } from 'zustand';
+import useAudio from './useAudio';
 
 export default create((set, get) => ({
   // Tracks
@@ -113,5 +114,20 @@ export default create((set, get) => ({
 
     // Set tracks & remember them
     set({ tracks: { items: sorted } });
+  },
+
+  /**
+   * @notice Init sound based on track id
+   */
+  initSound: async (trackId) => {
+    const { start } = useAudio.getState();
+    try {
+      const track = await fetchTrackById(trackId);
+      start(track, true /* meaning don't try to init the audio context yet */);
+      return true;
+    } catch (err) {
+      console.log('err', err);
+      return false;
+    }
   },
 }));
