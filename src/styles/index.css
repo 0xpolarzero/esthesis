@@ -91,7 +91,7 @@ body,
   grid-template-rows: 1fr auto;
   padding: 4rem 1rem;
 
-  transition: all 0.2s ease;
+  /* transition: all 0.2s ease; */
 }
 
 a {
