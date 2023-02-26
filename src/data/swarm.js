@@ -7,8 +7,8 @@ const swarm = {
     light: backgrounds.light[0],
   },
   pattern: shaders.vertex[0],
-  count: count.max,
-  allowDynamicCount: true,
+  count: count.default,
+  allowDynamicBackground: true,
 };
 
 export default swarm;
