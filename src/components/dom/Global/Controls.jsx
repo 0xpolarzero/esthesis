@@ -8,7 +8,7 @@ import hooks from '@/hooks';
 
 const { Duration } = Utils;
 
-const Controls = () => {
+const Controls = ({ type }) => {
   const { play, pause, navigate, suspended, playing } = stores.useAudio(
     (state) => ({
       play: state.play,
@@ -52,11 +52,13 @@ const Controls = () => {
     <div className='controls'>
       {playing ? <Title playing={playing} /> : '_select a track'}
       <div className='buttons'>
-        <MdOutlineSkipPrevious
-          size={20}
-          onClick={() => (existPrev ? navigate('prev') : null)}
-          className={existPrev ? '' : 'disabled'}
-        />
+        {type === 'shared' ? null : (
+          <MdOutlineSkipPrevious
+            size={20}
+            onClick={() => (existPrev ? navigate('prev') : null)}
+            className={existPrev ? '' : 'disabled'}
+          />
+        )}
 
         {suspended ? (
           <RiPlayFill size={20} onClick={play} />
@@ -64,11 +66,13 @@ const Controls = () => {
           <RiPauseFill size={20} onClick={pause} />
         )}
 
-        <MdOutlineSkipNext
-          size={20}
-          onClick={() => (existNext ? navigate('next') : null)}
-          className={existNext ? '' : 'disabled'}
-        />
+        {type === 'shared' ? null : (
+          <MdOutlineSkipNext
+            size={20}
+            onClick={() => (existNext ? navigate('next') : null)}
+            className={existNext ? '' : 'disabled'}
+          />
+        )}
       </div>
       <Slider />
     </div>
