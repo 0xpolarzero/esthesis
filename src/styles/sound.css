@@ -15,6 +15,9 @@
 .sound .panel .ant-collapse-header-text {
   padding-right: 1rem;
 }
+.sound .panel.mobile .ant-collapse-header {
+  padding: 0;
+}
 
 .sound .panel .ant-collapse-content-box {
   padding-top: 3rem !important;
@@ -30,6 +33,7 @@
   display: grid;
   grid-template-columns: 1fr;
   gap: 1rem;
+  padding: 0;
   /* max-height: 100%; */
   /* overflow: scroll; */
 }

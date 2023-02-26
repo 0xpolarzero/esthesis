@@ -15,6 +15,10 @@
   flex-direction: column;
   align-items: flex-end;
 }
+.swarm .panel.mobile .ant-collapse-content-box,
+.swarm .panel.mobile .ant-collapse-header {
+  padding: 0;
+}
 
 .swarm .panel .wrapper {
   display: grid;
