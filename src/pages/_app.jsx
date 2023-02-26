@@ -32,7 +32,7 @@ export default function App({ Component, pageProps = { title: 'polarzero' } }) {
     <>
       <Header title={pageProps.title} />
 
-      <Layout ref={layout}>
+      <Layout ref={layout} {...pageProps}>
         {Component?.canvas && (
           <Scene
             className='pointer-events-none'
