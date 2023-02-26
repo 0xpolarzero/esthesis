@@ -25,21 +25,25 @@ const {
 const Swarm = () => {
   const {
     count,
-    allowDynamicCount,
+    allowDynamicBackground,
     pattern,
     setCount,
-    setAllowDynamicCount,
+    setAllowDynamicBackground,
     setPattern,
-    createShareableLink,
   } = stores.useSwarm((state) => ({
     count: state.count,
-    allowDynamicCount: state.allowDynamicCount,
+    allowDynamicBackground: state.allowDynamicBackground,
     pattern: state.pattern,
     setCount: state.setCount,
-    setAllowDynamicCount: state.setAllowDynamicCount,
+    setAllowDynamicBackground: state.setAllowDynamicBackground,
     setPattern: state.setPattern,
-    createShareableLink: state.createShareableLink,
   }));
+  const { createPreviewLink, createShareableLink } = stores.useShare(
+    (state) => ({
+      createPreviewLink: state.createPreviewLink,
+      createShareableLink: state.createShareableLink,
+    }),
+  );
   const updateTheme = stores.useConfig((state) => state.updateTheme);
   const { isMobile } = hooks.useWindowSize();
   const [isCreatingLink, setIsCreatingLink] = useState(false);
@@ -48,14 +52,14 @@ const Swarm = () => {
 
   const copyShareableLink = async () => {
     setIsCreatingLink(true);
-    notification.current = toast.loading('Creating link...');
+    notification.current = toast.loading('creating link...');
 
     const res = await createShareableLink();
     setIsCreatingLink(false);
 
     if (res.error) {
       toast.update(notification.current, {
-        render: res.message || 'An error occurred',
+        render: res.message || 'an error occurred',
         type: 'error',
         isLoading: false,
         autoClose: 2000,
@@ -63,7 +67,7 @@ const Swarm = () => {
     } else {
       navigator.clipboard.writeText(res.data);
       toast.update(notification.current, {
-        render: 'Link copied to clipboard',
+        render: 'link copied to clipboard',
         type: 'info',
         isLoading: false,
         autoClose: 2000,
@@ -71,15 +75,14 @@ const Swarm = () => {
     }
   };
 
-  useEffect(() => {
-    // Set the count back to default after it's been initialized with the max value
-    // to prevent buffer issues
-    const repairCount = async () => {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      setCount(COUNT.default);
-    };
-    repairCount();
-  }, [setCount]);
+  const preview = () => {
+    const res = createPreviewLink();
+    if (res.error) {
+      toast.error(res.message || 'an error occurred');
+    } else {
+      window.open(res.data, '_blank');
+    }
+  };
 
   return (
     <div className='swarm'>
@@ -110,6 +113,18 @@ const Swarm = () => {
                 },
               ]}
             />
+            <div className='colors'>
+              <span className='with-icon'>
+                allow dynamic background
+                <Tooltip title='if checked, the background will change based on the frequencies'>
+                  <AiOutlineInfoCircle size={20} />
+                </Tooltip>
+              </span>
+              <Switch
+                checked={allowDynamicBackground}
+                onChange={setAllowDynamicBackground}
+              />
+            </div>
             <div className='separator horizontal' style={{ width: '100%' }} />
             <div className='pattern'>
               pattern
@@ -139,19 +154,11 @@ const Swarm = () => {
                 value={count}
                 onChange={setCount}
               />
-              <span className='with-icon'>
-                allow dynamic count{' '}
-                <Tooltip title='if checked, the particles count will be affected by the frequencies of the music'>
-                  <AiOutlineInfoCircle size={20} />
-                </Tooltip>
-              </span>
-              <Switch
-                checked={allowDynamicCount}
-                onChange={setAllowDynamicCount}
-              />
             </div>
             <div className='link'>
-              <button className='button-primary'>preview</button>
+              <button className='button-primary' onClick={preview}>
+                preview
+              </button>
               <button
                 className='button-primary special'
                 disabled={isCreatingLink}

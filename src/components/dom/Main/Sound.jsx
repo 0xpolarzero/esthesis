@@ -24,11 +24,6 @@ const Sound = () => {
   const { isMobile, windowSize } = hooks.useWindowSize();
   const ref = useRef(null);
 
-  const chooseTrack = (track) => {
-    console.log('choosing track', track);
-    start(track);
-  };
-
   useEffect(() => {
     // Keep the width of the panel header in sync with the width of the panel
     // content
@@ -59,7 +54,7 @@ const Sound = () => {
                   <div
                     className='track-card'
                     key={track.id}
-                    onClick={() => chooseTrack(track)}>
+                    onClick={() => start(track)}>
                     <TrackRow track={track} />
                   </div>
                   {tracks.items.indexOf(track) !== tracks.items.length - 1 ? (
@@ -70,7 +65,7 @@ const Sound = () => {
                 <TrackRow
                   key={track.id}
                   track={track}
-                  onClick={() => chooseTrack(track)}
+                  onClick={() => start(track)}
                 />
               ),
             )
