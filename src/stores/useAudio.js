@@ -14,15 +14,23 @@ export default create((set, get) => ({
   /*
    * Audio
    */
-  init: () => set({ audioContext: new AudioContext(), ready: true }),
+  init: () => {
+    try {
+      const audioContext = new (window.AudioContext ||
+        window.webkitAudioContext)();
+      set({ audioContext, ready: true });
+    } catch (err) {
+      console.log('err', err);
+    }
+  },
   reset: () => set({ ready: false, suspended: true, playing: null }),
 
-  start: (data) => {
+  start: (data, onlyPrepare = false) => {
     const { ready, init, playing, createAnalyser } = get();
-    if (!ready) init();
+    if (!ready && !onlyPrepare) init();
 
-    // If just playing again after pause
-    if (playing && playing.data.id === data.id) {
+    // Just to make sure
+    if (playing && playing.data.id === data.id && !onlyPrepare) {
       playing.audio.play();
       set({ suspended: false });
       return;
@@ -41,24 +49,28 @@ export default create((set, get) => ({
     audio.loop = true;
     audio.preload = 'none';
     audio.crossOrigin = 'anonymous';
-    audio.play();
+    if (!onlyPrepare) audio.play();
 
     // Except that we won't have the duration until the song is loaded
     audio.addEventListener('loadedmetadata', () => {
       set({ duration: audio.duration });
     });
 
-    createAnalyser(audio);
+    if (!onlyPrepare) {
+      createAnalyser(audio);
+      set({ suspended: false });
+    }
 
-    set({
-      playing: { audio, data },
-      suspended: false,
-    });
+    set({ playing: { audio, data } });
   },
 
   play: () => {
-    const { playing } = get();
+    const { playing, ready, analyser, init, createAnalyser } = get();
     if (!playing) return;
+
+    // Just for shared page
+    if (!ready) init();
+    if (!analyser) createAnalyser(playing.audio);
 
     playing.audio.play();
     set({ suspended: false });
@@ -119,17 +131,27 @@ export default create((set, get) => ({
   getAnalyserData: () => {
     const { audioContext, analyser } = get();
     if (!analyser) return null;
+    const frequencyRange = [20, 20000]; // change this to experiment with different ranges
+    let averageFrequency = 0;
 
+    const bufferLength = analyser.frequencyBinCount;
     const data = new Uint8Array(analyser.frequencyBinCount);
     analyser.getByteFrequencyData(data);
     // Get the gain
     const gain = data.reduce((a, b) => a + b) / data.length;
-    // Find the main frequency
-    const mainFrequencyIndex = data.indexOf(Math.max(...data));
-    const mainFrequencyInHz =
-      (mainFrequencyIndex * (audioContext.sampleRate / 2)) /
-      analyser.frequencyBinCount;
+    // Find the average frequency
+    let sum = 0;
+    const lowerIndex = Math.round(
+      frequencyRange[0] / (audioContext.sampleRate / bufferLength),
+    );
+    const upperIndex = Math.round(
+      frequencyRange[1] / (audioContext.sampleRate / bufferLength),
+    );
+    for (let i = lowerIndex; i <= upperIndex; i++) {
+      sum += data[i];
+    }
+    averageFrequency = sum / (upperIndex - lowerIndex + 1);
 
-    return { frequency: mainFrequencyInHz, gain: gain / 255 };
+    return { frequency: averageFrequency, gain: gain / 255 };
   },
 }));
