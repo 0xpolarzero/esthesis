@@ -131,4 +131,12 @@ export default create((set, get) => ({
       document.documentElement.style.setProperty(key, value);
     });
   },
+
+  /**
+   * @notice Graphics
+   */
+  highGraphics: true,
+  setHighGraphics: (value) => set({ highGraphics: value }),
+  toggleHighGraphics: () =>
+    set((state) => ({ highGraphics: !state.highGraphics })),
 }));

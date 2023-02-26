@@ -6,15 +6,20 @@ import stores from '@/stores';
 import '@/styles/index.css';
 // Lib
 import 'react-toastify/dist/ReactToastify.css';
+import hooks from '@/hooks';
 
 const Scene = dynamic(() => import('@/components/canvas/Scene'), { ssr: true });
 
 export default function App({ Component, pageProps = { title: 'polarzero' } }) {
-  const initTheme = stores.useConfig((state) => state.initTheme);
+  const { initTheme, setHighGraphics } = stores.useConfig((state) => ({
+    initTheme: state.initTheme,
+    setHighGraphics: state.setHighGraphics,
+  }));
   const { fetchTracks, fetchRemainingTracks } = stores.useSpinamp((state) => ({
     fetchTracks: state.fetchTracks,
     fetchRemainingTracks: state.fetchRemainingTracks,
   }));
+  const { isMobile } = hooks.useWindowSize();
 
   const layout = useRef();
   const loader = useRef();
@@ -27,6 +32,10 @@ export default function App({ Component, pageProps = { title: 'polarzero' } }) {
     fetchTracks();
     fetchRemainingTracks();
   }, [initTheme, fetchTracks, fetchRemainingTracks]);
+
+  useEffect(() => {
+    setHighGraphics(!isMobile);
+  }, [isMobile, setHighGraphics]);
 
   return (
     <>

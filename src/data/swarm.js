@@ -8,7 +8,7 @@ const swarm = {
   },
   pattern: shaders.vertex[0],
   count: count.default,
-  allowDynamicBackground: true,
+  allowDynamicEffects: true,
 };
 
 export default swarm;

@@ -121,8 +121,11 @@ export default create((set, get) => ({
     const source = audioContext.createMediaElementSource(audio);
     const analyser = audioContext.createAnalyser();
     analyser.fftSize = 2048;
+    const splitter = audioContext.createChannelSplitter(2);
 
-    source.connect(analyser);
+    source.connect(splitter);
+    splitter.connect(analyser, 0, 0);
+    splitter.connect(analyser, 1, 0);
     analyser.connect(audioContext.destination);
 
     set({ analyser });
@@ -152,6 +155,28 @@ export default create((set, get) => ({
     }
     averageFrequency = sum / (upperIndex - lowerIndex + 1);
 
-    return { frequency: averageFrequency, gain: gain / 255 };
+    // Get the stereo factor (-1=more left, 1=more right, 0=balanced)
+    const leftAmplitude = data.reduce((acc, val, index) => {
+      if (index < bufferLength / 2) {
+        return acc + val;
+      } else {
+        return acc;
+      }
+    }, 0);
+    const rightAmplitude = data.reduce((acc, val, index) => {
+      if (index >= bufferLength / 2) {
+        return acc + val;
+      } else {
+        return acc;
+      }
+    }, 0);
+
+    const balance = (leftAmplitude - rightAmplitude) / bufferLength;
+
+    return {
+      frequency: averageFrequency / 255,
+      gain: gain / 255,
+      pan: balance / 100,
+    };
   },
 }));

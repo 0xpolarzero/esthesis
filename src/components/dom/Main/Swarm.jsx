@@ -25,17 +25,17 @@ const {
 const Swarm = () => {
   const {
     count,
-    allowDynamicBackground,
+    allowDynamicEffects,
     pattern,
     setCount,
-    setAllowDynamicBackground,
+    setAllowDynamicEffects,
     setPattern,
   } = stores.useSwarm((state) => ({
     count: state.count,
-    allowDynamicBackground: state.allowDynamicBackground,
+    allowDynamicEffects: state.allowDynamicEffects,
     pattern: state.pattern,
     setCount: state.setCount,
-    setAllowDynamicBackground: state.setAllowDynamicBackground,
+    setAllowDynamicEffects: state.setAllowDynamicEffects,
     setPattern: state.setPattern,
   }));
   const { createPreviewLink, createShareableLink } = stores.useShare(
@@ -121,8 +121,8 @@ const Swarm = () => {
                 </Tooltip>
               </span>
               <Switch
-                checked={allowDynamicBackground}
-                onChange={setAllowDynamicBackground}
+                checked={allowDynamicEffects}
+                onChange={setAllowDynamicEffects}
               />
             </div>
             <div className='separator horizontal' style={{ width: '100%' }} />

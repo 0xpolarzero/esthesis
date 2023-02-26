@@ -8,7 +8,7 @@ const {
   background: BACKGROUND,
   pattern: PATTERN,
   count: COUNT,
-  allowDynamicBackground: ALLOW_DYNAMIC_BACKGROUND,
+  allowDynamicEffects: ALLOW_DYNAMIC_EFFECTS,
 } = config.swarm;
 const { shaders: OPTIONS_SHADERS } = config.options;
 
@@ -49,10 +49,10 @@ export default create((set, get) => ({
 
   // Count
   count: COUNT,
-  allowDynamicBackground: ALLOW_DYNAMIC_BACKGROUND,
+  allowDynamicEffects: ALLOW_DYNAMIC_EFFECTS,
   setCount: (count) =>
     isNaN(count) ? set({ count: COUNT.default }) : set({ count }),
-  setAllowDynamicBackground: (allow) => set({ allowDynamicBackground: allow }),
+  setAllowDynamicEffects: (allow) => set({ allowDynamicEffects: allow }),
 
   /**
    *
