@@ -1,6 +1,5 @@
 import { create } from 'zustand';
 import * as THREE from 'three';
-import useAudio from './useAudio';
 import useConfig from './useConfig';
 import config from '@/data';
 
@@ -9,7 +8,7 @@ const {
   background: BACKGROUND,
   pattern: PATTERN,
   count: COUNT,
-  allowDynamicCount: ALLOW_DYNAMIC_COUNT,
+  allowDynamicBackground: ALLOW_DYNAMIC_BACKGROUND,
 } = config.swarm;
 const { shaders: OPTIONS_SHADERS } = config.options;
 
@@ -19,6 +18,9 @@ const hexToVec3 = (hex) => {
 };
 
 export default create((set, get) => ({
+  /**
+   * @notice Attributes
+   */
   // Colors
   colorA: {
     dark: COLORS.dark[0],
@@ -47,46 +49,30 @@ export default create((set, get) => ({
 
   // Count
   count: COUNT,
-  allowDynamicCount: ALLOW_DYNAMIC_COUNT,
+  allowDynamicBackground: ALLOW_DYNAMIC_BACKGROUND,
   setCount: (count) =>
     isNaN(count) ? set({ count: COUNT.default }) : set({ count }),
-  setAllowDynamicCount: (allow) => set({ allowDynamicCount: allow }),
+  setAllowDynamicBackground: (allow) => set({ allowDynamicBackground: allow }),
 
-  // Link
-  createShareableLink: async () => {
-    const { colorA, colorB, background, pattern, count } = get();
-    const { playing } = useAudio.getState();
-
-    if (!playing)
-      return {
-        data: null,
-        error: true,
-        message: 'You need to choose a sound first',
-      };
-
-    const patternIndex = OPTIONS_SHADERS.vertex.findIndex(
-      (p) => p.name === pattern.name,
-    );
-    // 0 = colorA, 1 = colorB, 2 = background, 3 = pattern, 4 = count 5 = sound
-    const argsSwarm = `?0=${colorA.dark},${colorA.light}&1=${colorB.dark},${colorB.light}&2=${background.dark},${background.light}&3=${patternIndex}&4=${count}`;
-    const argsSound = `&5=${playing.data.id}`;
-    const args = `${argsSwarm}${argsSound}`;
-
-    // Call api to write to spreadsheet
-    const res = await fetch('/api/google-api', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        functionName: 'write',
-        args: [args],
-      }),
-    });
-
-    const data = await res.json();
-    const url = new URL(window.location.href);
-
-    return { data: `${url}${data}`, error: false, message: 'Success' };
+  /**
+   *
+   * @notice Init an entity based on parameters
+   */
+  initSwarm: (params) => {
+    const { setColorA, setColorB, setBackground, setPattern, setCount } = get();
+    try {
+      setColorA(params.colorA.dark, 'dark');
+      setColorA(params.colorA.light, 'light');
+      setColorB(params.colorB.dark, 'dark');
+      setColorB(params.colorB.light, 'light');
+      setBackground(params.background.dark, 'dark');
+      setBackground(params.background.light, 'light');
+      setPattern(params.pattern);
+      setCount(params.count);
+      return true;
+    } catch (err) {
+      console.log(err);
+      return false;
+    }
   },
 }));
