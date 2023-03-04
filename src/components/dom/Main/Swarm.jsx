@@ -129,7 +129,7 @@ const Swarm = () => {
               {/* Scale */}
               <span className='with-icon'>
                 scale effects
-                <Tooltip title='how much should the gain affect the particles scale; 0 = disabled'>
+                <Tooltip title='how much should the gain affect the particles scale'>
                   <AiOutlineInfoCircle size={20} />
                 </Tooltip>
               </span>
@@ -145,7 +145,7 @@ const Swarm = () => {
               {/* Movement */}
               <span className='with-icon'>
                 movement effects
-                <Tooltip title='how much should the balance (left/right) affect the swarm rotation; 0 = disabled'>
+                <Tooltip title='how much should the balance (left/right) affect the swarm rotation'>
                   <AiOutlineInfoCircle size={20} />
                 </Tooltip>
               </span>
@@ -160,7 +160,7 @@ const Swarm = () => {
               {/* Color */}
               <span className='with-icon'>
                 color effects
-                <Tooltip title='how much should the average frequency affect the particles color (higher = lighter); 0 = disabled'>
+                <Tooltip title='how much should the average frequency affect the particles color (higher = lighter)'>
                   <AiOutlineInfoCircle size={20} />
                 </Tooltip>
               </span>
