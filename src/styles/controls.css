@@ -46,10 +46,20 @@
   cursor: var(--cursor);
 }
 
+/* Loop */
+.controls .loop {
+  opacity: 0.4 !important;
+  margin-right: 0.5rem;
+}
+.controls .loop.active {
+  opacity: 1 !important;
+}
+
 .controls .scroll {
   white-space: nowrap;
   overflow-y: scroll !important;
   -webkit-overflow-scrolling: touch !important;
+  font-size: 0.8rem;
 }
 
 /* Slider (progress) */
@@ -82,5 +92,8 @@
 @media (min-width: 768px) {
   .controls {
     padding: 1rem 2rem;
+  }
+  .controls .scroll {
+    font-size: 1rem;
   }
 }

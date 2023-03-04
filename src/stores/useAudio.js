@@ -10,6 +10,7 @@ export default create((set, get) => ({
   // Current song
   playing: null,
   duration: 0,
+  loop: false,
 
   /*
    * Audio
@@ -26,7 +27,7 @@ export default create((set, get) => ({
   reset: () => set({ ready: false, suspended: true, playing: null }),
 
   start: (data, onlyPrepare = false) => {
-    const { ready, init, playing, createAnalyser } = get();
+    const { ready, init, playing, createAnalyser, navigate, loop } = get();
     if (!ready && !onlyPrepare) init();
 
     // Just to make sure
@@ -46,14 +47,19 @@ export default create((set, get) => ({
 
     const audio = new Audio(data.lossyAudioUrl);
     audio.volume = 1;
-    audio.loop = true;
+    audio.loop = loop;
     audio.preload = 'none';
     audio.crossOrigin = 'anonymous';
     if (!onlyPrepare) audio.play();
 
-    // Except that we won't have the duration until the song is loaded
+    // Set the duration when the song is loaded
     audio.addEventListener('loadedmetadata', () => {
       set({ duration: audio.duration });
+    });
+    // Play the next song when the current one is finished (if loop is off)
+    audio.addEventListener('ended', () => {
+      // if (loop) return;
+      navigate('next');
     });
 
     if (!onlyPrepare) {
@@ -92,6 +98,9 @@ export default create((set, get) => ({
     const index = tracks.items.findIndex((s) => s.id === playing.data.id);
     if (index === -1) return;
 
+    // If the current one has an event listener, remove it
+    playing.audio.removeEventListener('ended', () => {});
+
     const newSource =
       tracks.items[direction === 'next' ? index + 1 : index - 1];
     // Should not happen but just in case
@@ -110,6 +119,12 @@ export default create((set, get) => ({
     const time = (percent * playing.audio.duration) / 100;
 
     playing.audio.currentTime = time;
+  },
+
+  toggleLoop: () => {
+    const { playing, loop } = get();
+    if (playing) playing.audio.loop = !loop;
+    set({ loop: !loop });
   },
 
   /*

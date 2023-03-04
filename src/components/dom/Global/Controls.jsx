@@ -1,7 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 import { Divider, Tooltip } from 'antd';
 import { RiPlayFill, RiPauseFill } from 'react-icons/ri';
-import { MdOutlineSkipPrevious, MdOutlineSkipNext } from 'react-icons/md';
+import {
+  MdOutlineSkipPrevious,
+  MdOutlineSkipNext,
+  MdOutlineLoop,
+} from 'react-icons/md';
 import Utils from '../Utils';
 import stores from '@/stores';
 import hooks from '@/hooks';
@@ -9,15 +13,16 @@ import hooks from '@/hooks';
 const { Duration } = Utils;
 
 const Controls = ({ type }) => {
-  const { play, pause, navigate, suspended, playing } = stores.useAudio(
-    (state) => ({
+  const { play, pause, navigate, toggleLoop, suspended, playing, loop } =
+    stores.useAudio((state) => ({
       play: state.play,
       pause: state.pause,
       navigate: state.navigate,
+      toggleLoop: state.toggleLoop,
       suspended: state.suspended,
       playing: state.playing,
-    }),
-  );
+      loop: state.loop,
+    }));
   const tracks = stores.useSpinamp((state) => state.tracks);
 
   const [existPrev, setExistPrev] = useState(false);
@@ -53,11 +58,18 @@ const Controls = ({ type }) => {
       {playing ? <Title playing={playing} /> : '_select a track'}
       <div className='buttons'>
         {type === 'shared' ? null : (
-          <MdOutlineSkipPrevious
-            size={20}
-            onClick={() => (existPrev ? navigate('prev') : null)}
-            className={existPrev ? '' : 'disabled'}
-          />
+          <>
+            <MdOutlineLoop
+              size={20}
+              onClick={toggleLoop}
+              className={loop ? 'loop active' : 'loop'}
+            />
+            <MdOutlineSkipPrevious
+              size={20}
+              onClick={() => (existPrev ? navigate('prev') : null)}
+              className={existPrev ? '' : 'disabled'}
+            />
+          </>
         )}
 
         {suspended ? (

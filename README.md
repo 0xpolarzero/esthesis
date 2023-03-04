@@ -1,6 +1,6 @@
 Render page:
 Get colors, bg etc and song id from url params
-Enable/disable loop
+Add keyboard listener
 
 Particles size? different based on left/right balance
 Particles ugain add frequency (Center = low freq)
