@@ -31,7 +31,7 @@ const Search = () => {
       const { title, artist, id } = track;
       list.titles.push({ value: title, key: `${id}-title` });
 
-      if (list.artists.find((a) => a.value === artist)) return;
+      if (list.artists.find((a) => a.value === artist.name)) return;
       list.artists.push({ value: artist.name, key: `${id}-artist` });
     });
 
@@ -86,6 +86,11 @@ const Search = () => {
   return (
     <>
       <div className='search'>
+        {searchValue.length !== 0 && searchValue.length < 3 ? (
+          <span className='status'>
+            enter at least 3 characters{isMobile ? '' : ' to search'}
+          </span>
+        ) : null}
         <AutoComplete
           options={options}
           style={{
@@ -111,9 +116,6 @@ const Search = () => {
             }
           />
         </AutoComplete>
-        {searchValue.length !== 0 && searchValue.length < 3 ? (
-          <span className='status'>enter at least 3 characters to search</span>
-        ) : null}
         {/* Are there more than 100 results? */}
         {searchValue.length >= 3 && tracks.items.length >= 100 ? (
           <span>

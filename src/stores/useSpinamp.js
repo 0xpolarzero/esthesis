@@ -21,6 +21,7 @@ export default create((set, get) => ({
   unpaginatedTracks: [],
   loadingAllTracks: true,
   errorAllTracks: false,
+  filteredByArtist: null,
 
   /**
    * @notice Fetch paginated tracks
@@ -102,18 +103,38 @@ export default create((set, get) => ({
       return;
     }
 
-    const filtered = unpaginatedTracks.filter(
-      (track) =>
-        track.title.toLowerCase().includes(value.toLowerCase()) ||
-        track.artist.name.toLowerCase().includes(value.toLowerCase()),
-    );
+    // const filtered = unpaginatedTracks.filter(
+    //   (track) =>
+    //     track.title.toLowerCase().includes(value.toLowerCase()) ||
+    //     track.artist.name.toLowerCase().includes(value.toLowerCase()),
+    // );
     // Sort by most accurate match
     const sorted = matchSorter(unpaginatedTracks, value, {
       keys: ['title', 'artist.name'],
     }).slice(0, 100);
 
     // Set tracks & remember them
-    set({ tracks: { items: sorted } });
+    set({ tracks: { items: sorted }, filteredByArtist: null });
+  },
+
+  /**
+   * @notice Filter tracks by artist
+   */
+  filterByArtist: async (artistName) => {
+    const { unpaginatedTracks } = get();
+    const filtered = unpaginatedTracks.filter(
+      (track) => track.artist.name === artistName,
+    );
+
+    set({ tracks: { items: filtered }, filteredByArtist: artistName });
+  },
+
+  /**
+   * @notice Filter back to all tracks
+   */
+  filterAll: async () => {
+    const { oldPages } = get();
+    set({ tracks: oldPages[0], filteredByArtist: null });
   },
 
   /**

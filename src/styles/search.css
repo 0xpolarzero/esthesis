@@ -32,8 +32,14 @@
 
 /* Status */
 .search .status {
-  position: absolute;
-  top: -1.5rem;
-  right: 2.5rem;
   color: var(--text-warning);
+  position: absolute;
+}
+.panel.mobile .search .status {
+  top: -1.5rem;
+}
+.panel.desktop .search .status {
+  top: 50%;
+  right: 4rem;
+  transform: translateY(-50%);
 }

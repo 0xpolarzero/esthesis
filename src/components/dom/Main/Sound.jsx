@@ -12,12 +12,11 @@ const { ElapsedTime, TableSkeleton } = Utils;
 const { Panel } = Collapse;
 
 const Sound = () => {
-  const { tracks, loadingTracks, errorTracks, fetchTracks } = stores.useSpinamp(
+  const { tracks, filterAll, filteredByArtist } = stores.useSpinamp(
     (state) => ({
       tracks: state.tracks,
-      loadingTracks: state.loadingTracks,
-      errorTracks: state.errorTracks,
-      fetchTracks: state.fetchTracks,
+      filterAll: state.filterAll,
+      filteredByArtist: state.filteredByArtist,
     }),
   );
   const start = stores.useAudio((state) => state.start);
@@ -46,6 +45,18 @@ const Sound = () => {
           key='1'
           className={`panel ${isMobile ? 'mobile' : 'desktop'}`}>
           <Search />
+
+          {filteredByArtist ? (
+            <div className='filter'>
+              <span>
+                Showing tracks for{' '}
+                <span className='emphasize'>{filteredByArtist}</span>
+              </span>
+              <button className='button-primary' onClick={filterAll}>
+                Clear
+              </button>
+            </div>
+          ) : null}
           {tracks?.items ? (
             tracks.items.map((track) =>
               // Render a card on mobile, a row on desktop
@@ -87,6 +98,7 @@ const Sound = () => {
 
 const TrackRow = ({ track, onClick }) => {
   const playing = stores.useAudio((state) => state.playing);
+  const filterByArtist = stores.useSpinamp((state) => state.filterByArtist);
   const { isMobile } = hooks.useWindowSize();
 
   return (
@@ -115,7 +127,13 @@ const TrackRow = ({ track, onClick }) => {
         </div>
       </Tooltip>
       <div className='track-row__artist'>
-        <a onClick={(e) => e.stopPropagation()}>{track.artist.name}</a>
+        <a
+          onClick={(e) => {
+            e.stopPropagation();
+            filterByArtist(track.artist.name);
+          }}>
+          {track.artist.name}
+        </a>
       </div>
       <div className='track-row__platform'>
         <a

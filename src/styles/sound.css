@@ -51,6 +51,21 @@
   cursor: var(--cursor-hover);
 }
 
+/* Filter */
+.sound .filter {
+  display: flex;
+}
+.sound .panel.mobile .filter {
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.sound .panel.desktop .filter {
+  grid-column: span 4;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
 /* Antd */
 .sound .ant-skeleton-paragraph {
   margin: 0;

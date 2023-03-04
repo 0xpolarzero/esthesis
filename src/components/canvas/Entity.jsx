@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import * as THREE from 'three';
-import { useFrame } from '@react-three/fiber';
+import { useFrame, useThree } from '@react-three/fiber';
 import stores from '@/stores';
 import config from '@/data';
 
@@ -11,24 +11,23 @@ const { vertex, fragment } = shaders;
 const Entity = () => {
   const getAnalyserData = stores.useAudio((state) => state.getAnalyserData);
   const theme = stores.useConfig((state) => state.theme);
-  const { colorA, colorB, pattern, count, allowDynamicCount } = stores.useSwarm(
-    (state) => ({
+  const { colorA, colorB, pattern, count, allowDynamicEffects } =
+    stores.useSwarm((state) => ({
       colorA: state.colorA,
       colorB: state.colorB,
       pattern: state.pattern,
       count: state.count,
-      allowDynamicCount: state.allowDynamicCount,
-    }),
-  );
-  const [countExpanded, setCountExpanded] = useState(count);
+      allowDynamicEffects: state.allowDynamicEffects,
+    }));
+  const { camera } = useThree();
   const ref = useRef(null);
 
   const radius = 2;
 
   const particlesPosition = useMemo(() => {
-    const positions = new Float32Array(countExpanded * 3);
+    const positions = new Float32Array(count * 3);
 
-    for (let i = 0; i < countExpanded; i++) {
+    for (let i = 0; i < count; i++) {
       const d = Math.sqrt(Math.random() - 0.5) * radius;
       const th = THREE.MathUtils.randFloatSpread(360);
       const phi = THREE.MathUtils.randFloatSpread(360);
@@ -41,7 +40,7 @@ const Entity = () => {
     }
 
     return positions;
-  }, [countExpanded, radius]);
+  }, [count, radius]);
 
   const uniforms = useMemo(
     () => ({
@@ -56,12 +55,19 @@ const Entity = () => {
       uGain: {
         value: 1.0,
       },
-      uBrighten: {
+      uFreq: {
         value: 1.0,
       },
     }),
     [radius],
   );
+
+  // define the base position and the target position
+  const basePos = camera.position;
+  const objPos = new THREE.Vector3(0, 0, 0);
+  const targetPos = new THREE.Vector3().lerpVectors(basePos, objPos, 0.25);
+  // create a vector to hold the current position
+  const currentPos = new THREE.Vector3();
 
   useFrame(({ clock }) => {
     if (!ref.current) return;
@@ -72,18 +78,25 @@ const Entity = () => {
     // Modifications based on audio
     const analyserData = getAnalyserData();
     const gainMultiplier = 1 + analyserData?.gain * 5 || 1;
-    const freqMultiplier = 1 + analyserData?.frequency / 10000 || 1;
+    const freqMultiplier = 1 + analyserData?.frequency || 1;
     // Modify scale based on the gain
     ref.current.material.uniforms.uGain.value = gainMultiplier;
     // as well as the brightness
-    ref.current.material.uniforms.uBrighten.value = freqMultiplier;
-    // Increase the count of particles based on the frequency
-    if (!allowDynamicCount) return;
-    setCountExpanded(
-      count * freqMultiplier >= COUNT.max
-        ? COUNT.max
-        : (count * freqMultiplier).toFixed(0),
-    );
+    ref.current.material.uniforms.uFreq.value = freqMultiplier;
+
+    // Modify background color
+    if (allowDynamicEffects && analyserData?.frequency) {
+      // The camera should lerp a bit closer to the center of the swarm when frequencies are high
+      // frequency being between 0 and 1, 0 would be original position, 1 being 2 units closer
+      // const lerpFactor = analyserData.frequency;
+      // // lerp the camera position
+      // camera.position.lerpVectors(basePos, targetPos, lerpFactor);
+      // // lerp the swarm position
+      // currentPos.lerpVectors(objPos, targetPos, lerpFactor);
+      // ref.current.position.set(currentPos.x, currentPos.y, currentPos.z);
+    }
+
+    console.log(analyserData?.pan);
   });
 
   // Colors
@@ -105,11 +118,6 @@ const Entity = () => {
     ref.current.material.vertexShader = pattern.shader;
     ref.current.material.needsUpdate = true;
   }, [pattern]);
-
-  // Count
-  useEffect(() => {
-    setCountExpanded(count);
-  }, [count]);
 
   return (
     <points ref={ref} scale={1.5}>
