@@ -53,6 +53,25 @@ const Controls = ({ type }) => {
     }
   }, [playing, tracks]);
 
+  useEffect(() => {
+    const listenKey = (e) => {
+      if (e.key === 'ArrowRight') {
+        if (existNext) navigate('next');
+      } else if (e.key === 'ArrowLeft') {
+        if (existPrev) navigate('prev');
+      } else if (e.key === ' ') {
+        if (suspended) {
+          play();
+        } else {
+          pause();
+        }
+      }
+    };
+
+    document.addEventListener('keydown', listenKey);
+    return () => document.removeEventListener('keydown', listenKey);
+  }, [existNext, existPrev, navigate, pause, play, suspended]);
+
   return (
     <div className='controls'>
       {playing ? <Title playing={playing} /> : '_select a track'}
