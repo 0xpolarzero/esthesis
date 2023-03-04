@@ -7,7 +7,7 @@ const swarm = {
     light: backgrounds.light[0],
   },
   pattern: shaders.vertex[0],
-  count: count.default,
+  count: count.max, // So it enables max vertices
   allowDynamicEffects: true,
 };
 

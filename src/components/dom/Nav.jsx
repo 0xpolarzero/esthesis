@@ -21,7 +21,7 @@ const Nav = ({ type = 'default' }) => {
       <div className='title'>
         {type === 'shared' ? null : (
           <>
-            sound<span className='emphasize'>swarm</span>
+            visual<span className='emphasize'>ize</span>
           </>
         )}
       </div>
