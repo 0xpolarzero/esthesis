@@ -25,6 +25,10 @@
   gap: 1rem;
   min-width: 300px;
 }
+.swarm .panel.mobile {
+  background: rgba(var(--background-main-rgb), 0.8);
+  /* backdrop-filter: blur(2px); */
+}
 .swarm .panel.mobile .wrapper {
   gap: 0.5rem;
   min-width: 100%;
@@ -36,6 +40,16 @@
   display: grid;
   grid-template-columns: 1fr auto;
   gap: 1rem;
+}
+.swarm .panel.desktop .colors {
+  column-gap: 3rem;
+}
+.swarm .panel.desktop .colors .header {
+  grid-column: span 2;
+}
+.swarm .panel.mobile .colors {
+  grid-template-columns: 1fr;
+  gap: 0.5rem;
 }
 
 /* Count */

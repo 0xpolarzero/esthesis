@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import {
   Collapse,
   InputNumber,
+  Radio,
   Select,
   Slider,
   Switch,
@@ -16,6 +17,8 @@ import hooks from '@/hooks';
 import config from '@/data';
 
 const { Panel } = Collapse;
+const { Group } = Radio;
+
 const {
   backgrounds: BACKGROUNDS,
   count: COUNT,
@@ -25,18 +28,22 @@ const {
 const Swarm = () => {
   const {
     count,
-    allowDynamicEffects,
     pattern,
+    effects,
     setCount,
-    setAllowDynamicEffects,
     setPattern,
+    setScaleEffects,
+    setMovementEffects,
+    setColorEffects,
   } = stores.useSwarm((state) => ({
     count: state.count,
-    allowDynamicEffects: state.allowDynamicEffects,
     pattern: state.pattern,
+    effects: state.effects,
     setCount: state.setCount,
-    setAllowDynamicEffects: state.setAllowDynamicEffects,
     setPattern: state.setPattern,
+    setScaleEffects: state.setScaleEffects,
+    setMovementEffects: state.setMovementEffects,
+    setColorEffects: state.setColorEffects,
   }));
   const { createPreviewLink, createShareableLink } = stores.useShare(
     (state) => ({
@@ -44,7 +51,10 @@ const Swarm = () => {
       createShareableLink: state.createShareableLink,
     }),
   );
-  const updateTheme = stores.useConfig((state) => state.updateTheme);
+  const { theme, updateTheme } = stores.useConfig((state) => ({
+    theme: state.theme,
+    updateTheme: state.updateTheme,
+  }));
   const { isMobile } = hooks.useWindowSize();
   const [isCreatingLink, setIsCreatingLink] = useState(false);
 
@@ -98,7 +108,8 @@ const Swarm = () => {
           <div className='wrapper'>
             {/* Colors */}
             <Tabs
-              defaultActiveKey='1'
+              defaultActiveKey={theme}
+              activeKey={theme}
               onChange={updateTheme}
               items={[
                 {
@@ -114,16 +125,53 @@ const Swarm = () => {
               ]}
             />
             <div className='colors'>
+              <span className='header'>audiovisual effects_</span>
+              {/* Scale */}
               <span className='with-icon'>
-                allow dynamic background
-                <Tooltip title='if checked, the background will change based on the frequencies'>
+                scale effects
+                <Tooltip title='how much should the gain affect the particles scale; 0 = disabled'>
                   <AiOutlineInfoCircle size={20} />
                 </Tooltip>
               </span>
-              <Switch
-                checked={allowDynamicEffects}
-                onChange={setAllowDynamicEffects}
-              />
+
+              <Group
+                onChange={(e) => setScaleEffects(e.target.value)}
+                value={effects.scale}>
+                <Radio value={0}>none</Radio>
+                <Radio value={0.5}>light</Radio>
+                <Radio value={1}>med</Radio>
+                <Radio value={2}>high</Radio>
+              </Group>
+              {/* Movement */}
+              <span className='with-icon'>
+                movement effects
+                <Tooltip title='how much should the balance (left/right) affect the swarm rotation; 0 = disabled'>
+                  <AiOutlineInfoCircle size={20} />
+                </Tooltip>
+              </span>
+              <Group
+                onChange={(e) => setMovementEffects(e.target.value)}
+                value={effects.movement}>
+                <Radio value={0}>none</Radio>
+                <Radio value={0.5}>light</Radio>
+                <Radio value={1}>med</Radio>
+                <Radio value={2}>high</Radio>
+              </Group>
+              {/* Color */}
+              <span className='with-icon'>
+                color effects
+                <Tooltip title='how much should the average frequency affect the particles color (higher = lighter); 0 = disabled'>
+                  <AiOutlineInfoCircle size={20} />
+                </Tooltip>
+              </span>
+              <Group
+                onChange={(e) => setColorEffects(e.target.value)}
+                value={effects.color}>
+                <Radio value={0}>none</Radio>
+                <Radio value={0.5}>light</Radio>
+                <Radio value={1}>med</Radio>
+                <Radio value={2}>high</Radio>
+              </Group>
             </div>
             <div className='separator horizontal' style={{ width: '100%' }} />
             <div className='pattern'>

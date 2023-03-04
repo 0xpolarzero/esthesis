@@ -11,7 +11,12 @@ void main() {
   vec3 color = mix(uColorA, uColorB, vDistance * 0.5);
   color = mix(vec3(0.0), color, strength);
 
-  gl_FragColor = vec4(color, strength * 2.0) * uFreq;
+  // uFreq will lighten the color
+  // If 1 it will be the same color
+  // If more than 1 it will be lighter
+  color *= uFreq;
+
+  gl_FragColor = vec4(color, strength * 2.0);
 }
 `;
 

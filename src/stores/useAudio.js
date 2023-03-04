@@ -58,7 +58,6 @@ export default create((set, get) => ({
     });
     // Play the next song when the current one is finished (if loop is off)
     audio.addEventListener('ended', () => {
-      // if (loop) return;
       navigate('next');
     });
 
@@ -150,7 +149,6 @@ export default create((set, get) => ({
     const { audioContext, analyser } = get();
     if (!analyser) return null;
     const frequencyRange = [20, 20000]; // change this to experiment with different ranges
-    let averageFrequency = 0;
 
     const bufferLength = analyser.frequencyBinCount;
     const data = new Uint8Array(analyser.frequencyBinCount);
@@ -168,30 +166,26 @@ export default create((set, get) => ({
     for (let i = lowerIndex; i <= upperIndex; i++) {
       sum += data[i];
     }
-    averageFrequency = sum / (upperIndex - lowerIndex + 1);
 
-    // Get the stereo factor (-1=more left, 1=more right, 0=balanced)
-    const leftAmplitude = data.reduce((acc, val, index) => {
-      if (index < bufferLength / 2) {
-        return acc + val;
-      } else {
-        return acc;
-      }
-    }, 0);
-    const rightAmplitude = data.reduce((acc, val, index) => {
-      if (index >= bufferLength / 2) {
-        return acc + val;
-      } else {
-        return acc;
-      }
-    }, 0);
+    const averageFrequency = sum / (upperIndex - lowerIndex + 1);
 
-    const balance = (leftAmplitude - rightAmplitude) / bufferLength;
+    // Find the balance
+    let leftAmplitude = 0;
+    let rightAmplitude = 0;
+
+    for (let i = 0; i < bufferLength; i += 2) {
+      leftAmplitude += data[i];
+      rightAmplitude += data[i + 1];
+    }
+
+    const normalizedLeftAmplitude = leftAmplitude / (bufferLength / 2);
+    const normalizedRightAmplitude = rightAmplitude / (bufferLength / 2);
+    const balance = 100 * (normalizedLeftAmplitude - normalizedRightAmplitude);
 
     return {
       frequency: averageFrequency / 255,
       gain: gain / 255,
-      pan: balance / 100,
+      pan: balance / 255,
     };
   },
 }));

@@ -11,14 +11,15 @@ const { vertex, fragment } = shaders;
 const Entity = () => {
   const getAnalyserData = stores.useAudio((state) => state.getAnalyserData);
   const theme = stores.useConfig((state) => state.theme);
-  const { colorA, colorB, pattern, count, allowDynamicEffects } =
-    stores.useSwarm((state) => ({
+  const { colorA, colorB, pattern, count, effects } = stores.useSwarm(
+    (state) => ({
       colorA: state.colorA,
       colorB: state.colorB,
       pattern: state.pattern,
       count: state.count,
-      allowDynamicEffects: state.allowDynamicEffects,
-    }));
+      effects: state.effects,
+    }),
+  );
   const { camera } = useThree();
   const ref = useRef(null);
 
@@ -62,13 +63,6 @@ const Entity = () => {
     [radius],
   );
 
-  // define the base position and the target position
-  const basePos = camera.position;
-  const objPos = new THREE.Vector3(0, 0, 0);
-  const targetPos = new THREE.Vector3().lerpVectors(basePos, objPos, 0.25);
-  // create a vector to hold the current position
-  const currentPos = new THREE.Vector3();
-
   useFrame(({ clock }) => {
     if (!ref.current) return;
 
@@ -77,26 +71,31 @@ const Entity = () => {
 
     // Modifications based on audio
     const analyserData = getAnalyserData();
-    const gainMultiplier = 1 + analyserData?.gain * 5 || 1;
-    const freqMultiplier = 1 + analyserData?.frequency || 1;
-    // Modify scale based on the gain
-    ref.current.material.uniforms.uGain.value = gainMultiplier;
-    // as well as the brightness
-    ref.current.material.uniforms.uFreq.value = freqMultiplier;
+    if (!analyserData) return;
 
-    // Modify background color
-    if (allowDynamicEffects && analyserData?.frequency) {
-      // The camera should lerp a bit closer to the center of the swarm when frequencies are high
-      // frequency being between 0 and 1, 0 would be original position, 1 being 2 units closer
-      // const lerpFactor = analyserData.frequency;
-      // // lerp the camera position
-      // camera.position.lerpVectors(basePos, targetPos, lerpFactor);
-      // // lerp the swarm position
-      // currentPos.lerpVectors(objPos, targetPos, lerpFactor);
-      // ref.current.position.set(currentPos.x, currentPos.y, currentPos.z);
+    if (effects.scale) {
+      // Modify scale based on the gain
+      const gainMultiplier = 1 + analyserData.gain * 5 * effects.scale;
+      ref.current.material.uniforms.uGain.value = gainMultiplier;
     }
 
-    console.log(analyserData?.pan);
+    if (effects.movement) {
+      // Rotate the swarm based on the pan (left/right balance)
+      ref.current.rotation.y = THREE.MathUtils.lerp(
+        ref.current.rotation.y,
+        analyserData.pan * 2 * effects.movement,
+        0.01,
+      );
+    }
+
+    if (effects.color) {
+      // Modify the brightness of the colors based on the frequency
+      ref.current.material.uniforms.uFreq.value = THREE.MathUtils.lerp(
+        ref.current.material.uniforms.uFreq.value,
+        1 + analyserData.frequency * effects.color * 2,
+        0.1,
+      );
+    }
   });
 
   // Colors

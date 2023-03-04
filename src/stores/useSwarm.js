@@ -49,10 +49,17 @@ export default create((set, get) => ({
 
   // Count
   count: COUNT,
-  allowDynamicEffects: ALLOW_DYNAMIC_EFFECTS,
   setCount: (count) =>
     isNaN(count) ? set({ count: COUNT.default }) : set({ count }),
-  setAllowDynamicEffects: (allow) => set({ allowDynamicEffects: allow }),
+
+  // Audiovisual effects
+  effects: { scale: 1, movement: 1, color: 1 },
+  setScaleEffects: (value) =>
+    set({ effects: { ...get().effects, scale: value } }),
+  setMovementEffects: (value) =>
+    set({ effects: { ...get().effects, movement: value } }),
+  setColorEffects: (value) =>
+    set({ effects: { ...get().effects, color: value } }),
 
   /**
    *

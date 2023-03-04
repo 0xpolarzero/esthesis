@@ -7,6 +7,10 @@
   z-index: 1;
 }
 
+.sound .panel.mobile {
+  backdrop-filter: blur(2px);
+}
+
 .sound .panel .ant-collapse-header {
   position: fixed;
   backdrop-filter: blur(10px);

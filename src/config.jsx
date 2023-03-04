@@ -1,7 +1,7 @@
 import Head from 'next/head';
 
 const titleDefault = 'visualize';
-const url = 'https://polarzero.xyz/';
+const url = 'https://visualize.polarzero.xyz/';
 const description = 'Music NFTs immersive visualizer';
 const author = 'polarzero';
 
