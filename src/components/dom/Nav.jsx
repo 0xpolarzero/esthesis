@@ -7,12 +7,12 @@ import { CiDark, CiLight } from 'react-icons/ci';
 import stores from '@/stores';
 
 const Nav = ({ type = 'default' }) => {
-  const { theme, updateTheme, highGraphics, toggleHighGraphics } =
+  const { theme, updateTheme /* highGraphics, toggleHighGraphics */ } =
     stores.useConfig((state) => ({
       theme: state.theme,
       updateTheme: state.updateTheme,
-      highGraphics: state.highGraphics,
-      toggleHighGraphics: state.toggleHighGraphics,
+      // highGraphics: state.highGraphics,
+      // toggleHighGraphics: state.toggleHighGraphics,
     }));
   const router = useRouter();
 
@@ -54,7 +54,7 @@ const Nav = ({ type = 'default' }) => {
           }>
           <AiOutlineInfoCircle size={20} />
         </Tooltip>
-        <Divider type='vertical' />
+        {/* <Divider type='vertical' />
         <Tooltip
           title={
             highGraphics
@@ -66,7 +66,7 @@ const Nav = ({ type = 'default' }) => {
           ) : (
             <BsThermometerLow size={20} onClick={toggleHighGraphics} />
           )}
-        </Tooltip>
+        </Tooltip> */}
         <Divider type='vertical' />
         {theme === 'dark' ? (
           <CiDark size={20} onClick={() => updateTheme('light')} />

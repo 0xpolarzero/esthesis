@@ -11,15 +11,15 @@ import hooks from '@/hooks';
 const Scene = dynamic(() => import('@/components/canvas/Scene'), { ssr: true });
 
 export default function App({ Component, pageProps = { title: 'polarzero' } }) {
-  const { initTheme, setHighGraphics } = stores.useConfig((state) => ({
+  const { initTheme /* setHighGraphics */ } = stores.useConfig((state) => ({
     initTheme: state.initTheme,
-    setHighGraphics: state.setHighGraphics,
+    // setHighGraphics: state.setHighGraphics,
   }));
   const { fetchTracks, fetchRemainingTracks } = stores.useSpinamp((state) => ({
     fetchTracks: state.fetchTracks,
     fetchRemainingTracks: state.fetchRemainingTracks,
   }));
-  const { isMobile } = hooks.useWindowSize();
+  // const { isMobile } = hooks.useWindowSize();
 
   const layout = useRef();
   const loader = useRef();
@@ -33,9 +33,9 @@ export default function App({ Component, pageProps = { title: 'polarzero' } }) {
     fetchRemainingTracks();
   }, [initTheme, fetchTracks, fetchRemainingTracks]);
 
-  useEffect(() => {
-    setHighGraphics(!isMobile);
-  }, [isMobile, setHighGraphics]);
+  // useEffect(() => {
+  //   setHighGraphics(!isMobile);
+  // }, [isMobile, setHighGraphics]);
 
   return (
     <>

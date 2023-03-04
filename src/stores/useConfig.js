@@ -135,8 +135,8 @@ export default create((set, get) => ({
   /**
    * @notice Graphics
    */
-  highGraphics: true,
-  setHighGraphics: (value) => set({ highGraphics: value }),
-  toggleHighGraphics: () =>
-    set((state) => ({ highGraphics: !state.highGraphics })),
+  // highGraphics: true,
+  // setHighGraphics: (value) => set({ highGraphics: value }),
+  // toggleHighGraphics: () =>
+  //   set((state) => ({ highGraphics: !state.highGraphics })),
 }));
