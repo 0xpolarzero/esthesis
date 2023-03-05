@@ -1,6 +1,7 @@
-import stores from '@/stores';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
+import Island from './Island';
+import stores from '@/stores';
 
 const Render = () => {
   const retrieveLink = stores.useShare((state) => state.retrieveLink);
@@ -66,7 +67,7 @@ const Render = () => {
     retrieveParameters();
   }, [initSound, initSwarm, retrieveLink]);
 
-  return null;
+  return <Island />;
 };
 
 export default Render;

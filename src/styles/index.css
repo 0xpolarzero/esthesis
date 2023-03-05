@@ -6,6 +6,7 @@
 @import './sound.css';
 @import './swarm.css';
 @import './search.css';
+@import './shared.css';
 
 :root {
   --font-main: 'Source Code Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI',
