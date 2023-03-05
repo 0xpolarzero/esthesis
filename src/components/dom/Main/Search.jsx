@@ -26,13 +26,18 @@ const Search = () => {
   useEffect(() => {
     if (!unpaginatedTracks) return;
 
-    let list = { titles: [], artists: [] };
+    let list = { titles: [], artists: [], platforms: [] };
     unpaginatedTracks.map((track) => {
-      const { title, artist, id } = track;
+      const { title, artist, id, platformId } = track;
       list.titles.push({ value: title, key: `${id}-title` });
 
-      if (list.artists.find((a) => a.value === artist.name)) return;
-      list.artists.push({ value: artist.name, key: `${id}-artist` });
+      if (!list.artists.find((a) => a.value === artist.name)) {
+        list.artists.push({ value: artist.name, key: artist.id });
+      }
+
+      if (!list.platforms.find((p) => p.value === platformId)) {
+        list.platforms.push({ value: platformId, key: platformId });
+      }
     });
 
     // Format
@@ -57,6 +62,20 @@ const Search = () => {
                 isMobile ? 'mobile' : 'desktop'
               }`}>
               {artist.value}
+            </span>
+          ),
+        })),
+      )
+      .concat(
+        list.platforms.map((platform) => ({
+          value: platform.value,
+          key: platform.key,
+          label: (
+            <span
+              className={`option-label platform ${
+                isMobile ? 'mobile' : 'desktop'
+              }`}>
+              {platform.value}
             </span>
           ),
         })),
@@ -105,7 +124,7 @@ const Search = () => {
         >
           <SearchBar
             size='medium'
-            placeholder='search a track or artist'
+            placeholder='search a track, artist or platform'
             allowClear
             onSearch={onSearchTrack}
             onChange={(e) => setSearchValue(e.target.value)}

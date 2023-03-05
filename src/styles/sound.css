@@ -29,7 +29,7 @@
 
 .sound .panel.desktop .ant-collapse-content-box {
   display: grid;
-  grid-template-columns: 1fr auto auto auto;
+  grid-template-columns: 1fr auto auto auto auto;
   gap: 0.5rem 2rem;
 }
 
@@ -54,6 +54,10 @@
 .sound .track-row__title:hover {
   cursor: var(--cursor-hover);
 }
+.sound .track-row__more {
+  display: flex;
+  align-items: center;
+}
 
 /* Filter */
 .sound .filter {
@@ -64,10 +68,9 @@
   gap: 0.5rem;
 }
 .sound .panel.desktop .filter {
-  grid-column: span 4;
+  grid-column: span 5;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
 }
 
 /* Antd */

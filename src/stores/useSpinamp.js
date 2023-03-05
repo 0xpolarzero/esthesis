@@ -21,7 +21,7 @@ export default create((set, get) => ({
   unpaginatedTracks: [],
   loadingAllTracks: true,
   errorAllTracks: false,
-  filteredByArtist: null,
+  filteredBy: null,
 
   /**
    * @notice Fetch paginated tracks
@@ -110,23 +110,56 @@ export default create((set, get) => ({
     // );
     // Sort by most accurate match
     const sorted = matchSorter(unpaginatedTracks, value, {
-      keys: ['title', 'artist.name'],
+      keys: ['title', 'artist.name', 'platformId'],
     }).slice(0, 100);
 
     // Set tracks & remember them
-    set({ tracks: { items: sorted }, filteredByArtist: null });
+    set({ tracks: { items: sorted }, filteredBy: null });
   },
 
   /**
-   * @notice Filter tracks by artist
+   * @notice Filter tracks by artist or platform
    */
-  filterByArtist: async (artistName) => {
+  filterBy: async (type, value) => {
     const { unpaginatedTracks } = get();
-    const filtered = unpaginatedTracks.filter(
-      (track) => track.artist.name === artistName,
+
+    const filtered =
+      type === 'artist'
+        ? unpaginatedTracks.filter((track) => track.artist.name === value)
+        : unpaginatedTracks.filter((track) => track.platformId === value);
+
+    // Create pages of 100 tracks with pagination info
+    const pagesAmount = Math.ceil(filtered.length / 100);
+    const pages = [];
+    for (let i = 0; i < pagesAmount; i++) {
+      pages.push({
+        items: filtered.slice(i * 100, (i + 1) * 100),
+        pageInfo: {
+          hasNextPage: i < pagesAmount - 1,
+          hasPreviousPage: i > 0,
+        },
+      });
+    }
+
+    // Set tracks & remember them
+    set({ tracks: pages[0], filteredBy: { value, pages } });
+  },
+
+  filterNavigate: async (direction) => {
+    const { filteredBy, tracks } = get();
+    const { pages } = filteredBy;
+
+    // Get current page index
+    const currentPageIndex = pages.findIndex(
+      (page) => page.items[0].id === tracks.items[0].id,
     );
 
-    set({ tracks: { items: filtered }, filteredByArtist: artistName });
+    // Get next page index
+    const nextPageIndex =
+      direction === 'next' ? currentPageIndex + 1 : currentPageIndex - 1;
+
+    // Set tracks & remember them
+    set({ tracks: pages[nextPageIndex] });
   },
 
   /**
@@ -134,7 +167,7 @@ export default create((set, get) => ({
    */
   filterAll: async () => {
     const { oldPages } = get();
-    set({ tracks: oldPages[0], filteredByArtist: null });
+    set({ tracks: oldPages[0], filteredBy: null });
   },
 
   /**

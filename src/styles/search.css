@@ -10,7 +10,7 @@
 }
 
 .panel.desktop .search {
-  grid-column: span 4;
+  grid-column: span 5;
 }
 
 /* Options */
@@ -28,6 +28,9 @@
 }
 .option-label.desktop.artist::after {
   content: 'artist';
+}
+.option-label.desktop.platform::after {
+  content: 'platform';
 }
 
 /* Status */
