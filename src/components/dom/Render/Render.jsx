@@ -45,6 +45,11 @@ const Render = () => {
             },
             count: Number(retrievedParams.count),
             pattern: Number(retrievedParams.pattern),
+            effects: {
+              scale: Number(retrievedParams.scale),
+              movement: Number(retrievedParams.movement),
+              color: Number(retrievedParams.color),
+            },
             sound: retrievedParams.sound,
           };
 

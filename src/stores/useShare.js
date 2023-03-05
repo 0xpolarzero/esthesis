@@ -8,7 +8,8 @@ const { shaders: OPTIONS_SHADERS } = config.options;
 export default create((set, get) => ({
   // Get the exhaustive args for the link
   getLink: () => {
-    const { colorA, colorB, background, pattern, count } = useSwarm.getState();
+    const { colorA, colorB, background, pattern, count, effects } =
+      useSwarm.getState();
     const { playing } = useAudio.getState();
 
     const patternIndex = OPTIONS_SHADERS.vertex.findIndex(
@@ -26,6 +27,9 @@ export default create((set, get) => ({
       );
       url.searchParams.set('pattern', `${patternIndex}`);
       url.searchParams.set('count', `${count}`);
+      Object.keys(effects).forEach((key) => {
+        url.searchParams.set(key, `${effects[key]}`);
+      });
       url.searchParams.set('sound', `${playing.data.id}`);
 
       return url;
@@ -40,6 +44,7 @@ export default create((set, get) => ({
         background,
         pattern: patternIndex,
         count,
+        effects,
         sound: playing.data.id,
       });
     };

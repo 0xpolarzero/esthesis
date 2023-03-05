@@ -66,7 +66,16 @@ export default create((set, get) => ({
    * @notice Init an entity based on parameters
    */
   initSwarm: (params) => {
-    const { setColorA, setColorB, setBackground, setPattern, setCount } = get();
+    const {
+      setColorA,
+      setColorB,
+      setBackground,
+      setPattern,
+      setCount,
+      setScaleEffects,
+      setMovementEffects,
+      setColorEffects,
+    } = get();
     try {
       setColorA(params.colorA.dark, 'dark');
       setColorA(params.colorA.light, 'light');
@@ -76,6 +85,10 @@ export default create((set, get) => ({
       setBackground(params.background.light, 'light');
       setPattern(params.pattern);
       setCount(params.count);
+      setScaleEffects(params.effects.scale);
+      setMovementEffects(params.effects.movement);
+      setColorEffects(params.effects.color);
+
       return true;
     } catch (err) {
       console.log(err);
