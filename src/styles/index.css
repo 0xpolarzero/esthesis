@@ -127,6 +127,9 @@ input {
   font-size: 1em;
   font-weight: 500;
   border: 1px solid transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   /* cursor: pointer; */
   cursor: var(--cursor-hover);
   transition: all 0.25s ease;

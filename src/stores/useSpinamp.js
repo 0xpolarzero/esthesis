@@ -215,8 +215,6 @@ export default create((set, get) => ({
 
     // If there is a filter, navigate through filtered pages
     const { pages } = filteredBy;
-    console.log(pages);
-
     set({
       tracks: pages[pageReq],
       page: pageReq,

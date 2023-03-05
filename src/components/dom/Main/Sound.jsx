@@ -5,6 +5,8 @@ import {
   AiOutlineFilter,
   AiOutlineHeart,
   AiOutlineInfoCircle,
+  AiOutlineLeft,
+  AiOutlineRight,
 } from 'react-icons/ai';
 import { CiCircleMore } from 'react-icons/ci';
 import { RiExternalLinkLine, RiPlayFill } from 'react-icons/ri';
@@ -113,11 +115,17 @@ const TrackRow = ({ track, onClick }) => {
         </a>
       ),
       icon: <RiExternalLinkLine size={20} />,
+      mobile: (
+        <a href={track.websiteUrl} target='_blank' rel='noreferrer'>
+          <RiExternalLinkLine size={20} />
+        </a>
+      ),
     },
     {
       key: '3',
       label: 'add to favorites',
       icon: <AiOutlineHeart size={20} />,
+      mobile: <AiOutlineHeart size={20} />,
     },
   ];
 
@@ -226,9 +234,22 @@ const TrackRow = ({ track, onClick }) => {
         <ElapsedTime time={new Date(track.createdAtTime)} />
       </div>
       <div className='track-row__more'>
-        <Dropdown menu={{ items: infoDropdown }} placement='bottomLeft'>
-          <CiCircleMore size={20} />
-        </Dropdown>
+        {isMobile ? (
+          <span
+            style={{
+              display: 'flex',
+              gap: '1rem',
+              marginTop: '0.5rem',
+            }}>
+            {infoDropdown.map((item, index) =>
+              index !== 0 ? item.mobile : null,
+            )}
+          </span>
+        ) : (
+          <Dropdown menu={{ items: infoDropdown }} placement='bottomLeft'>
+            <CiCircleMore size={20} />
+          </Dropdown>
+        )}
       </div>
     </>
   );
@@ -295,20 +316,18 @@ const Navigation = () => {
                   totalCount || '...'
                 } results`}
           </span>
-          {/* if not filtered */}
-          {/* if not all tracks loaded */}
-          <div style={{ display: 'flex', gap: '1rem' }}>
+          <div className='navigation'>
             <button
               className='button-primary'
               onClick={() => navigatePage('prev')}
               disabled={!tracks.pageInfo?.hasPreviousPage}>
-              prev
+              <AiOutlineLeft size={20} />
             </button>
             <button
               className='button-primary'
               onClick={() => navigatePage('next')}
               disabled={!tracks.pageInfo?.hasNextPage}>
-              next
+              <AiOutlineRight size={20} />
             </button>
           </div>
         </div>
