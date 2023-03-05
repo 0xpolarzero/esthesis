@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import { Collapse, Dropdown, Tooltip } from 'antd';
 import {
@@ -18,14 +18,7 @@ const { ElapsedTime, TableSkeleton } = Utils;
 const { Panel } = Collapse;
 
 const Sound = () => {
-  const { tracks, filterAll, filterNavigate, filteredBy } = stores.useSpinamp(
-    (state) => ({
-      tracks: state.tracks,
-      filterAll: state.filterAll,
-      filterNavigate: state.filterNavigate,
-      filteredBy: state.filteredBy,
-    }),
-  );
+  const tracks = stores.useSpinamp((state) => state.tracks);
   const start = stores.useAudio((state) => state.start);
   const { isMobile, windowSize } = hooks.useWindowSize();
   const ref = useRef(null);
@@ -53,33 +46,7 @@ const Sound = () => {
           className={`panel ${isMobile ? 'mobile' : 'desktop'}`}>
           <Search />
 
-          {filteredBy ? (
-            <div className='filter'>
-              <span>
-                Showing tracks for{' '}
-                <span className='emphasize'>{filteredBy.value}</span>
-              </span>
-              <button className='button-primary' onClick={filterAll}>
-                Clear
-              </button>
-            </div>
-          ) : (
-            <div className='filter'>Showing all tracks</div>
-          )}
-
-          <div className='filter' style={{ marginBottom: '1rem' }}>
-            <span style={{ opacity: 0.7 }}>x-x of x results</span>
-            {/* if not filtered */}
-            {/* if not all tracks loaded */}
-            <div style={{ display: 'flex', gap: '1rem' }}>
-              <button className='button-primary' onClick={filterNavigate}>
-                prev
-              </button>
-              <button className='button-primary' onClick={filterNavigate}>
-                next
-              </button>
-            </div>
-          </div>
+          <Navigation />
 
           {tracks?.items ? (
             tracks.items.map((track) =>
@@ -122,7 +89,10 @@ const Sound = () => {
 
 const TrackRow = ({ track, onClick }) => {
   const playing = stores.useAudio((state) => state.playing);
-  const filterBy = stores.useSpinamp((state) => state.filterBy);
+  const { filterBy, loadingAllTracks } = stores.useSpinamp((state) => ({
+    filterBy: state.filterBy,
+    loadingAllTracks: state.loadingAllTracks,
+  }));
   const { isMobile } = hooks.useWindowSize();
 
   const infoDropdown = [
@@ -158,12 +128,15 @@ const TrackRow = ({ track, onClick }) => {
         <a
           onClick={(e) => {
             e.stopPropagation();
+            if (loadingAllTracks) return;
             filterBy('artist', track.artist.name);
-          }}>
+          }}
+          className={loadingAllTracks ? 'disabled' : ''}>
           tracks by {track.artist.name}
         </a>
       ),
       icon: <AiOutlineFilter size={20} />,
+      disabled: loadingAllTracks,
     },
     {
       key: '2',
@@ -219,13 +192,23 @@ const TrackRow = ({ track, onClick }) => {
       </Tooltip>
       <div className='track-row__artist'>
         <Dropdown menu={{ items: artistDropdown }}>
-          <a>{track.artist.name}</a>
+          <a>
+            {track.artist.name.length > 20
+              ? `${track.artist.name.substring(
+                  0,
+                  6,
+                )}...${track.artist.name.substring(
+                  track.artist.name.length - 4,
+                )}`
+              : track.artist.name}
+          </a>
         </Dropdown>
       </div>
       <div className='track-row__platform'>
         <a
           onClick={(e) => {
             e.stopPropagation();
+            if (loadingAllTracks) return;
             filterBy('platform', track.platformId);
           }}>
           {track.platformId.length > 20 ? (
@@ -247,6 +230,89 @@ const TrackRow = ({ track, onClick }) => {
           <CiCircleMore size={20} />
         </Dropdown>
       </div>
+    </>
+  );
+};
+
+const Navigation = () => {
+  const {
+    tracks,
+    page,
+    navigatePage,
+    totalCount,
+    filterAll,
+    filteredBy,
+    isSearching,
+  } = stores.useSpinamp((state) => ({
+    tracks: state.tracks,
+    page: state.page,
+    navigatePage: state.navigatePage,
+    totalCount: state.totalCount,
+    filterAll: state.filterAll,
+    filteredBy: state.filteredBy,
+    isSearching: state.isSearching,
+  }));
+
+  return (
+    <>
+      {isSearching ? (
+        <div className='filter'>
+          {tracks.items.length === 100 ? (
+            <span>
+              showing 100 most accurate results for{' '}
+              <span className='emphasize'>{isSearching}</span> ; try to be more
+              specific to get better results.
+            </span>
+          ) : (
+            <span>
+              showing all results for{' '}
+              <span className='emphasize'>{isSearching}</span>
+            </span>
+          )}
+        </div>
+      ) : filteredBy ? (
+        <div className='filter'>
+          <span>
+            showing tracks {filteredBy.type === 'artist' ? 'from' : 'on'}{' '}
+            <span className='emphasize'>{filteredBy.value}</span>
+          </span>
+          <button className='button-primary' onClick={filterAll}>
+            Clear
+          </button>
+        </div>
+      ) : (
+        <div className='filter'>showing most recent tracks</div>
+      )}
+
+      {tracks ? (
+        <div className='filter' style={{ marginBottom: '1rem' }}>
+          <span style={{ opacity: 0.7 }}>
+            {isSearching
+              ? tracks.items.length === 100
+                ? 'more than 100 results'
+                : `${tracks.items.length} results`
+              : `${page * 100 + 1}-${page * 100 + 100} of ${
+                  totalCount || '...'
+                } results`}
+          </span>
+          {/* if not filtered */}
+          {/* if not all tracks loaded */}
+          <div style={{ display: 'flex', gap: '1rem' }}>
+            <button
+              className='button-primary'
+              onClick={() => navigatePage('prev')}
+              disabled={!tracks.pageInfo?.hasPreviousPage}>
+              prev
+            </button>
+            <button
+              className='button-primary'
+              onClick={() => navigatePage('next')}
+              disabled={!tracks.pageInfo?.hasNextPage}>
+              next
+            </button>
+          </div>
+        </div>
+      ) : null}
     </>
   );
 };

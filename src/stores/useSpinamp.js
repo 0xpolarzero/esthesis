@@ -5,19 +5,21 @@ import useAudio from './useAudio';
 
 export default create((set, get) => ({
   // Tracks
-  tracks: [],
-  setTracks: (tracks) => set({ tracks }),
+  tracks: {},
+  rememberTracks: {},
+  totalCount: 0,
   loadingTracks: true,
   errorTracks: false,
 
   // Pagination
   page: 0,
-  oldPages: {},
-  setPage: (page) => set({ page }),
-  hasNextPage: () => get().tracks.pageInfo.hasNextPage,
-  hasPreviousPage: () => get().tracks.pageInfo.hasPreviousPage,
+  hasNextPage: () => get().rememberTracks[get().page].pageInfo.hasNextPage,
+  hasPreviousPage: () =>
+    get().rememberTracks[get().page].pageInfo.hasPreviousPage,
 
   // Search
+  isSearching: null,
+  setIsSearching: (value) => set({ isSearching: value }),
   unpaginatedTracks: [],
   loadingAllTracks: true,
   errorAllTracks: false,
@@ -26,60 +28,81 @@ export default create((set, get) => ({
   /**
    * @notice Fetch paginated tracks
    */
-  fetchTracks: async (pageReq) => {
-    const { page, oldPages } = get();
-
+  fetchTracks: async (pageReq = 0) => {
+    const { rememberTracks } = get();
     // Was this page already fetched?
-    if (oldPages[page]) {
-      set({ tracks: oldPages[page] });
+    if (rememberTracks[pageReq]) {
+      set({ tracks: rememberTracks[pageReq], page: pageReq });
       return;
     }
 
     // Fetch tracks
     set({ loadingTracks: true });
-    const tracks = await fetchAllTracks({
+    const res = await fetchAllTracks({
       first: 100,
-      offset: page * 100,
+      offset: pageReq * 100,
     }).catch((err) => {
       console.log('err', err);
       set({ errorTracks: true });
     });
 
-    // Set tracks & remember them
     set({
-      tracks,
-      oldPages: { ...oldPages, [page]: tracks },
+      tracks: res,
+      rememberTracks: { ...rememberTracks, [pageReq]: res },
+      totalCount: res.totalCount,
       loadingTracks: false,
     });
   },
 
   /**
-   * @notice Fetch all tracks in the background to prepare for search
+   * @notice Fetch all tracks in the background to prepare for search and navigation
    */
   fetchRemainingTracks: async () => {
-    const { oldPages } = get();
+    // let latest = { pageInfo: { hasNextPage: true } };
+    // let i = 1;
+    // while (latest.pageInfo.hasNextPage) {
+    //   const res = await fetchAllTracks({
+    //     first: 100,
+    //     offset: i * 100,
+    //   }).catch((err) => {
+    //     console.log('err', err);
+    //     set({ errorAllTracks: true });
+    //   });
+    //   console.log(i, res);
 
-    const allTracks = await fetchAllTracks().catch((err) => {
+    //   set({
+    //     rememberTracks: { ...get().rememberTracks, [i]: res },
+    //   });
+    //   latest = res;
+    //   i++;
+    // }
+
+    // Or fetch all tracks in one request and then paginate them
+    const res = await fetchAllTracks().catch((err) => {
       console.log('err', err);
       set({ errorAllTracks: true });
     });
 
-    // Set tracks & remember them
-    const pagesAmount = Math.ceil(allTracks.totalCount / 100);
-
-    // Set up pages with 100 tracks each so it won't need to be fetched again
+    // Create pages of 100 tracks with pagination info
+    const pagesAmount = Math.ceil(res.items.length / 100);
+    const pages = [];
     for (let i = 0; i < pagesAmount; i++) {
-      oldPages[i] = {
-        items: allTracks.items.slice(i * 100, (i + 1) * 100),
+      pages.push({
+        items: res.items.slice(i * 100, (i + 1) * 100),
         pageInfo: {
           hasNextPage: i < pagesAmount - 1,
           hasPreviousPage: i > 0,
         },
-      };
+        totalCount: res.totalCount,
+      });
     }
 
+    set({
+      rememberTracks: pages,
+    });
+
     // Set all tracks in one array for search
-    const unpaginatedTracks = Object.values(oldPages)
+    const unpaginatedTracks = Object.values(get().rememberTracks)
       .reduce((acc, page) => [...acc, ...page.items], [])
       .sort((a, b) => b.createdAt - a.createdAt);
 
@@ -96,10 +119,10 @@ export default create((set, get) => ({
    * then set all tracks so nothing will need to be fetched again even in paginated results
    */
   onSearchTrack: async (value) => {
-    const { unpaginatedTracks, oldPages } = get();
+    const { unpaginatedTracks, tracks, rememberTracks, page } = get();
     // If there is no search, display recent tracks
     if (!value || value.length < 3) {
-      set({ tracks: oldPages[0] });
+      set({ tracks: rememberTracks[page] });
       return;
     }
 
@@ -114,7 +137,13 @@ export default create((set, get) => ({
     }).slice(0, 100);
 
     // Set tracks & remember them
-    set({ tracks: { items: sorted }, filteredBy: null });
+    set({
+      tracks: {
+        items: sorted,
+        pageInfo: { hasNextPage: false, hasPreviousPage: false },
+      },
+      filteredBy: null,
+    });
   },
 
   /**
@@ -138,36 +167,60 @@ export default create((set, get) => ({
           hasNextPage: i < pagesAmount - 1,
           hasPreviousPage: i > 0,
         },
+        totalCount: filtered.length,
       });
     }
 
     // Set tracks & remember them
-    set({ tracks: pages[0], filteredBy: { value, pages } });
-  },
-
-  filterNavigate: async (direction) => {
-    const { filteredBy, tracks } = get();
-    const { pages } = filteredBy;
-
-    // Get current page index
-    const currentPageIndex = pages.findIndex(
-      (page) => page.items[0].id === tracks.items[0].id,
-    );
-
-    // Get next page index
-    const nextPageIndex =
-      direction === 'next' ? currentPageIndex + 1 : currentPageIndex - 1;
-
-    // Set tracks & remember them
-    set({ tracks: pages[nextPageIndex] });
+    set({
+      tracks: pages[0],
+      page: 0,
+      totalCount: filtered.length,
+      filteredBy: {
+        type,
+        value,
+        pages,
+      },
+    });
   },
 
   /**
    * @notice Filter back to all tracks
    */
   filterAll: async () => {
-    const { oldPages } = get();
-    set({ tracks: oldPages[0], filteredBy: null });
+    const { rememberTracks, page } = get();
+    set({
+      tracks: rememberTracks[page],
+      filteredBy: null,
+      totalCount: rememberTracks[page].totalCount,
+      page: 0,
+    });
+  },
+
+  navigatePage: async (direction = null) => {
+    const { filteredBy, page, fetchTracks } = get();
+
+    const pageReq = direction
+      ? direction === 'next'
+        ? page + 1
+        : page - 1
+      : 0;
+
+    // If there is no filter, fetch prev/next page
+    if (!filteredBy) {
+      fetchTracks(pageReq);
+      set({ page: pageReq });
+      return;
+    }
+
+    // If there is a filter, navigate through filtered pages
+    const { pages } = filteredBy;
+    console.log(pages);
+
+    set({
+      tracks: pages[pageReq],
+      page: pageReq,
+    });
   },
 
   /**

@@ -12,12 +12,14 @@ const Search = () => {
     unpaginatedTracks,
     loadingAllTracks,
     errorAllTracks,
+    setIsSearching,
   } = stores.useSpinamp((state) => ({
     tracks: state.tracks,
     onSearchTrack: state.onSearchTrack,
     unpaginatedTracks: state.unpaginatedTracks,
     loadingAllTracks: state.loadingAllTracks,
     errorAllTracks: state.errorAllTracks,
+    setIsSearching: state.setIsSearching,
   }));
   const { isMobile } = hooks.useWindowSize();
   const [options, setOptions] = useState([]);
@@ -84,6 +86,14 @@ const Search = () => {
     setOptions(options);
   }, [unpaginatedTracks]);
 
+  useEffect(() => {
+    if (searchValue.length < 3) {
+      setIsSearching(null);
+    } else {
+      setIsSearching(searchValue);
+    }
+  }, [searchValue]);
+
   if (errorAllTracks)
     return (
       <div className='search'>
@@ -111,7 +121,7 @@ const Search = () => {
           </span>
         ) : null}
         <AutoComplete
-          options={options}
+          // options={options}
           style={{
             width: isMobile ? '90%' : '100%',
           }}
@@ -119,9 +129,7 @@ const Search = () => {
           onSelect={onSearchTrack}
           filterOption={(inputValue, option) =>
             option.value.toLowerCase().indexOf(inputValue.toLowerCase()) !== -1
-          }
-          // disabled={loadingAllTracks || !options.length}
-        >
+          }>
           <SearchBar
             size='medium'
             placeholder='search a track, artist or platform'
@@ -135,13 +143,6 @@ const Search = () => {
             }
           />
         </AutoComplete>
-        {/* Are there more than 100 results? */}
-        {searchValue.length >= 3 && tracks.items.length >= 100 ? (
-          <span>
-            showing 100 most accurate results ; try to be more specific to get
-            better results.
-          </span>
-        ) : null}
       </div>
       {isMobile ? <span className='separator horizontal' /> : null}
     </>
