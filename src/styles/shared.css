@@ -1,10 +1,11 @@
 .island {
-  /* background: rgba(var(--background-main-rgb), 0.4); */
-  backdrop-filter: blur(1px);
   border-radius: 0.4rem;
   max-width: 1600px;
   margin: 0 auto;
   width: 100%;
+  height: min-content;
+  max-height: 100%;
+  overflow: scroll;
 }
 .island.mobile {
   padding: 0.5 1rem;
@@ -12,11 +13,53 @@
 .island.desktop {
   padding: 1rem 2rem;
 }
+.island.expanded {
+  backdrop-filter: blur(1px);
+}
 
-.island .content {
+.island .content,
+.island .content .expand {
   display: flex;
   flex-direction: column;
   text-align: justify;
-  gap: 0.5rem;
+  gap: 1rem;
   max-width: 100ch;
+}
+
+.island .ant-collapse-header {
+  padding: 0 !important;
+}
+.island.mobile .ant-collapse-content-box {
+  padding: 0.5rem 0 !important;
+}
+
+.island .label {
+  font-size: 0.9rem;
+  font-weight: 400;
+  opacity: 0.8;
+  margin-right: 0.5rem;
+}
+.island .label::after {
+  content: '_';
+  opacity: 0.8;
+}
+
+.island.mobile .expand div {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Profiles */
+.island .expand .profiles {
+  display: flex;
+  gap: 0.5rem;
+}
+.island.desktop .expand .profiles {
+  gap: 1rem;
+}
+.island .expand .profiles .profiles-content {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 1rem;
 }

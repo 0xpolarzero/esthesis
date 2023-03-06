@@ -14,7 +14,7 @@ const Experience = () => {
   return (
     <>
       <Entity />
-      <OrbitControls />
+      <OrbitControls enablePan={false} minZoom={10} maxZoom={200} />
     </>
   );
 };
