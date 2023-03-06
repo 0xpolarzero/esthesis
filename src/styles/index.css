@@ -96,9 +96,12 @@ body,
 
   /* transition: all 0.2s ease; */
 }
-.container.overlay {
+
+.bg-overlay {
   background: rgba(var(--background-main-rgb), 0.6);
   backdrop-filter: blur(6px);
+  width: 100%;
+  height: 100%;
 }
 .bg-wrapper {
   position: absolute;
@@ -106,9 +109,6 @@ body,
   left: 0;
   width: 100%;
   height: 100%;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
 
   pointer-events: none;
   z-index: -1;
@@ -242,7 +242,7 @@ input.error {
 }
 /* Special */
 button.special {
-  background-color: var(--text-link);
+  background-color: var(--text-link) !important;
   color: rgba(255, 255, 255, 1) !important;
   border: 1px solid var(--text-link);
 }

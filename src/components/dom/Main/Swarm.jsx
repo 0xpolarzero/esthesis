@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import {
   Collapse,
   InputNumber,
+  Popconfirm,
   Radio,
   Select,
   Slider,
@@ -15,6 +16,7 @@ import { toast } from 'react-toastify';
 import stores from '@/stores';
 import hooks from '@/hooks';
 import config from '@/data';
+import Image from 'next/image';
 
 const { Panel } = Collapse;
 const { Group } = Radio;
@@ -59,7 +61,7 @@ const Swarm = () => {
     theme: state.theme,
     updateTheme: state.updateTheme,
   }));
-  const playing = stores.useAudio((state) => state.playing);
+
   const { isMobile } = hooks.useWindowSize();
   const [isCreatingLink, setIsCreatingLink] = useState(false);
 
@@ -99,24 +101,6 @@ const Swarm = () => {
     }
   };
 
-  useEffect(() => {
-    if (
-      !playing ||
-      !document.querySelector('.container') ||
-      !document.querySelector('.bg-wrapper')
-    )
-      return;
-
-    if (artworkBg) {
-      document.querySelector('.container').classList.add('overlay');
-      document.querySelector(
-        '.bg-wrapper',
-      ).style.backgroundImage = `url(${playing.data.lossyArtworkUrl})`;
-    } else {
-      document.querySelector('.container').classList.remove('overlay');
-    }
-  }, [artworkBg, playing]);
-
   return (
     <div className={`swarm ${isMobile ? 'mobile' : 'desktop'}`}>
       <Collapse
@@ -149,7 +133,25 @@ const Swarm = () => {
             />
             <div className='artwork'>
               <span>artwork as background</span>
-              <Switch checked={artworkBg} onChange={toggleArtworkBg} />
+              <Popconfirm
+                title={
+                  <>
+                    please proceed with caution, as some artworks may contain
+                    flashing images;
+                    <br />
+                    you will see a thumbnail of the artwork when hovering on the
+                    track.
+                  </>
+                }
+                onConfirm={toggleArtworkBg}
+                disabled={artworkBg}
+                okText='continue'
+                cancelText='cancel'>
+                <Switch
+                  checked={artworkBg}
+                  onChange={artworkBg ? toggleArtworkBg : null}
+                />
+              </Popconfirm>
             </div>
             <div className='colors'>
               <span className='header'>audiovisual effects_</span>

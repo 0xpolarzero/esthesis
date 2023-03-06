@@ -1,11 +1,12 @@
 import Controls from './Controls';
 import Render from '../Render';
-import { Sound, Swarm } from '../Main';
+import { Background, Sound, Swarm } from '../Main';
 
 const Global = ({ type = 'default' }) => {
   if (type === 'shared')
     return (
       <>
+        <Background />
         <Controls type={type} />
         <Render />
       </>
@@ -13,6 +14,7 @@ const Global = ({ type = 'default' }) => {
 
   return (
     <>
+      <Background />
       <Sound />
       <Swarm />
       <Controls />

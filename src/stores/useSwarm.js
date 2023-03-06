@@ -62,7 +62,7 @@ export default create((set, get) => ({
     set({ effects: { ...get().effects, color: value } }),
 
   // Artwork background
-  artworkBg: true,
+  artworkBg: false,
   toggleArtworkBg: () => set({ artworkBg: !get().artworkBg }),
 
   /**
