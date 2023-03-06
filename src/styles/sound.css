@@ -115,7 +115,7 @@
 .more-modal .header .links {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 1.5rem;
 }
 .more-modal.mobile .header .links {
   gap: 1rem;
@@ -125,19 +125,18 @@
 .more-modal .header .links .profiles-content {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-}
-.more-modal.mobile .header .links .profiles,
-.more-modal.mobile .header .links .profiles-content {
-  gap: 0.5rem;
-}
-.more-modal .header .links .profiles-content {
   gap: 0.5rem;
 }
 .more-modal.mobile .header .links .profiles-content {
   flex-direction: row;
   gap: 1rem;
   flex-wrap: wrap;
+}
+
+.more-modal .header .actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
 .more-modal .description {

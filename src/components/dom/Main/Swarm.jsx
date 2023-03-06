@@ -45,7 +45,7 @@ const Swarm = () => {
     setMovementEffects: state.setMovementEffects,
     setColorEffects: state.setColorEffects,
   }));
-  const { createPreviewLink, createShareableLink } = stores.useShare(
+  const { createPreviewLink, createShareableLink } = stores.useInteract(
     (state) => ({
       createPreviewLink: state.createPreviewLink,
       createShareableLink: state.createShareableLink,

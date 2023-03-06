@@ -150,6 +150,7 @@ const TrackRow = ({ track, onClick, setModalContent }) => {
             if (loadingAllTracks) return;
             filterBy('platform', track.platformId);
           }}>
+          {/* RxDashboard, RxGlobe, RxLayers */}
           {isMobile ? <RxRocket size={20} /> : null}
           {track.platformId.length > 20 ? (
             <Tooltip title={track.platformId} arrow={false}>

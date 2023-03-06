@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import { Collapse, Modal } from 'antd';
+import { AiOutlineHeart, AiOutlineLink } from 'react-icons/ai';
 import { RiExternalLinkLine } from 'react-icons/ri';
 import stores from '@/stores';
 import hooks from '@/hooks';
@@ -52,6 +53,23 @@ const More = () => {
 };
 
 const Header = ({ content }) => {
+  const { isMobile } = hooks.useWindowSize();
+
+  const actions = [
+    {
+      icon: <AiOutlineHeart size={20} />,
+      text: 'add to favorites',
+      mobile: 'favorites',
+      onClick: () => console.log('add to favorites'),
+    },
+    {
+      icon: <AiOutlineLink size={20} />,
+      text: 'copy shareable link',
+      mobile: 'get shareable link',
+      onClick: () => console.log('share'), // TODO same as createShareableLink but also handle lens connect, open to share
+    },
+  ];
+
   return (
     <div className='header'>
       <Image
@@ -62,9 +80,6 @@ const Header = ({ content }) => {
         placeholder='blur'
         blurDataURL='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNMyflfDwAFWwJQh9q4ZQAAAABJRU5ErkJggg=='
       />
-      {/* links here */}
-      {/* artist.profiles */}
-      {/* platformId & websiteUrl */}
       <div className='links'>
         <a
           className='with-icon'
@@ -73,6 +88,7 @@ const Header = ({ content }) => {
           rel='noreferrer'>
           <RiExternalLinkLine size={20} /> listen on {content.platformId}
         </a>
+        {isMobile ? <span className='separator horizontal' /> : null}
         <div className='profiles'>
           open profile on{' '}
           <div className='profiles-content'>
@@ -88,6 +104,27 @@ const Header = ({ content }) => {
               </a>
             ))}
           </div>
+        </div>
+        {isMobile ? <span className='separator horizontal' /> : null}
+        <div className='actions'>
+          {isMobile
+            ? actions.map((action) => (
+                <a
+                  className='with-icon'
+                  key={action.text}
+                  onClick={action.onClick}>
+                  {action.icon} {action.mobile}
+                </a>
+              ))
+            : actions.map((action) => (
+                <button
+                  className='button-primary with-icon'
+                  style={{ justifyContent: 'flex-start' }}
+                  key={action.text}
+                  onClick={action.onClick}>
+                  {action.icon} {action.text}
+                </button>
+              ))}
         </div>
       </div>
     </div>

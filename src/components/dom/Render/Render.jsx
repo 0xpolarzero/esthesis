@@ -4,7 +4,7 @@ import Island from './Island';
 import stores from '@/stores';
 
 const Render = () => {
-  const retrieveLink = stores.useShare((state) => state.retrieveLink);
+  const retrieveLink = stores.useInteract((state) => state.retrieveLink);
   const initSwarm = stores.useSwarm((state) => state.initSwarm);
   const initSound = stores.useSpinamp((state) => state.initSound);
   const [isLoading, setIsLoading] = useState(true);
