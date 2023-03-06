@@ -1,93 +1,13 @@
-import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
-import { Collapse, Dropdown, Tooltip } from 'antd';
+import { Dropdown, Tooltip } from 'antd';
 import {
   AiOutlineFilter,
   AiOutlineHeart,
   AiOutlineInfoCircle,
-  AiOutlineLeft,
-  AiOutlineRight,
 } from 'react-icons/ai';
 import { CiCircleMore } from 'react-icons/ci';
 import { RiExternalLinkLine, RiPlayFill } from 'react-icons/ri';
-import Search from './Search';
-import Utils from '../Utils';
-import stores from '@/stores';
-import hooks from '@/hooks';
-
-const { ElapsedTime, TableSkeleton } = Utils;
-
-const { Panel } = Collapse;
-
-const Sound = () => {
-  const tracks = stores.useSpinamp((state) => state.tracks);
-  const start = stores.useAudio((state) => state.start);
-  const { isMobile, windowSize } = hooks.useWindowSize();
-  const ref = useRef(null);
-
-  useEffect(() => {
-    // Keep the width of the panel header in sync with the width of the panel
-    // content
-    if (!ref.current) return;
-
-    const header = ref.current.querySelector('.ant-collapse-header');
-    const content = ref.current.querySelector('.ant-collapse-content-box');
-
-    if (!header || !content) return;
-
-    header.style.width = `${content.offsetWidth}px`;
-  }, [windowSize]);
-
-  return (
-    <div className='sound'>
-      <Collapse bordered={false} ghost defaultActiveKey={['1']}>
-        <Panel
-          ref={ref}
-          header='sound'
-          key='1'
-          className={`panel ${isMobile ? 'mobile' : 'desktop'}`}>
-          <Search />
-
-          <Navigation />
-
-          {tracks?.items ? (
-            tracks.items.map((track) =>
-              // Render a card on mobile, a row on desktop
-              isMobile ? (
-                <>
-                  <div
-                    className='track-card'
-                    key={track.id}
-                    onClick={() => start(track)}>
-                    <TrackRow track={track} />
-                  </div>
-                  {tracks.items.indexOf(track) !== tracks.items.length - 1 ? (
-                    <span className='separator horizontal' />
-                  ) : null}
-                </>
-              ) : (
-                <TrackRow
-                  key={track.id}
-                  track={track}
-                  onClick={() => start(track)}
-                />
-              ),
-            )
-          ) : isMobile ? (
-            <TableSkeleton colCount={1} rowCount={10} noHeader={true} />
-          ) : (
-            <TableSkeleton
-              colCount={4}
-              rowCount={10}
-              style={{ gridColumn: 'span 4' }}
-              noHeader={true}
-            />
-          )}
-        </Panel>
-      </Collapse>
-    </div>
-  );
-};
+import ElapsedTime from '../../Utils/ElapsedTime';
 
 const TrackRow = ({ track, onClick }) => {
   const playing = stores.useAudio((state) => state.playing);
@@ -255,85 +175,4 @@ const TrackRow = ({ track, onClick }) => {
   );
 };
 
-const Navigation = () => {
-  const {
-    tracks,
-    page,
-    navigatePage,
-    totalCount,
-    filterAll,
-    filteredBy,
-    isSearching,
-  } = stores.useSpinamp((state) => ({
-    tracks: state.tracks,
-    page: state.page,
-    navigatePage: state.navigatePage,
-    totalCount: state.totalCount,
-    filterAll: state.filterAll,
-    filteredBy: state.filteredBy,
-    isSearching: state.isSearching,
-  }));
-
-  return (
-    <>
-      {isSearching ? (
-        <div className='filter'>
-          {tracks.items.length === 100 ? (
-            <span>
-              showing 100 most accurate results for{' '}
-              <span className='emphasize'>{isSearching}</span> ; try to be more
-              specific to get better results.
-            </span>
-          ) : (
-            <span>
-              showing all results for{' '}
-              <span className='emphasize'>{isSearching}</span>
-            </span>
-          )}
-        </div>
-      ) : filteredBy ? (
-        <div className='filter'>
-          <span>
-            showing tracks {filteredBy.type === 'artist' ? 'from' : 'on'}{' '}
-            <span className='emphasize'>{filteredBy.value}</span>
-          </span>
-          <button className='button-primary' onClick={filterAll}>
-            Clear
-          </button>
-        </div>
-      ) : (
-        <div className='filter'>showing most recent tracks</div>
-      )}
-
-      {tracks ? (
-        <div className='filter' style={{ marginBottom: '1rem' }}>
-          <span style={{ opacity: 0.7 }}>
-            {isSearching
-              ? tracks.items.length === 100
-                ? 'more than 100 results'
-                : `${tracks.items.length} results`
-              : `${page * 100 + 1}-${page * 100 + 100} of ${
-                  totalCount || '...'
-                } results`}
-          </span>
-          <div className='navigation'>
-            <button
-              className='button-primary'
-              onClick={() => navigatePage('prev')}
-              disabled={!tracks.pageInfo?.hasPreviousPage}>
-              <AiOutlineLeft size={20} />
-            </button>
-            <button
-              className='button-primary'
-              onClick={() => navigatePage('next')}
-              disabled={!tracks.pageInfo?.hasNextPage}>
-              <AiOutlineRight size={20} />
-            </button>
-          </div>
-        </div>
-      ) : null}
-    </>
-  );
-};
-
-export default Sound;
+export default TrackRow;
