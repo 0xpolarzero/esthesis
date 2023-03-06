@@ -5,22 +5,24 @@
   max-width: 1600px;
   overflow: scroll;
   z-index: 1;
+  transition: background 0.2s ease;
 }
 
-.sound .panel.mobile {
-  backdrop-filter: blur(2px);
+.sound .ant-collapse {
+  padding: 0 1rem;
 }
-
-.sound .panel .ant-collapse-header {
-  position: fixed;
-  backdrop-filter: blur(10px);
+.sound .ant-collapse-header {
+  position: fixed !important;
+  backdrop-filter: blur(2px) !important;
+  padding-top: 1rem !important;
   z-index: 1;
-}
-.sound .panel .ant-collapse-header-text {
-  padding-right: 1rem;
 }
 .sound .panel.mobile .ant-collapse-header {
   padding: 0;
+  backdrop-filter: none;
+}
+.sound .ant-collapse-header-text {
+  padding-right: 1rem;
 }
 
 .sound .panel .ant-collapse-content-box {
@@ -56,6 +58,13 @@
 }
 .sound .track-row__title:hover {
   cursor: var(--cursor-hover);
+}
+.sound .panel.mobile .track-row__title {
+  display: grid;
+  grid-template-columns: auto auto 1fr;
+}
+.sound .panel.mobile .track-row__title button {
+  justify-self: flex-end;
 }
 .sound .track-row__more {
   display: flex;
@@ -152,13 +161,6 @@
 }
 .more-modal .description p:last-child {
   margin-bottom: 0;
-}
-
-.more-modal button.button-primary {
-  background: rgba(var(--background-main-rgb), 0.3);
-}
-.more-modal button.button-primary:hover {
-  background: rgba(var(--background-main-rgb), 0.5);
 }
 
 /* Artwork */

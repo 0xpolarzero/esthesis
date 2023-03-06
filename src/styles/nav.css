@@ -1,13 +1,14 @@
 .nav {
   font-family: var(--font-main);
-  backdrop-filter: blur(10px);
-  position: fixed;
+  backdrop-filter: blur(2px);
+  /* position: fixed;
   left: 50%;
   top: 0;
-  transform: translateX(-50%);
+  transform: translateX(-50%); */
   width: 100%;
   max-width: 1600px;
   padding: 0.8rem 1.2rem;
+  margin: 0 auto;
   display: flex;
   justify-content: space-between;
   align-items: center;

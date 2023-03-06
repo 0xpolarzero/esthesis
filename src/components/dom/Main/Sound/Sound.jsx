@@ -36,7 +36,7 @@ const Sound = () => {
   }, [windowSize]);
 
   return (
-    <div className='sound'>
+    <div className={`sound ${isMobile ? 'mobile' : 'desktop'}`}>
       <Collapse bordered={false} ghost defaultActiveKey={['1']}>
         <Panel
           ref={ref}

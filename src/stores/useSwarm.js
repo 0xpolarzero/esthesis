@@ -61,6 +61,10 @@ export default create((set, get) => ({
   setColorEffects: (value) =>
     set({ effects: { ...get().effects, color: value } }),
 
+  // Artwork background
+  artworkBg: true,
+  toggleArtworkBg: () => set({ artworkBg: !get().artworkBg }),
+
   /**
    *
    * @notice Init an entity based on parameters

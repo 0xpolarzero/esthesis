@@ -118,18 +118,23 @@ const TrackRow = ({ track, onClick, setModalContent }) => {
           onClick={onClick}>
           {isMobile ? <RxDisc size={20} /> : <RiPlayFill size={20} />}
           {track.title.length > 40 ? (
-            <>
+            <span>
               {track.title.substring(0, 40)}
               <span className='emphasize'>...</span>
-            </>
+            </span>
           ) : (
             track.title
           )}
+          {isMobile ? (
+            <button className='button-primary small'>
+              <RiPlayFill size={20} />
+            </button>
+          ) : null}
         </div>
       </Tooltip>
       <div className='track-row__artist'>
         <Dropdown menu={{ items: artistDropdown }}>
-          <a className='with-icon'>
+          <a className='with-icon' onClick={(e) => e.stopPropagation()}>
             {isMobile ? <RxPerson size={20} /> : null}
             {track.artist.name.length > 20
               ? `${track.artist.name.substring(

@@ -6,8 +6,17 @@
   z-index: 1;
 }
 
+.swarm.mobile {
+  backdrop-filter: blur(2px);
+}
+
+.swarm .ant-collapse {
+  padding: 0 1rem;
+}
+
 .swarm .ant-collapse-header {
   text-align: end;
+  padding: 1rem 0 !important;
 }
 
 .swarm .ant-collapse-content-box {
@@ -26,7 +35,7 @@
   min-width: 300px;
 }
 .swarm .panel.mobile {
-  background: rgba(var(--background-main-rgb), 0.8);
+  /* background: rgba(var(--background-main-rgb), 0.8); */
   /* backdrop-filter: blur(2px); */
 }
 .swarm .panel.mobile .wrapper {
@@ -70,6 +79,7 @@
 }
 .swarm .panel.mobile .link {
   grid-template-columns: 1fr auto;
+  margin-bottom: 1rem;
 }
 .swarm .panel.mobile .link button:first-of-type {
   grid-column: span 2;

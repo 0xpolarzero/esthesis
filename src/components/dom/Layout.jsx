@@ -13,6 +13,7 @@ const Layout = forwardRef(({ children, ...props }, ref) => {
         <Nav {...props} />
         {children}
       </div>
+      <div className='bg-wrapper' />
     </Config>
   );
 });

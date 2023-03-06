@@ -30,8 +30,10 @@ const Swarm = () => {
     count,
     pattern,
     effects,
+    artworkBg,
     setCount,
     setPattern,
+    toggleArtworkBg,
     setScaleEffects,
     setMovementEffects,
     setColorEffects,
@@ -39,8 +41,10 @@ const Swarm = () => {
     count: state.count,
     pattern: state.pattern,
     effects: state.effects,
+    artworkBg: state.artworkBg,
     setCount: state.setCount,
     setPattern: state.setPattern,
+    toggleArtworkBg: state.toggleArtworkBg,
     setScaleEffects: state.setScaleEffects,
     setMovementEffects: state.setMovementEffects,
     setColorEffects: state.setColorEffects,
@@ -55,6 +59,7 @@ const Swarm = () => {
     theme: state.theme,
     updateTheme: state.updateTheme,
   }));
+  const playing = stores.useAudio((state) => state.playing);
   const { isMobile } = hooks.useWindowSize();
   const [isCreatingLink, setIsCreatingLink] = useState(false);
 
@@ -94,8 +99,26 @@ const Swarm = () => {
     }
   };
 
+  useEffect(() => {
+    if (
+      !playing ||
+      !document.querySelector('.container') ||
+      !document.querySelector('.bg-wrapper')
+    )
+      return;
+
+    if (artworkBg) {
+      document.querySelector('.container').classList.add('overlay');
+      document.querySelector(
+        '.bg-wrapper',
+      ).style.backgroundImage = `url(${playing.data.lossyArtworkUrl})`;
+    } else {
+      document.querySelector('.container').classList.remove('overlay');
+    }
+  }, [artworkBg, playing]);
+
   return (
-    <div className='swarm'>
+    <div className={`swarm ${isMobile ? 'mobile' : 'desktop'}`}>
       <Collapse
         bordered={false}
         ghost
