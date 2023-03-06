@@ -1,7 +1,7 @@
-import config from '@/data';
 import { create } from 'zustand';
 import useAudio from './useAudio';
 import useSwarm from './useSwarm';
+import config from '@/data';
 
 const { shaders: OPTIONS_SHADERS } = config.options;
 

@@ -1,6 +1,7 @@
+import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import { Collapse, Modal } from 'antd';
-import { AiOutlineHeart, AiOutlineLink } from 'react-icons/ai';
+import { AiOutlineHeart, AiOutlineShareAlt } from 'react-icons/ai';
 import { RiExternalLinkLine } from 'react-icons/ri';
 import stores from '@/stores';
 import hooks from '@/hooks';
@@ -14,6 +15,14 @@ const More = () => {
   }));
   const { isMobile } = hooks.useWindowSize();
 
+  useEffect(() => {
+    if (!document.querySelector('.ant-modal')) return;
+
+    document.querySelector(
+      '.ant-modal',
+    ).style.backgroundImage = `url(${content.lossyArtworkUrl})`;
+  }, [content]);
+
   if (!content) return null;
 
   return (
@@ -22,7 +31,8 @@ const More = () => {
       open={content}
       onCancel={() => setContent(null)}
       footer={null}
-      title={`${content.artist.name} - ${content.title}`}>
+      title={`${content.artist.name} - ${content.title}`}
+      width={isMobile ? '100%' : 'min(90%, 800px)'}>
       {isMobile ? null : <Header content={content} />}
       <Collapse
         bordered={false}
@@ -48,12 +58,25 @@ const More = () => {
           </div>
         </Panel>
       </Collapse>
+      <div className='modal-overlay' />
     </Modal>
   );
 };
 
 const Header = ({ content }) => {
-  const { isMobile } = hooks.useWindowSize();
+  const { isMobile, windowSize } = hooks.useWindowSize();
+  const [artworkSize, setArtworkSize] = useState(200);
+
+  useEffect(() => {
+    if (!windowSize.width) return;
+
+    let size;
+    if (windowSize.width < 600) size = 200;
+    else if (windowSize.width > 1000) size = 400;
+    else size = windowSize.width / 3;
+
+    setArtworkSize(size);
+  }, [windowSize.width]);
 
   const actions = [
     {
@@ -63,9 +86,9 @@ const Header = ({ content }) => {
       onClick: () => console.log('add to favorites'),
     },
     {
-      icon: <AiOutlineLink size={20} />,
-      text: 'copy shareable link',
-      mobile: 'get shareable link',
+      icon: <AiOutlineShareAlt size={20} />,
+      text: 'share',
+      mobile: 'share',
       onClick: () => console.log('share'), // TODO same as createShareableLink but also handle lens connect, open to share
     },
   ];
@@ -75,8 +98,8 @@ const Header = ({ content }) => {
       <Image
         src={content.lossyArtworkUrl}
         alt={`Album image for ${content.title} from ${content.artist.name}`}
-        width={200}
-        height={200}
+        width={artworkSize}
+        height={artworkSize}
         placeholder='blur'
         blurDataURL='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNMyflfDwAFWwJQh9q4ZQAAAABJRU5ErkJggg=='
       />
