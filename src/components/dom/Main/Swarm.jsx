@@ -147,6 +147,10 @@ const Swarm = () => {
                 },
               ]}
             />
+            <div className='artwork'>
+              <span>artwork as background</span>
+              <Switch checked={artworkBg} onChange={toggleArtworkBg} />
+            </div>
             <div className='colors'>
               <span className='header'>audiovisual effects_</span>
               {/* Scale */}
@@ -248,15 +252,23 @@ const Swarm = () => {
 };
 
 const Tab = ({ type }) => {
-  const { colorA, colorB, background, setColorA, setColorB, setBackground } =
-    stores.useSwarm((state) => ({
-      colorA: state.colorA,
-      colorB: state.colorB,
-      background: state.background,
-      setColorA: state.setColorA,
-      setColorB: state.setColorB,
-      setBackground: state.setBackground,
-    }));
+  const {
+    colorA,
+    colorB,
+    background,
+    artworkBg,
+    setColorA,
+    setColorB,
+    setBackground,
+  } = stores.useSwarm((state) => ({
+    colorA: state.colorA,
+    colorB: state.colorB,
+    background: state.background,
+    artworkBg: state.artworkBg,
+    setColorA: state.setColorA,
+    setColorB: state.setColorB,
+    setBackground: state.setBackground,
+  }));
 
   return (
     <div className='colors'>
@@ -279,6 +291,7 @@ const Tab = ({ type }) => {
         list={`colors-${type}`}
         value={background[type]}
         onChange={(e) => setBackground(e.target.value, type)}
+        disabled={artworkBg}
       />
       <datalist id={`colors-${type}`}>
         {BACKGROUNDS[type].map((c) => (

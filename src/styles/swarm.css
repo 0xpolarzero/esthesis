@@ -45,7 +45,8 @@
 
 .swarm .colors,
 .swarm .pattern,
-.swarm .count {
+.swarm .count,
+.swarm .artwork {
   display: grid;
   grid-template-columns: 1fr auto;
   gap: 1rem;

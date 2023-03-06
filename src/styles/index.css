@@ -221,7 +221,8 @@ span.button-primary button.has-icon {
 }
 /* Disabled */
 button.button-primary:disabled,
-span.button-primary button:disabled {
+span.button-primary button:disabled,
+input:disabled {
   opacity: 0.5;
   cursor: not-allowed;
   border-color: transparent;
