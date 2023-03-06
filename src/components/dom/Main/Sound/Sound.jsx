@@ -1,20 +1,25 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Collapse } from 'antd';
 import Search from '../Search';
 import Utils from '../../Utils';
 import stores from '@/stores';
 import hooks from '@/hooks';
-import TrackRow from './TrackRow';
+import More from './More';
 import Navigation from './Navigation';
+import TrackRow from './TrackRow';
 
 const { TableSkeleton } = Utils;
 
 const { Panel } = Collapse;
 
 const Sound = () => {
-  const tracks = stores.useSpinamp((state) => state.tracks);
+  const { tracks, setModalContent } = stores.useSpinamp((state) => ({
+    tracks: state.tracks,
+    setModalContent: state.setModalContent,
+  }));
   const start = stores.useAudio((state) => state.start);
   const { isMobile, windowSize } = hooks.useWindowSize();
+
   const ref = useRef(null);
 
   useEffect(() => {
@@ -51,7 +56,7 @@ const Sound = () => {
                     className='track-card'
                     key={track.id}
                     onClick={() => start(track)}>
-                    <TrackRow track={track} />
+                    <TrackRow track={track} setModalContent={setModalContent} />
                   </div>
                   {tracks.items.indexOf(track) !== tracks.items.length - 1 ? (
                     <span className='separator horizontal' />
@@ -62,6 +67,7 @@ const Sound = () => {
                   key={track.id}
                   track={track}
                   onClick={() => start(track)}
+                  setModalContent={setModalContent}
                 />
               ),
             )
@@ -77,6 +83,8 @@ const Sound = () => {
           )}
         </Panel>
       </Collapse>
+
+      <More />
     </div>
   );
 };

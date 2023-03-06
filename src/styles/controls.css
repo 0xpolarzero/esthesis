@@ -60,6 +60,9 @@
   overflow-y: scroll !important;
   -webkit-overflow-scrolling: touch !important;
   font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
 }
 
 /* Slider (progress) */

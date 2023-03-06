@@ -25,6 +25,10 @@ export default create((set, get) => ({
   errorAllTracks: false,
   filteredBy: null,
 
+  // Modal
+  modalContent: null,
+  setModalContent: (value) => set({ modalContent: value }),
+
   /**
    * @notice Fetch paginated tracks
    */

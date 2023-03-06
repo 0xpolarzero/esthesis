@@ -38,11 +38,14 @@
   grid-template-columns: 1fr;
   gap: 1rem;
   padding: 0;
-  /* max-height: 100%; */
-  /* overflow: scroll; */
 }
 
 /* Row */
+.sound .track-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
 .sound .track-row__title {
   display: flex;
   align-items: center;
@@ -57,6 +60,13 @@
 .sound .track-row__more {
   display: flex;
   align-items: center;
+  gap: 1rem;
+}
+.sound .panel.mobile .track-row__more {
+  margin-top: 0.5rem;
+}
+.sound .track-row__more a {
+  display: flex;
 }
 
 /* Filter */
@@ -77,6 +87,67 @@
 .sound .navigation {
   display: flex;
   gap: 1rem;
+}
+
+/* Modal */
+.more-modal {
+  /*  */
+}
+
+.more-modal .ant-collapse-header {
+  padding: 1rem 0 0 0 !important;
+}
+
+.more-modal .header {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 1rem;
+}
+.more-modal.mobile .header {
+  grid-template-columns: 1fr;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+.more-modal.mobile .ant-collapse-content-box {
+  padding: 0.5rem 0 0 0 !important;
+}
+
+.more-modal .header .links {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+.more-modal.mobile .header .links {
+  gap: 1rem;
+}
+
+.more-modal .header .links .profiles,
+.more-modal .header .links .profiles-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.more-modal.mobile .header .links .profiles,
+.more-modal.mobile .header .links .profiles-content {
+  gap: 0.5rem;
+}
+.more-modal .header .links .profiles-content {
+  gap: 0.5rem;
+}
+.more-modal.mobile .header .links .profiles-content {
+  flex-direction: row;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.more-modal .description {
+  text-align: justify;
+}
+.more-modal .description p:first-child {
+  margin-top: 0;
+}
+.more-modal .description p:last-child {
+  margin-bottom: 0;
 }
 
 /* Antd */

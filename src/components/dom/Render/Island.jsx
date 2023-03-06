@@ -27,7 +27,7 @@ const Island = () => {
         </span>
         <a className='platform with-icon'>
           <RiExternalLinkLine size={20} />
-          see on {playing.data.platformId}
+          listen on {playing.data.platformId}
         </a>
         <Collapse
           bordered={false}
@@ -36,7 +36,7 @@ const Island = () => {
           <Panel header='more' key='1'>
             <div className='expand'>
               <div className='profiles'>
-                <span className='label'>see artist on</span>
+                <span className='label'>open profile on</span>
                 <div className='profiles-content'>
                   {Object.keys(playing.data.artist.profiles).map(
                     (profile, i) => (
@@ -59,12 +59,20 @@ const Island = () => {
               </div>
               <div className='description'>
                 <span className='label'>context</span>
-                {playing.data.description.split('\n').map((line, i) => (
-                  <span key={i}>
-                    {line}
-                    <br />
+                {playing.data.description &&
+                playing.data.description.length &&
+                content.description !== '<br>' ? (
+                  playing.data.description.split('\n').map((line, i) => (
+                    <span key={i}>
+                      {line}
+                      <br />
+                    </span>
+                  ))
+                ) : (
+                  <span className='empty'>
+                    no description provided for this track
                   </span>
-                ))}
+                )}
               </div>
             </div>
           </Panel>

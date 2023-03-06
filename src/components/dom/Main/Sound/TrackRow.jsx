@@ -7,9 +7,12 @@ import {
 } from 'react-icons/ai';
 import { CiCircleMore } from 'react-icons/ci';
 import { RiExternalLinkLine, RiPlayFill } from 'react-icons/ri';
+import { RxDisc, RxPerson, RxRocket, RxTimer } from 'react-icons/rx';
 import ElapsedTime from '../../Utils/ElapsedTime';
+import stores from '@/stores';
+import hooks from '@/hooks';
 
-const TrackRow = ({ track, onClick }) => {
+const TrackRow = ({ track, onClick, setModalContent }) => {
   const playing = stores.useAudio((state) => state.playing);
   const { filterBy, loadingAllTracks } = stores.useSpinamp((state) => ({
     filterBy: state.filterBy,
@@ -22,6 +25,12 @@ const TrackRow = ({ track, onClick }) => {
       key: '1',
       label: 'more info',
       icon: <AiOutlineInfoCircle size={20} />,
+      onClick: () => setModalContent(track),
+      mobile: (
+        <span className='with-icon'>
+          <AiOutlineInfoCircle size={20} /> more
+        </span>
+      ),
     },
     {
       key: '2',
@@ -69,7 +78,7 @@ const TrackRow = ({ track, onClick }) => {
     {
       key: '2',
       type: 'group',
-      label: `see profile on`,
+      label: `open profile on`,
       icon: <AiOutlineInfoCircle size={20} />,
       children: Object.keys(track.artist.profiles).map((profile) => ({
         key: track.artist.profiles[profile].platformId,
@@ -107,7 +116,7 @@ const TrackRow = ({ track, onClick }) => {
             playing?.data?.id === track.id ? 'active' : ''
           }`}
           onClick={onClick}>
-          <RiPlayFill size={20} />
+          {isMobile ? <RxDisc size={20} /> : <RiPlayFill size={20} />}
           {track.title.length > 40 ? (
             <>
               {track.title.substring(0, 40)}
@@ -120,7 +129,8 @@ const TrackRow = ({ track, onClick }) => {
       </Tooltip>
       <div className='track-row__artist'>
         <Dropdown menu={{ items: artistDropdown }}>
-          <a>
+          <a className='with-icon'>
+            {isMobile ? <RxPerson size={20} /> : null}
             {track.artist.name.length > 20
               ? `${track.artist.name.substring(
                   0,
@@ -134,11 +144,13 @@ const TrackRow = ({ track, onClick }) => {
       </div>
       <div className='track-row__platform'>
         <a
+          className='with-icon'
           onClick={(e) => {
             e.stopPropagation();
             if (loadingAllTracks) return;
             filterBy('platform', track.platformId);
           }}>
+          {isMobile ? <RxRocket size={20} /> : null}
           {track.platformId.length > 20 ? (
             <Tooltip title={track.platformId} arrow={false}>
               {track.platformId.substring(0, 6)}...
@@ -150,21 +162,14 @@ const TrackRow = ({ track, onClick }) => {
         </a>
       </div>
       <div className='track-row__date'>
-        {/* {new Date(track.createdAtTime).toLocaleDateString()} */}
-        <ElapsedTime time={new Date(track.createdAtTime)} />
+        <span className='with-icon'>
+          {isMobile ? <RxTimer size={20} /> : null}
+          <ElapsedTime time={new Date(track.createdAtTime)} />
+        </span>
       </div>
       <div className='track-row__more'>
         {isMobile ? (
-          <span
-            style={{
-              display: 'flex',
-              gap: '1rem',
-              marginTop: '0.5rem',
-            }}>
-            {infoDropdown.map((item, index) =>
-              index !== 0 ? item.mobile : null,
-            )}
-          </span>
+          infoDropdown.map((item, index) => item.mobile)
         ) : (
           <Dropdown menu={{ items: infoDropdown }} placement='bottomLeft'>
             <CiCircleMore size={20} />

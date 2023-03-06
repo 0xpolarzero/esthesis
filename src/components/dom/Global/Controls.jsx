@@ -9,6 +9,7 @@ import {
 import Utils from '../Utils';
 import stores from '@/stores';
 import hooks from '@/hooks';
+import { AiOutlineInfoCircle } from 'react-icons/ai';
 
 const { Duration } = Utils;
 
@@ -112,10 +113,11 @@ const Controls = ({ type }) => {
 
 const Title = ({ playing }) => {
   const duration = stores.useAudio((state) => state.duration);
+  const setModalContent = stores.useSpinamp((state) => state.setModalContent);
   const { isMobile } = hooks.useWindowSize();
 
   return (
-    <div className='scroll'>
+    <div className='scroll' onClick={() => setModalContent(playing.data)}>
       {playing.data.title}{' '}
       {isMobile ? (
         <span style={{ opacity: 0.8 }}>
@@ -130,6 +132,11 @@ const Title = ({ playing }) => {
           <span style={{ opacity: 0.7 }}>
             <Duration time={duration} />
           </span>
+          <Divider type='vertical' style={{ margin: '0 2rem' }} />
+          <AiOutlineInfoCircle
+            size={20}
+            onClick={() => setModalContent(playing.data)}
+          />
         </>
       )}
     </div>
