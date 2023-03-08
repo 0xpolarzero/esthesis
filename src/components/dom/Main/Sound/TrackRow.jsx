@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import { Dropdown, Tooltip } from 'antd';
 import {
+  AiFillHeart,
   AiOutlineFilter,
   AiOutlineHeart,
   AiOutlineInfoCircle,
@@ -18,19 +19,32 @@ const TrackRow = ({ track, onClick, setModalContent }) => {
     filterBy: state.filterBy,
     loadingAllTracks: state.loadingAllTracks,
   }));
-  const { isMobile } = hooks.useWindowSize();
+  const { connected, isFavorite, toggleFavorite } = stores.useInteract(
+    (state) => ({
+      connected: state.connected,
+      isFavorite: state.isFavorite,
+      toggleFavorite: state.toggleFavorite,
+    }),
+  );
+  const { isMobile, isWideScreen } = hooks.useWindowSize();
 
   const infoDropdown = [
     {
       key: '1',
       label: 'more info',
       icon: <AiOutlineInfoCircle size={20} />,
-      onClick: () => setModalContent(track),
       mobile: (
         <span className='with-icon'>
           <AiOutlineInfoCircle size={20} /> more
         </span>
       ),
+      large: (
+        <Tooltip title='more info'>
+          <AiOutlineInfoCircle size={20} />
+        </Tooltip>
+      ),
+      onClick: () => setModalContent(track),
+      disabled: false,
     },
     {
       key: '2',
@@ -49,12 +63,48 @@ const TrackRow = ({ track, onClick, setModalContent }) => {
           <RiExternalLinkLine size={20} />
         </a>
       ),
+      large: (
+        <Tooltip title={`open in ${track.platformId}`}>
+          <a href={track.websiteUrl} target='_blank' rel='noreferrer'>
+            <RiExternalLinkLine size={20} />
+          </a>
+        </Tooltip>
+      ),
+      onClick: null,
+      disabled: false,
     },
     {
       key: '3',
-      label: 'add to favorites',
-      icon: <AiOutlineHeart size={20} />,
-      mobile: <AiOutlineHeart size={20} />,
+      label: (
+        <Tooltip
+          title={
+            connected
+              ? null
+              : 'you need to be connected to perform this action.'
+          }>
+          {isFavorite(track.id) ? 'remove from favorites' : 'add to favorites'}
+        </Tooltip>
+      ),
+      icon: isFavorite(track.id) ? (
+        <AiFillHeart size={20} />
+      ) : (
+        <AiOutlineHeart size={20} />
+      ),
+      mobile: isFavorite(track.id) ? (
+        <AiFillHeart size={20} />
+      ) : (
+        <AiOutlineHeart size={20} />
+      ),
+      large: (
+        <Tooltip
+          title={
+            connected ? 'add to favorites' : 'you need to connect to interact'
+          }>
+          <AiOutlineHeart className={connected ? '' : 'disabled'} size={20} />
+        </Tooltip>
+      ),
+      onClick: () => toggleFavorite(track.id),
+      disabled: !connected,
     },
   ];
 
@@ -173,9 +223,27 @@ const TrackRow = ({ track, onClick, setModalContent }) => {
           <ElapsedTime time={new Date(track.createdAtTime)} />
         </span>
       </div>
-      <div className='track-row__more'>
+      <div className='track-row__more interact-svg'>
         {isMobile ? (
-          infoDropdown.map((item, index) => item.mobile)
+          infoDropdown.map((item, index) => (
+            <Tooltip
+              key={index}
+              title={
+                item.disabled
+                  ? 'You need to be connected to perform this action'
+                  : null
+              }>
+              <a
+                onClick={item.onClick}
+                className={item.disabled ? 'disabled' : ''}>
+                {item.mobile}
+              </a>
+            </Tooltip>
+          ))
+        ) : isWideScreen ? (
+          <div className='with-icon'>
+            {infoDropdown.map((item, index) => item.large)}
+          </div>
         ) : (
           <Dropdown menu={{ items: infoDropdown }} placement='bottomLeft'>
             <CiCircleMore size={20} />

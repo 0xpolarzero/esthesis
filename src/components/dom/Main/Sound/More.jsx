@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
-import { Collapse, Modal } from 'antd';
-import { AiOutlineHeart, AiOutlineShareAlt } from 'react-icons/ai';
+import { Collapse, Modal, Tooltip } from 'antd';
+import { AiFillHeart, AiOutlineHeart, AiOutlineShareAlt } from 'react-icons/ai';
 import { RiExternalLinkLine } from 'react-icons/ri';
 import stores from '@/stores';
 import hooks from '@/hooks';
@@ -64,6 +64,13 @@ const More = () => {
 };
 
 const Header = ({ content }) => {
+  const { connected, isFavorite, toggleFavorite } = stores.useInteract(
+    (state) => ({
+      connected: state.connected,
+      isFavorite: state.isFavorite,
+      toggleFavorite: state.toggleFavorite,
+    }),
+  );
   const { isMobile, windowSize } = hooks.useWindowSize();
   const [artworkSize, setArtworkSize] = useState(200);
 
@@ -80,16 +87,22 @@ const Header = ({ content }) => {
 
   const actions = [
     {
-      icon: <AiOutlineHeart size={20} />,
+      icon: isFavorite(content.id) ? (
+        <AiFillHeart size={20} />
+      ) : (
+        <AiOutlineHeart size={20} />
+      ),
       text: 'add to favorites',
       mobile: 'favorites',
-      onClick: () => console.log('add to favorites'),
+      onClick: () => toggleFavorite(content.id),
+      disabled: !connected,
     },
     {
       icon: <AiOutlineShareAlt size={20} />,
       text: 'share',
       mobile: 'share',
       onClick: () => console.log('share'), // TODO same as createShareableLink but also handle lens connect, open to share
+      disabled: !connected,
     },
   ];
 
@@ -132,21 +145,37 @@ const Header = ({ content }) => {
         <div className='actions'>
           {isMobile
             ? actions.map((action) => (
-                <a
-                  className='with-icon'
-                  key={action.text}
-                  onClick={action.onClick}>
-                  {action.icon} {action.mobile}
-                </a>
+                <Tooltip
+                  title={
+                    connected
+                      ? null
+                      : `you need to be connected to perform this action.`
+                  }
+                  key={action.text}>
+                  <a
+                    className={`with-icon ${action.disabled ? 'disabled' : ''}`}
+                    onClick={action.onClick}>
+                    {action.icon} {action.mobile}
+                  </a>
+                </Tooltip>
               ))
             : actions.map((action) => (
-                <button
-                  className='button-primary with-icon'
-                  style={{ justifyContent: 'flex-start' }}
-                  key={action.text}
-                  onClick={action.onClick}>
-                  {action.icon} {action.text}
-                </button>
+                <Tooltip
+                  title={
+                    connected
+                      ? null
+                      : `you need to be connected to perform this action.`
+                  }
+                  className='button-primary with-icon large'
+                  key={action.text}>
+                  <button
+                    className='button-primary with-icon'
+                    style={{ justifyContent: 'flex-start' }}
+                    onClick={action.onClick}
+                    disabled={action.disabled}>
+                    {action.icon} {action.text}
+                  </button>
+                </Tooltip>
               ))}
         </div>
       </div>

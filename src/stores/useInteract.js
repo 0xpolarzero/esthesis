@@ -6,6 +6,23 @@ import config from '@/data';
 const { shaders: OPTIONS_SHADERS } = config.options;
 
 export default create((set, get) => ({
+  // Connection status
+  connected: false,
+  setConnected: (connected) => set({ connected }),
+
+  // Favorites
+  favorites: [],
+  isFavorite: (id) => get().favorites.includes(id),
+  toggleFavorite: (id) => {
+    const { favorites, connected } = get();
+    if (!connected) return;
+
+    set((state) => ({
+      favorites: favorites.includes(id)
+        ? favorites.filter((f) => f !== id)
+        : new Set([...favorites, id]),
+    }));
+  },
   // Get the exhaustive args for the link
   getLink: () => {
     const { colorA, colorB, background, pattern, count, effects } =
@@ -54,7 +71,8 @@ export default create((set, get) => ({
 
   // Create a shareable link (minified with a reference to Google Spreadsheet)
   createShareableLink: async () => {
-    const { getLink } = get();
+    const { getLink, connected } = get();
+    if (!connected) return;
     const link = getLink().shareable();
 
     if (!link)

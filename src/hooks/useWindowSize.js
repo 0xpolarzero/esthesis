@@ -20,7 +20,7 @@ const useWindowSize = () => {
       } else {
         setIsMobile(false);
       }
-      if (window.innerWidth > 1400) {
+      if (window.innerWidth > 1200) {
         setIsWideScreen(true);
       } else {
         setIsWideScreen(false);

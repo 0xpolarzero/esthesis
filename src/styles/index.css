@@ -122,17 +122,17 @@ a {
 }
 a:hover {
   color: var(--text-link-hover);
+  cursor: var(--cursor-hover);
+}
+a.disabled {
+  color: var(--text-main);
+  opacity: 0.5;
 }
 
 h1 {
   line-height: 1.1;
   font-weight: 300;
   margin-top: 0;
-}
-
-a:hover,
-svg:hover {
-  cursor: var(--cursor-hover);
 }
 
 /* 
@@ -154,12 +154,18 @@ input {
   cursor: var(--cursor-hover);
   transition: all 0.25s ease;
 }
+
 button.button-primary,
 span.button-primary button {
   padding: 0.6em 1.2em;
 }
 button.button-primary.small {
   padding: 0.2em 0.4em;
+}
+button.button-primary.large,
+span.button-primary.large button,
+input {
+  width: 100%;
 }
 input[type='color'] {
   background: var(--background-main);
@@ -213,8 +219,8 @@ span.button-primary button.loading span::before {
   animation: spin 1s linear infinite;
 }
 /* with icon */
-button.button-primary.has-icon,
-span.button-primary button.has-icon {
+button.button-primary.with-icon,
+span.button-primary.with-icon button {
   display: flex;
   align-items: center;
   gap: 1rem;
@@ -251,18 +257,25 @@ button.special:hover {
   border-color: var(--text-link-hover);
 }
 
-svg {
+.links svg,
+.interact-svg svg {
   color: var(--text-main);
   fill: var(--text-main);
   stroke: var(--text-main);
   opacity: 0.8;
   transition: all 0.2s ease;
 }
-svg:hover {
+.links svg:hover,
+.interact-svg svg:hover {
   opacity: 1;
   color: var(--text-main-full);
   fill: var(--text-main-full);
   stroke: var(--text-main-full);
+  cursor: var(--cursor-hover);
+}
+.interact-svg svg.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 /* 
