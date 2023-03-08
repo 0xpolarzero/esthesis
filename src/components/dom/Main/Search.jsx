@@ -11,6 +11,7 @@ const Search = () => {
     onSearchTrack,
     unpaginatedTracks,
     loadingAllTracks,
+    errorTracks,
     errorAllTracks,
     setIsSearching,
   } = stores.useSpinamp((state) => ({
@@ -18,6 +19,7 @@ const Search = () => {
     onSearchTrack: state.onSearchTrack,
     unpaginatedTracks: state.unpaginatedTracks,
     loadingAllTracks: state.loadingAllTracks,
+    errorTracks: state.errorTracks,
     errorAllTracks: state.errorAllTracks,
     setIsSearching: state.setIsSearching,
   }));
@@ -94,7 +96,7 @@ const Search = () => {
     }
   }, [searchValue]);
 
-  if (errorAllTracks)
+  if (errorAllTracks && !errorTracks)
     return (
       <div className='search'>
         Error loading all tracks. Search not available, try to reload the page.

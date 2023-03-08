@@ -13,10 +13,13 @@ const { TableSkeleton } = Utils;
 const { Panel } = Collapse;
 
 const Sound = () => {
-  const { tracks, setModalContent } = stores.useSpinamp((state) => ({
-    tracks: state.tracks,
-    setModalContent: state.setModalContent,
-  }));
+  const { tracks, errorTracks, setModalContent } = stores.useSpinamp(
+    (state) => ({
+      tracks: state.tracks,
+      errorTracks: state.errorTracks,
+      setModalContent: state.setModalContent,
+    }),
+  );
   const start = stores.useAudio((state) => state.start);
   const { isMobile, windowSize } = hooks.useWindowSize();
 
@@ -47,7 +50,11 @@ const Sound = () => {
 
           <Navigation />
 
-          {tracks?.items ? (
+          {errorTracks ? (
+            <div>
+              There was an error loading tracks. Please try to reload the page.
+            </div>
+          ) : tracks?.items ? (
             tracks.items.map((track) =>
               // Render a card on mobile, a row on desktop
               isMobile ? (

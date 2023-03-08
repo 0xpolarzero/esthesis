@@ -4,6 +4,7 @@ import stores from '@/stores';
 const Navigation = () => {
   const {
     tracks,
+    errorTracks,
     page,
     navigatePage,
     totalCount,
@@ -12,6 +13,7 @@ const Navigation = () => {
     isSearching,
   } = stores.useSpinamp((state) => ({
     tracks: state.tracks,
+    errorTracks: state.errorTracks,
     page: state.page,
     navigatePage: state.navigatePage,
     totalCount: state.totalCount,
@@ -19,6 +21,8 @@ const Navigation = () => {
     filteredBy: state.filteredBy,
     isSearching: state.isSearching,
   }));
+
+  if (errorTracks) return null;
 
   return (
     <>
