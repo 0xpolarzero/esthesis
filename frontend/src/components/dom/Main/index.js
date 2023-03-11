@@ -1,5 +1,5 @@
-import Background from './Background';
 import Sound from './Sound';
 import Swarm from './Swarm';
+import User from './User';
 
-export { Background, Sound, Swarm };
+export { Sound, Swarm, User };

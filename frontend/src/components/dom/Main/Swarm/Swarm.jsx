@@ -109,7 +109,7 @@ const Swarm = () => {
         expandIcon={() => <AiOutlineLeft size={14} />}
         expandIconPosition='end'>
         <Panel
-          header='swarm'
+          header='customize'
           key='1'
           className={`panel ${isMobile ? 'mobile' : 'desktop'}`}>
           <div className='wrapper'>

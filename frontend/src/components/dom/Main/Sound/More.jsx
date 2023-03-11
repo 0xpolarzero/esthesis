@@ -5,6 +5,7 @@ import { AiFillHeart, AiOutlineHeart, AiOutlineShareAlt } from 'react-icons/ai';
 import { RiExternalLinkLine } from 'react-icons/ri';
 import stores from '@/stores';
 import hooks from '@/hooks';
+import { FavoritesIcon, FavoritesLabel } from './Favorites';
 
 const { Panel } = Collapse;
 
@@ -64,15 +65,32 @@ const More = () => {
 };
 
 const Header = ({ content }) => {
-  const { connected, isFavorite, toggleFavorite } = stores.useInteract(
+  const { connected, favoritesLoaded, toggleFavorite } = stores.useInteract(
     (state) => ({
       connected: state.connected,
-      isFavorite: state.isFavorite,
+      favoritesLoaded: state.favoritesLoaded,
       toggleFavorite: state.toggleFavorite,
     }),
   );
   const { isMobile, windowSize } = hooks.useWindowSize();
   const [artworkSize, setArtworkSize] = useState(200);
+
+  const actions = [
+    {
+      icon: <FavoritesIcon id={content.id} />,
+      text: <FavoritesLabel id={content.id} type='minimal' />,
+      mobile: 'favorites',
+      onClick: () => toggleFavorite(content.id),
+      disabled: !connected || !favoritesLoaded,
+    },
+    {
+      icon: <AiOutlineShareAlt size={20} />,
+      text: 'share',
+      mobile: 'share',
+      onClick: () => console.log('share'), // TODO same as createShareableLink but also handle lens connect, open to share
+      disabled: !connected,
+    },
+  ];
 
   useEffect(() => {
     if (!windowSize.width) return;
@@ -84,27 +102,6 @@ const Header = ({ content }) => {
 
     setArtworkSize(size);
   }, [windowSize.width]);
-
-  const actions = [
-    {
-      icon: isFavorite(content.id) ? (
-        <AiFillHeart size={20} />
-      ) : (
-        <AiOutlineHeart size={20} />
-      ),
-      text: 'add to favorites',
-      mobile: 'favorites',
-      onClick: () => toggleFavorite(content.id),
-      disabled: !connected,
-    },
-    {
-      icon: <AiOutlineShareAlt size={20} />,
-      text: 'share',
-      mobile: 'share',
-      onClick: () => console.log('share'), // TODO same as createShareableLink but also handle lens connect, open to share
-      disabled: !connected,
-    },
-  ];
 
   return (
     <div className='header'>

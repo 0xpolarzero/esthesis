@@ -12,3 +12,9 @@ Use allowlist to interact (favorite & create share link)
 Connect wallet before, only do it if in the allowlist
 
 How to allow people? How to request access?
+
+API calls with selector
+
+Calculate gasLeft to decrement credits for the user
+deposit function to add credits
+Use 'pay as you go' (just sign tx and pay, no need for whitelist) or whitelist (pay upfront and sign with our private key)

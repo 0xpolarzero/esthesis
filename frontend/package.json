@@ -19,12 +19,15 @@
     "start": "next start"
   },
   "dependencies": {
+    "@metamask/eth-sig-util": "^5.0.2",
     "@react-spring/three": "^9.6.1",
     "@react-three/drei": "9.51.10",
     "@react-three/fiber": "^8.10.1",
     "@spinamp/spinamp-sdk": "^0.0.7",
     "antd": "^5.2.1",
+    "ethers": "5.7.2",
     "googleapis": "^111.0.0",
+    "magic-sdk": "^13.6.0",
     "match-sorter": "^6.3.1",
     "next": "^13.1.6",
     "next-pwa": "^5.6.0",

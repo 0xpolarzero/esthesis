@@ -168,6 +168,7 @@ input {
   width: 100%;
 }
 input[type='color'] {
+  min-width: 4em;
   background: var(--background-main);
 }
 /* Hover */

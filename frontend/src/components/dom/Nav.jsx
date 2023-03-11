@@ -2,8 +2,8 @@ import { Fragment, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { Divider, Dropdown, Tooltip } from 'antd';
 import { AiOutlineInfoCircle, AiOutlineMenu } from 'react-icons/ai';
-import { BsThermometerHigh, BsThermometerLow } from 'react-icons/bs';
 import { CiDark, CiLight } from 'react-icons/ci';
+import { User } from './Main';
 import stores from '@/stores';
 
 const Nav = ({ type = 'default' }) => {
@@ -21,7 +21,7 @@ const Nav = ({ type = 'default' }) => {
       <div className='title'>
         {type === 'shared' ? null : (
           <>
-            visual<span className='emphasize'>ize</span>
+            ecl<span className='emphasize'>ipse</span>
           </>
         )}
       </div>
@@ -34,7 +34,9 @@ const Nav = ({ type = 'default' }) => {
             <a onClick={() => router.push('/')}>app</a>
             <Divider type='vertical' />
           </>
-        ) : null}
+        ) : (
+          <User />
+        )}
         <Tooltip
           title={
             <>

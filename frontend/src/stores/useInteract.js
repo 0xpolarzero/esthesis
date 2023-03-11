@@ -1,6 +1,8 @@
 import { create } from 'zustand';
+import { toast } from 'react-toastify';
 import useAudio from './useAudio';
 import useSwarm from './useSwarm';
+import { getFavorites, addFavorite, removeFavorite } from '@/systems/interact';
 import config from '@/data';
 
 const { shaders: OPTIONS_SHADERS } = config.options;
@@ -9,19 +11,64 @@ export default create((set, get) => ({
   // Connection status
   connected: false,
   setConnected: (connected) => set({ connected }),
+  address: null,
+  setAddress: (address) => set({ address }),
+  isAllowlisted: () => config.allowlist.includes(get().address),
 
   // Favorites
   favorites: [],
+  favoritesLoaded: false,
   isFavorite: (id) => get().favorites.includes(id),
-  toggleFavorite: (id) => {
-    const { favorites, connected } = get();
+  setFavorites: async (address) => {
+    const favorites = await getFavorites(address);
+    set({ favorites, favoritesLoaded: true });
+  },
+  toggleFavorite: async (id) => {
+    const { connected, address, isFavorite, favorites } = get();
     if (!connected) return;
 
-    set((state) => ({
-      favorites: favorites.includes(id)
-        ? favorites.filter((f) => f !== id)
-        : new Set([...favorites, id]),
-    }));
+    if (!isFavorite(id)) {
+      // OR
+      const notif = toast.loading('Adding to favorites...');
+      const { success, error } = await addFavorite(address, id);
+      if (success) {
+        toast.update(notif, {
+          render: 'Added to favorites',
+          type: 'success',
+          isLoading: false,
+          autoClose: 3000,
+        });
+        set((state) => ({ favorites: [...favorites, id] }));
+      } else {
+        toast.update(notif, {
+          render: 'Error adding to favorites',
+          type: 'error',
+          isLoading: false,
+          autoClose: 3000,
+        });
+        console.error(error);
+      }
+    } else {
+      const notif = toast.loading('Removing from favorites...');
+      const { success, error } = await removeFavorite(address, id);
+      if (success) {
+        toast.update(notif, {
+          render: 'Removed from favorites',
+          type: 'success',
+          isLoading: false,
+          autoClose: 3000,
+        });
+        set((state) => ({ favorites: favorites.filter((f) => f !== id) }));
+      } else {
+        toast.update(notif, {
+          render: 'Error removing from favorites',
+          type: 'error',
+          isLoading: false,
+          autoClose: 3000,
+        });
+        console.error(error);
+      }
+    }
   },
   // Get the exhaustive args for the link
   getLink: () => {

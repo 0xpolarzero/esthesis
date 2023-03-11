@@ -1,8 +1,8 @@
 import Head from 'next/head';
 
-const titleDefault = 'visualize';
-const url = 'https://visualize.polarzero.xyz/';
-const description = 'Music NFTs immersive visualizer';
+const titleDefault = 'eclipse';
+const url = 'https://eclipse.polarzero.xyz/';
+const description = 'Music NFTs immersive eclipser';
 const author = 'polarzero';
 
 const Header = ({ title = titleDefault }) => {

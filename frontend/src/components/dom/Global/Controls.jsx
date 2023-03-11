@@ -76,7 +76,7 @@ const Controls = ({ type }) => {
   return (
     <div className='controls'>
       {playing ? <Title playing={playing} /> : '_select a track'}
-      <div className='buttons'>
+      <div className='buttons interact-svg'>
         {type === 'shared' ? null : (
           <>
             <MdOutlineLoop

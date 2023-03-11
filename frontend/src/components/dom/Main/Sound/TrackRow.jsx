@@ -1,17 +1,13 @@
 import Image from 'next/image';
 import { Dropdown, Tooltip } from 'antd';
-import {
-  AiFillHeart,
-  AiOutlineFilter,
-  AiOutlineHeart,
-  AiOutlineInfoCircle,
-} from 'react-icons/ai';
+import { AiOutlineFilter, AiOutlineInfoCircle } from 'react-icons/ai';
 import { CiCircleMore } from 'react-icons/ci';
 import { RiExternalLinkLine, RiPlayFill } from 'react-icons/ri';
 import { RxDisc, RxPerson, RxRocket, RxTimer } from 'react-icons/rx';
 import ElapsedTime from '../../Utils/ElapsedTime';
 import stores from '@/stores';
 import hooks from '@/hooks';
+import { FavoritesIcon, FavoritesLabel } from './Favorites';
 
 const TrackRow = ({ track, onClick, setModalContent }) => {
   const playing = stores.useAudio((state) => state.playing);
@@ -19,10 +15,10 @@ const TrackRow = ({ track, onClick, setModalContent }) => {
     filterBy: state.filterBy,
     loadingAllTracks: state.loadingAllTracks,
   }));
-  const { connected, isFavorite, toggleFavorite } = stores.useInteract(
+  const { connected, favoritesLoaded, toggleFavorite } = stores.useInteract(
     (state) => ({
       connected: state.connected,
-      isFavorite: state.isFavorite,
+      favoritesLoaded: state.favoritesLoaded,
       toggleFavorite: state.toggleFavorite,
     }),
   );
@@ -75,36 +71,12 @@ const TrackRow = ({ track, onClick, setModalContent }) => {
     },
     {
       key: '3',
-      label: (
-        <Tooltip
-          title={
-            connected
-              ? null
-              : 'you need to be connected to perform this action.'
-          }>
-          {isFavorite(track.id) ? 'remove from favorites' : 'add to favorites'}
-        </Tooltip>
-      ),
-      icon: isFavorite(track.id) ? (
-        <AiFillHeart size={20} />
-      ) : (
-        <AiOutlineHeart size={20} />
-      ),
-      mobile: isFavorite(track.id) ? (
-        <AiFillHeart size={20} />
-      ) : (
-        <AiOutlineHeart size={20} />
-      ),
-      large: (
-        <Tooltip
-          title={
-            connected ? 'add to favorites' : 'you need to connect to interact'
-          }>
-          <AiOutlineHeart className={connected ? '' : 'disabled'} size={20} />
-        </Tooltip>
-      ),
+      label: <FavoritesLabel id={track.id} type='default' />,
+      icon: <FavoritesIcon id={track.id} />,
+      mobile: <FavoritesIcon id={track.id} />,
+      large: <FavoritesLabel id={track.id} type='extended' />,
       onClick: () => toggleFavorite(track.id),
-      disabled: !connected,
+      disabled: !connected || !favoritesLoaded,
     },
   ];
 

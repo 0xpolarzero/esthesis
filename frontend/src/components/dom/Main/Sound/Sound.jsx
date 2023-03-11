@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Collapse } from 'antd';
-import Search from '../Search';
+import Search from './Search';
 import Utils from '../../Utils';
 import stores from '@/stores';
 import hooks from '@/hooks';
@@ -43,7 +43,7 @@ const Sound = () => {
       <Collapse bordered={false} ghost defaultActiveKey={['1']}>
         <Panel
           ref={ref}
-          header='sound'
+          header='explore'
           key='1'
           className={`panel ${isMobile ? 'mobile' : 'desktop'}`}>
           <Search />
