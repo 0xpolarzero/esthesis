@@ -32,17 +32,22 @@ const User = () => {
     const message =
       'Please sign this message to verify that you own this address.';
     const signer = provider.getSigner();
-    // Sign a message with the address
-    const signature = await signer.signMessage(message);
-    // Recover the address from the signature
-    const recoveredAddress = recoverPersonalSignature({
-      data: message,
-      sig: signature,
-    });
 
-    if (recoveredAddress === address) {
-      setConnected(true);
-      setAddress(address);
+    try {
+      // Sign a message with the address
+      const signature = await signer.signMessage(message);
+      // Recover the address from the signature
+      const recoveredAddress = recoverPersonalSignature({
+        data: message,
+        signature,
+      });
+
+      if (recoveredAddress === address) {
+        setConnected(true);
+        setAddress(address);
+      }
+    } catch (err) {
+      console.log(err);
     }
   };
 
