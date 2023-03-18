@@ -81,23 +81,38 @@ export default create((set, get) => ({
     //   i++;
     // }
 
-    // Or fetch all tracks in one request and then paginate them
-    const res = await fetchAllTracks().catch((err) => {
-      console.log('err', err);
-      set({ errorAllTracks: true });
-    });
+    // Fetch tracks by batch of 1000
+    let allTracks = [];
+    let hasNextPage = true;
+    let offset = 100; // first 100 tracks are already fetched
+    let totalCount = 0;
+
+    while (hasNextPage) {
+      const res = await fetchAllTracks({
+        first: 1000,
+        offset,
+      }).catch((err) => {
+        console.log('err', err);
+        set({ errorAllTracks: true });
+      });
+
+      allTracks.push(...res.items);
+      hasNextPage = res.pageInfo.hasNextPage;
+      offset += 1000;
+      if (!totalCount) totalCount = res.totalCount;
+    }
 
     // Create pages of 100 tracks with pagination info
-    const pagesAmount = Math.ceil(res.items.length / 100);
+    const pagesAmount = Math.ceil(allTracks.length / 100);
     const pages = [];
     for (let i = 0; i < pagesAmount; i++) {
       pages.push({
-        items: res.items.slice(i * 100, (i + 1) * 100),
+        items: allTracks.slice(i * 100, (i + 1) * 100),
         pageInfo: {
           hasNextPage: i < pagesAmount - 1,
           hasPreviousPage: i > 0,
         },
-        totalCount: res.totalCount,
+        totalCount,
       });
     }
 
