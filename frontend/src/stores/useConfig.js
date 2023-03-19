@@ -75,6 +75,12 @@ const getDarkProperties = (background) => [
   // },
 ];
 
+const getRainbowkitStyles = () => ({
+  accentColor: '#646cff',
+  fontStack: 'rounded',
+  borderRadius: 'small',
+});
+
 export default create((set, get) => ({
   /**
    * @notice Providers configuration
@@ -85,31 +91,31 @@ export default create((set, get) => ({
 
     return (
       <>
-        <ConfigProvider
-          theme={{
-            algorithm:
+        <WagmiConfig client={wagmiClient}>
+          <RainbowKitProvider
+            chains={chains}
+            theme={
               theme === 'dark'
-                ? antdTheme.darkAlgorithm
-                : antdTheme.defaultAlgorithm,
-            token: {
-              ...antdTheme.defaultAlgorithm.token,
-              fontFamily: 'var(--font-main)',
-              colorPrimary: '#646cff',
-              colorWarning: '#ff9e00',
-            },
-          }}>
-          <WagmiConfig client={wagmiClient}>
-            <RainbowKitProvider
-              chains={chains}
-              theme={
-                theme === 'dark'
-                  ? darkTheme({ accentColor: '#646cff' })
-                  : lightTheme({ accentColor: '#646cff' })
-              }>
+                ? darkTheme(getRainbowkitStyles())
+                : lightTheme(getRainbowkitStyles())
+            }>
+            <ConfigProvider
+              theme={{
+                algorithm:
+                  theme === 'dark'
+                    ? antdTheme.darkAlgorithm
+                    : antdTheme.defaultAlgorithm,
+                token: {
+                  ...antdTheme.defaultAlgorithm.token,
+                  fontFamily: 'var(--font-main)',
+                  colorPrimary: '#646cff',
+                  colorWarning: '#ff9e00',
+                },
+              }}>
               {children}
-            </RainbowKitProvider>
-          </WagmiConfig>
-        </ConfigProvider>
+            </ConfigProvider>
+          </RainbowKitProvider>
+        </WagmiConfig>
         <ToastContainer
           position={isMobile ? 'top-left' : 'bottom-left'}
           autoClose={5000}

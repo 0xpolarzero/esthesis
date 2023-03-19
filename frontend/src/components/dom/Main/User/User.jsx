@@ -1,15 +1,43 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ethers } from 'ethers';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { useAccount } from 'wagmi';
+import { AiOutlineUser } from 'react-icons/ai';
+import ConnectButtonMobile from './ConnectButtonMobile';
+import { waitForElem } from '@/systems/utils';
 import stores from '@/stores';
+import hooks from '@/hooks';
 
 const User = () => {
-  const { setConnected, setAddress } = stores.useInteract((state) => ({
-    setConnected: state.setConnected,
-    setAddress: state.setAddress,
-  }));
+  const { connected, setConnected, setAddress } = stores.useInteract(
+    (state) => ({
+      connected: state.connected,
+      setConnected: state.setConnected,
+      setAddress: state.setAddress,
+    }),
+  );
   const { address } = useAccount();
+  const { isMobile } = hooks.useWindowSize();
+
+  const wrapper = useRef(null);
+
+  const replaceSvg = async () => {
+    if (!wrapper.current || !connected) return;
+
+    // const svg = await waitForElem('.iekbcc0.ju367v6.ju367v9 ~ svg');
+    const buttonIcon = await waitForElem('.iekbcc0.ju367v6.ju367v9');
+    const svg = buttonIcon.nextElementSibling;
+    if (svg) {
+      svg.remove();
+      // Add after
+      const newIcon = document.createElement('span');
+      newIcon.textContent = '﹀';
+      newIcon.style.position = 'relative';
+      newIcon.style.top = '0.3rem';
+      newIcon.style.paddingLeft = '0.2rem';
+      buttonIcon.after(newIcon);
+    }
+  };
 
   useEffect(() => {
     if (address) {
@@ -21,13 +49,24 @@ const User = () => {
     }
   }, [address, setConnected, setAddress]);
 
+  useEffect(() => {
+    replaceSvg();
+  }, [connected]);
+
   return (
-    <ConnectButton
-      label='Connect'
-      accountStatus='address'
-      chainStatus='none'
-      showBalance={false}
-    />
+    <div ref={wrapper} id='a'>
+      {isMobile ? (
+        <ConnectButtonMobile />
+      ) : (
+        <ConnectButton
+          label={<AiOutlineUser size={20} />}
+          accountStatus={{ smallScreen: 'none', largeScreen: 'address' }}
+          chainStatus='none'
+          showBalance={false}
+          style={{ color: 'white' }}
+        />
+      )}
+    </div>
   );
 };
 
