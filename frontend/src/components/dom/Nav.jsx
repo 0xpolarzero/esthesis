@@ -35,7 +35,10 @@ const Nav = ({ type = 'default' }) => {
             <Divider type='vertical' />
           </>
         ) : (
-          <User />
+          <>
+            <User />
+            <Divider type='vertical' />
+          </>
         )}
         <Tooltip
           title={

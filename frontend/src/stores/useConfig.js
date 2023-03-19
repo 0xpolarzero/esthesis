@@ -1,12 +1,42 @@
 import { create } from 'zustand';
 import { ConfigProvider, theme as antdTheme } from 'antd';
 import { ToastContainer } from 'react-toastify';
+// Rainbowkit/Wagmi
+import {
+  getDefaultWallets,
+  RainbowKitProvider,
+  darkTheme,
+  lightTheme,
+} from '@rainbow-me/rainbowkit';
+import { configureChains, createClient, WagmiConfig } from 'wagmi';
+import { polygonMumbai } from 'wagmi/chains';
+import { alchemyProvider } from 'wagmi/providers/alchemy';
+import { publicProvider } from 'wagmi/providers/public';
+
 import useSwarm from './useSwarm';
 import hooks from '@/hooks';
 
 /**
  * @notice Set up providers
  */
+const { chains, provider } = configureChains(
+  [polygonMumbai],
+  [
+    alchemyProvider({ apiKey: process.env.NEXT_PUBLIC_ALCHEMY_API_KEY }),
+    publicProvider(),
+  ],
+);
+
+const { connectors } = getDefaultWallets({
+  appName: 'eclipse',
+  chains,
+});
+
+const wagmiClient = createClient({
+  autoConnect: true,
+  connectors,
+  provider,
+});
 
 /**
  * @notice Themes
@@ -68,7 +98,17 @@ export default create((set, get) => ({
               colorWarning: '#ff9e00',
             },
           }}>
-          {children}
+          <WagmiConfig client={wagmiClient}>
+            <RainbowKitProvider
+              chains={chains}
+              theme={
+                theme === 'dark'
+                  ? darkTheme({ accentColor: '#646cff' })
+                  : lightTheme({ accentColor: '#646cff' })
+              }>
+              {children}
+            </RainbowKitProvider>
+          </WagmiConfig>
         </ConfigProvider>
         <ToastContainer
           position={isMobile ? 'top-left' : 'bottom-left'}

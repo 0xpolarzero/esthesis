@@ -5,8 +5,8 @@ import Layout from '@/components/dom/Layout';
 import stores from '@/stores';
 import '@/styles/index.css';
 // Lib
+import '@rainbow-me/rainbowkit/styles.css';
 import 'react-toastify/dist/ReactToastify.css';
-import hooks from '@/hooks';
 
 const Scene = dynamic(() => import('@/components/canvas/Scene'), { ssr: true });
 
