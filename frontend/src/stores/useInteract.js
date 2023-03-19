@@ -20,8 +20,12 @@ export default create((set, get) => ({
   favoritesLoaded: false,
   isFavorite: (id) => get().favorites.includes(id),
   setFavorites: async (address) => {
-    const favorites = await getFavorites(address);
-    set({ favorites, favoritesLoaded: true });
+    if (address) {
+      const favorites = await getFavorites(address);
+      set({ favorites, favoritesLoaded: true });
+    } else {
+      set({ favorites: [], favoritesLoaded: true });
+    }
   },
   toggleFavorite: async (id) => {
     const { connected, address, isFavorite, favorites } = get();
