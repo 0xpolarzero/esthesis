@@ -13,13 +13,13 @@ const { TableSkeleton } = Utils;
 const { Panel } = Collapse;
 
 const Sound = () => {
-  const { tracks, errorTracks, setModalContent } = stores.useSpinamp(
-    (state) => ({
+  const { tracks, errorTracks, loadingTracks, setModalContent } =
+    stores.useSpinamp((state) => ({
       tracks: state.tracks,
       errorTracks: state.errorTracks,
+      loadingTracks: state.loadingTracks,
       setModalContent: state.setModalContent,
-    }),
-  );
+    }));
   const start = stores.useAudio((state) => state.start);
   const { isMobile, windowSize } = hooks.useWindowSize();
 
@@ -78,15 +78,19 @@ const Sound = () => {
                 />
               ),
             )
-          ) : isMobile ? (
-            <TableSkeleton colCount={1} rowCount={10} noHeader={true} />
+          ) : loadingTracks ? (
+            isMobile ? (
+              <TableSkeleton colCount={1} rowCount={10} noHeader={true} />
+            ) : (
+              <TableSkeleton
+                colCount={4}
+                rowCount={10}
+                style={{ gridColumn: 'span 4' }}
+                noHeader={true}
+              />
+            )
           ) : (
-            <TableSkeleton
-              colCount={4}
-              rowCount={10}
-              style={{ gridColumn: 'span 4' }}
-              noHeader={true}
-            />
+            'no tracks yet'
           )}
         </Panel>
       </Collapse>
