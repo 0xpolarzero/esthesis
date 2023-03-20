@@ -107,13 +107,15 @@ export const shortenUrl = async (url, allowlisted) => {
         abi: eclipseAbi,
         eventName: 'VISUALIZE__URL_SHORTENED',
       },
-      (event) => {
+      (id, urlEmitted) => {
         unwatch();
-        resolve({
-          data: `${config.baseUrl}shared?id=${event.toString()}`,
-          success: true,
-          error: null,
-        });
+        if (urlEmitted === `${config.baseUrl}${url}`) {
+          resolve({
+            data: `${config.baseUrl}shared?id=${id.toString()}`,
+            success: true,
+            error: null,
+          });
+        }
       },
     );
 
