@@ -110,7 +110,7 @@ export default create((set, get) => ({
         items: allTracks.slice(i * 100, (i + 1) * 100),
         pageInfo: {
           hasNextPage: i < pagesAmount - 1,
-          hasPreviousPage: i > 0,
+          hasPreviousPage: true, // i > 0 but here there is always page 0
         },
         totalCount,
       });
