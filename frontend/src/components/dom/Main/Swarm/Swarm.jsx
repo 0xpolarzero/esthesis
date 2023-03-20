@@ -51,12 +51,12 @@ const Swarm = () => {
     setMovementEffects: state.setMovementEffects,
     setColorEffects: state.setColorEffects,
   }));
-  const { createPreviewLink, createShareableLink } = stores.useInteract(
-    (state) => ({
+  const { connected, createPreviewLink, createShareableLink } =
+    stores.useInteract((state) => ({
+      connected: state.connected,
       createPreviewLink: state.createPreviewLink,
       createShareableLink: state.createShareableLink,
-    }),
-  );
+    }));
   const { theme, updateTheme } = stores.useConfig((state) => ({
     theme: state.theme,
     updateTheme: state.updateTheme,
@@ -219,12 +219,21 @@ const Swarm = () => {
                 disabled={!playing}>
                 preview
               </button>
-              <button
-                className='button-primary special'
-                disabled={isCreatingLink || !playing}
-                onClick={copyShareableLink}>
-                copy shareable link
-              </button>
+              <Tooltip
+                title={
+                  !connected
+                    ? 'connect your wallet to create a link'
+                    : !playing
+                    ? 'choose a song to create a link'
+                    : ''
+                }>
+                <button
+                  className='button-primary special'
+                  disabled={isCreatingLink || !playing || !connected}
+                  onClick={copyShareableLink}>
+                  copy shareable link
+                </button>
+              </Tooltip>
               <Tooltip title='the link points to an immersive render of this song, using the customized settings'>
                 <AiOutlineInfoCircle size={20} />
               </Tooltip>
