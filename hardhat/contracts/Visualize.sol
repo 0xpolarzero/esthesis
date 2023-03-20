@@ -250,6 +250,13 @@ contract Visualize is ERC2771Context {
     }
 
     /**
+     * @notice Get all the shortened URLs
+     */
+    function getShortenedURLs() public view returns (ShortenedURL[] memory) {
+        return s_shortenedURLs;
+    }
+
+    /**
      * @notice Get the favorites for an address
      * @param _address The address of the user
      */
