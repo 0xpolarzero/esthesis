@@ -19,8 +19,6 @@ Calculate gasLeft to decrement credits for the user
 deposit function to add credits
 Use 'pay as you go' (just sign tx and pay, no need for whitelist) or whitelist (pay upfront and sign with our private key)
 
-Pass address & id to createShareableLink to check in event if right user
-Fix tracks not showing first 100 sometimes + artist search broken?
 Add button for favorites filtering + showing created links (subgraph)
 
 Send on:

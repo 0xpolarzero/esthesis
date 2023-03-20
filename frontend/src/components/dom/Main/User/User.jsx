@@ -13,8 +13,6 @@ const User = () => {
     }));
   const { address } = useAccount();
 
-  const wrapper = useRef(null);
-
   useEffect(() => {
     if (address) {
       setConnected(true);
@@ -27,11 +25,7 @@ const User = () => {
     }
   }, [address, setConnected, setAddress, setFavorites]);
 
-  return (
-    <div ref={wrapper} id='a'>
-      <ConnectBtn />
-    </div>
-  );
+  return <ConnectBtn />;
 };
 
 export default User;

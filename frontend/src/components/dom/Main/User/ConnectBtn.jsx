@@ -1,7 +1,13 @@
 import { ConnectButton } from '@rainbow-me/rainbowkit';
-import { AiOutlineUser, AiOutlineWarning } from 'react-icons/ai';
+import {
+  AiOutlineHeart,
+  AiOutlineShareAlt,
+  AiOutlineUser,
+  AiOutlineWarning,
+} from 'react-icons/ai';
 import hooks from '@/hooks';
-import { MdKeyboardArrowDown } from 'react-icons/md';
+import { MdKeyboardArrowRight } from 'react-icons/md';
+import { Dropdown } from 'antd';
 
 const ConnectBtn = () => {
   const { isMobile } = hooks.useWindowSize();
@@ -25,6 +31,27 @@ const ConnectBtn = () => {
           account &&
           chain &&
           (!authenticationStatus || authenticationStatus === 'authenticated');
+
+        const menuItems = [
+          {
+            key: '1',
+            label: 'show favorites',
+            icon: <AiOutlineHeart size={20} />,
+            onClick: () => console.log('favorites'),
+          },
+          {
+            key: '2',
+            label: 'created links',
+            icon: <AiOutlineShareAlt size={20} />,
+            onClick: () => console.log('created links'),
+          },
+          {
+            key: '3',
+            label: 'account',
+            icon: <AiOutlineUser size={20} />,
+            onClick: openAccountModal,
+          },
+        ];
 
         return (
           <div
@@ -61,20 +88,26 @@ const ConnectBtn = () => {
 
               return isMobile ? (
                 <span className='with-icon'>
-                  <AiOutlineUser
-                    size={20}
-                    onClick={openAccountModal}
-                    style={{ fill: 'var(--text-link)' }}
-                  />
+                  <Dropdown menu={{ items: menuItems }}>
+                    <a>
+                      <AiOutlineUser
+                        size={20}
+                        // onClick={openAccountModal}
+                        // style={{ fill: 'var(--text-link)' }}
+                      />
+                    </a>
+                  </Dropdown>
                 </span>
               ) : (
-                <a className='with-icon' onClick={openAccountModal}>
-                  {account.name ??
-                    `${account.address.slice(0, 6)}...${account.address.slice(
-                      -4,
-                    )}`}{' '}
-                  <MdKeyboardArrowDown size={20} />
-                </a>
+                <Dropdown menu={{ items: menuItems }}>
+                  <a className='with-icon' onClick={openAccountModal}>
+                    {account.name ??
+                      `${account.address.slice(0, 6)}...${account.address.slice(
+                        -4,
+                      )}`}{' '}
+                    <MdKeyboardArrowRight size={20} />
+                  </a>
+                </Dropdown>
               );
             })()}
           </div>

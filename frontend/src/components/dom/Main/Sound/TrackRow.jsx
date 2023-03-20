@@ -218,7 +218,7 @@ const TrackRow = ({ track, onClick, setModalContent }) => {
           </div>
         ) : (
           <Dropdown menu={{ items: infoDropdown }} placement='bottomLeft'>
-            <CiCircleMore size={20} />
+            <CiCircleMore size={20} onClick={() => setModalContent(track)} />
           </Dropdown>
         )}
       </div>
