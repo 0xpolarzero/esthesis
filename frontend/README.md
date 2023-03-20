@@ -21,3 +21,9 @@ Use 'pay as you go' (just sign tx and pay, no need for whitelist) or whitelist (
 
 Pass address & id to createShareableLink to check in event if right user
 Fix tracks not showing first 100 sometimes + artist search broken?
+
+Send on:
+immersivewire
+ben ziggy ziggy
+coopahtroopa
+twitter

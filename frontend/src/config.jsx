@@ -5,6 +5,16 @@ const url = 'https://eclipse.polarzero.xyz/';
 const description = 'Music NFTs immersive eclipser';
 const author = 'polarzero';
 
+const noOverlayWorkaroundScript = `
+  window.addEventListener('error', event => {
+    event.stopImmediatePropagation()
+  })
+
+  window.addEventListener('unhandledrejection', event => {
+    event.stopImmediatePropagation()
+  })
+`;
+
 const Header = ({ title = titleDefault }) => {
   return (
     <Head>
@@ -64,6 +74,12 @@ const Header = ({ title = titleDefault }) => {
       <link rel='shortcut icon' href='/icons/favicon.ico' />
       <meta name='twitter:card' content='summary' />
       <meta name='twitter:site' content='@0xpolarzero' />
+
+      {process.env.NODE_ENV !== 'production' && (
+        <script
+          dangerouslySetInnerHTML={{ __html: noOverlayWorkaroundScript }}
+        />
+      )}
     </Head>
   );
 };

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import * as THREE from 'three';
-import { useFrame, useThree } from '@react-three/fiber';
+import { useFrame } from '@react-three/fiber';
 import stores from '@/stores';
 import config from '@/data';
 
@@ -20,7 +20,6 @@ const Entity = () => {
       effects: state.effects,
     }),
   );
-  const { camera } = useThree();
   const ref = useRef(null);
 
   const radius = 2;
