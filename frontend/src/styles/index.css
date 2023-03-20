@@ -418,18 +418,25 @@ a.emphasize.min:hover {
 
 .iekbcc0 {
   font-family: var(--font-main) !important;
-  background: none !important;
   border: none !important;
+}
+.iekbcc0.ju367v8m:not(._12cbo8i7):not(:hover) {
+  background: none !important;
+}
+.iekbcc0.ju367v8l {
+  background: rgba(var(--background-main-rgb), 0.5) !important;
 }
 .iekbcc0.ju367v70 {
   font-size: 0.9rem !important;
   font-weight: 400 !important;
+  background: none !important;
 }
 .iekbcc0.ju367va.ju367v1n:not(.ju367v2l),
 .ju367va.ju367v10.ju367v8m {
-  background: rgba(var(--background-main-rgb), 0.3) !important;
+  /* background: rgba(var(--background-main-rgb), 0.3) !important; */
 }
 .ju367va.ju367v10.ju367v8m {
+  background: none !important;
   backdrop-filter: blur(6px) !important;
   border-radius: 6px;
 }

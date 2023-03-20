@@ -1,7 +1,11 @@
 import { ConnectButton } from '@rainbow-me/rainbowkit';
-import { AiOutlineUser } from 'react-icons/ai';
+import { AiOutlineUser, AiOutlineWarning } from 'react-icons/ai';
+import hooks from '@/hooks';
+import { MdKeyboardArrowDown } from 'react-icons/md';
 
-const ConnectButtonMobile = () => {
+const ConnectBtn = () => {
+  const { isMobile } = hooks.useWindowSize();
+
   return (
     <ConnectButton.Custom>
       {({
@@ -34,22 +38,28 @@ const ConnectButtonMobile = () => {
             })}>
             {(() => {
               if (!connected) {
-                return (
+                return isMobile ? (
                   <span className='with-icon'>
                     <AiOutlineUser size={20} onClick={openConnectModal} />
                   </span>
+                ) : (
+                  <a onClick={openConnectModal}>connect</a>
                 );
               }
 
               if (chain.unsupported) {
                 return (
                   <button onClick={openChainModal} type='button'>
-                    Wrong network
+                    {isMobile ? (
+                      <AiOutlineWarning size={20} />
+                    ) : (
+                      'Wrong network'
+                    )}
                   </button>
                 );
               }
 
-              return (
+              return isMobile ? (
                 <span className='with-icon'>
                   <AiOutlineUser
                     size={20}
@@ -57,6 +67,14 @@ const ConnectButtonMobile = () => {
                     style={{ fill: 'var(--text-link)' }}
                   />
                 </span>
+              ) : (
+                <a className='with-icon' onClick={openAccountModal}>
+                  {account.name ??
+                    `${account.address.slice(0, 6)}...${account.address.slice(
+                      -4,
+                    )}`}{' '}
+                  <MdKeyboardArrowDown size={20} />
+                </a>
               );
             })()}
           </div>
@@ -66,4 +84,4 @@ const ConnectButtonMobile = () => {
   );
 };
 
-export default ConnectButtonMobile;
+export default ConnectBtn;
