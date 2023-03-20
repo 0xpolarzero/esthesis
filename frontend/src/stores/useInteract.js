@@ -2,7 +2,13 @@ import { create } from 'zustand';
 import { toast } from 'react-toastify';
 import useAudio from './useAudio';
 import useSwarm from './useSwarm';
-import { getFavorites, addFavorite, removeFavorite } from '@/systems/interact';
+import {
+  getFavorites,
+  addFavorite,
+  removeFavorite,
+  shortenUrl,
+  getShortenedUrl,
+} from '@/systems/interact';
 import config from '@/data';
 
 const { shaders: OPTIONS_SHADERS } = config.options;
@@ -28,13 +34,17 @@ export default create((set, get) => ({
     }
   },
   toggleFavorite: async (id) => {
-    const { connected, address, isFavorite, favorites } = get();
+    const { connected, address, isFavorite, favorites, isAllowlisted } = get();
     if (!connected) return;
 
     if (!isFavorite(id)) {
       // OR
       const notif = toast.loading('Adding to favorites...');
-      const { success, error } = await addFavorite(address, id);
+      const { success, error } = await addFavorite(
+        address,
+        id,
+        isAllowlisted(),
+      );
       if (success) {
         toast.update(notif, {
           render: 'Added to favorites',
@@ -54,7 +64,11 @@ export default create((set, get) => ({
       }
     } else {
       const notif = toast.loading('Removing from favorites...');
-      const { success, error } = await removeFavorite(address, id);
+      const { success, error } = await removeFavorite(
+        address,
+        id,
+        isAllowlisted(),
+      );
       if (success) {
         toast.update(notif, {
           render: 'Removed from favorites',
@@ -75,16 +89,15 @@ export default create((set, get) => ({
     }
   },
   // Get the exhaustive args for the link
-  getLink: () => {
+  getLink: (track) => {
     const { colorA, colorB, background, pattern, count, effects } =
       useSwarm.getState();
-    const { playing } = useAudio.getState();
 
     const patternIndex = OPTIONS_SHADERS.vertex.findIndex(
       (p) => p.name === pattern.name,
     );
     const preview = () => {
-      if (!playing) return null;
+      if (!track) return null;
 
       const url = new URL(`${window.location.href}shared/`);
       url.searchParams.set('colorA', `${colorA.dark},${colorA.light}`);
@@ -98,13 +111,13 @@ export default create((set, get) => ({
       Object.keys(effects).forEach((key) => {
         url.searchParams.set(key, `${effects[key]}`);
       });
-      url.searchParams.set('sound', `${playing.data.id}`);
+      url.searchParams.set('sound', `${track.id}`);
 
       return url;
     };
 
     const shareable = () => {
-      if (!playing) return null;
+      if (!track) return null;
 
       return JSON.stringify({
         colorA,
@@ -113,7 +126,7 @@ export default create((set, get) => ({
         pattern: patternIndex,
         count,
         effects,
-        sound: playing.data.id,
+        sound: track.id,
       });
     };
 
@@ -121,10 +134,10 @@ export default create((set, get) => ({
   },
 
   // Create a shareable link (minified with a reference to Google Spreadsheet)
-  createShareableLink: async () => {
+  createShareableLink: async (track) => {
     const { getLink, connected } = get();
     if (!connected) return;
-    const link = getLink().shareable();
+    const link = getLink(track).shareable();
 
     if (!link)
       return {
@@ -134,29 +147,72 @@ export default create((set, get) => ({
       };
 
     // Call api to write to spreadsheet
-    const res = await fetch('/api/google-api', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        functionName: 'write',
-        arg: link,
-      }),
-    });
+    // const res = await fetch('/api/google-api', {
+    //   method: 'POST',
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //   },
+    //   body: JSON.stringify({
+    //     functionName: 'write',
+    //     arg: link,
+    //   }),
+    // });
 
-    const data = await res.json();
-    if (data.statusCode === 500) return { data, error: true, message: 'error' };
+    // const data = await res.json();
+    // if (data.statusCode === 500) return { data, error: true, message: 'error' };
 
-    const newLink = new URL(`${window.location.href}shared?id=${data}`);
+    // const newLink = new URL(`${window.location.href}shared?id=${data}`);
 
-    return { data: newLink, error: false, message: 'success' };
+    // return { data: newLink, error: false, message: 'success' };
+    const notif = toast.loading('Creating link...');
+    const res = await shortenUrl(link);
+
+    if (res?.success) {
+      toast.update(notif, {
+        render: 'Link created!',
+        type: 'success',
+        isLoading: false,
+        autoClose: 3000,
+      });
+      const linkNotif = toast.info(
+        <div>
+          <em>{res?.data}</em>
+          <br />
+          <br />
+          <a
+            onClick={() => {
+              navigator.clipboard.writeText(res?.data);
+              toast.update(linkNotif, {
+                render: 'Copied to clipboard',
+                type: 'success',
+                isLoading: false,
+                autoClose: 3000,
+              });
+            }}>
+            Copy
+          </a>
+        </div>,
+        {
+          autoClose: false,
+        },
+      );
+    } else {
+      toast.update(notif, {
+        render: 'Error creating link',
+        type: 'error',
+        isLoading: false,
+        autoClose: 3000,
+      });
+      console.error(res?.error);
+    }
+
+    return res;
   },
 
   // Create a preview link (no need to write to Google Spreadsheet)
-  createPreviewLink: () => {
+  createPreviewLink: (track) => {
     const { getLink } = get();
-    const link = getLink().preview();
+    const link = getLink(track).preview();
 
     if (!link)
       return {
@@ -170,20 +226,19 @@ export default create((set, get) => ({
 
   // Retrieve the link from the ID
   retrieveLink: async (id) => {
-    const res = await fetch('/api/google-api', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        functionName: 'retrieve',
-        arg: id,
-      }),
-    });
+    // const res = await fetch('/api/google-api', {
+    //   method: 'POST',
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //   },
+    //   body: JSON.stringify({
+    //     functionName: 'retrieve',
+    //     arg: id,
+    //   }),
+    // });
 
-    const data = await res.json();
-    if (data.statusCode === 500) return null;
-
-    return data;
+    // const data = await res.json();
+    // if (data.statusCode === 500) return null;
+    return await getShortenedUrl(id);
   },
 }));

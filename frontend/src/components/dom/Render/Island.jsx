@@ -13,7 +13,6 @@ const Island = () => {
   const [isExpanded, setIsExpanded] = useState(!isMobile);
 
   if (!playing) return null;
-  console.log(playing.data.artist);
 
   return (
     <div
@@ -43,7 +42,7 @@ const Island = () => {
                       <a
                         key={i}
                         className='profile with-icon'
-                        href='https://www.instagram.com/alexanderjamesmccallum/'
+                        href={playing.data.artist.profiles[profile]}
                         target='_blank'
                         rel='noreferrer'>
                         <RiExternalLinkLine size={20} />
@@ -61,7 +60,7 @@ const Island = () => {
                 <span className='label'>context</span>
                 {playing.data.description &&
                 playing.data.description.length &&
-                content.description !== '<br>' ? (
+                playing.data.description !== '<br>' ? (
                   playing.data.description.split('\n').map((line, i) => (
                     <span key={i}>
                       {line}

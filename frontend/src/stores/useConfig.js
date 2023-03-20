@@ -114,14 +114,14 @@ export default create((set, get) => ({
               }}>
               {children}
             </ConfigProvider>
+            <ToastContainer
+              position={isMobile ? 'top-left' : 'bottom-left'}
+              autoClose={5000}
+              newestOnTop
+              theme={theme}
+            />
           </RainbowKitProvider>
         </WagmiConfig>
-        <ToastContainer
-          position={isMobile ? 'top-left' : 'bottom-left'}
-          autoClose={5000}
-          newestOnTop
-          theme={theme}
-        />
       </>
     );
   },

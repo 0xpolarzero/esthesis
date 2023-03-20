@@ -65,13 +65,13 @@ const More = () => {
 };
 
 const Header = ({ content }) => {
-  const { connected, favoritesLoaded, toggleFavorite } = stores.useInteract(
-    (state) => ({
+  const { connected, favoritesLoaded, toggleFavorite, createShareableLink } =
+    stores.useInteract((state) => ({
       connected: state.connected,
       favoritesLoaded: state.favoritesLoaded,
       toggleFavorite: state.toggleFavorite,
-    }),
-  );
+      createShareableLink: state.createShareableLink,
+    }));
   const { isMobile, windowSize } = hooks.useWindowSize();
   const [artworkSize, setArtworkSize] = useState(200);
 
@@ -87,7 +87,7 @@ const Header = ({ content }) => {
       icon: <AiOutlineShareAlt size={20} />,
       text: 'share',
       mobile: 'share',
-      onClick: () => console.log('share'), // TODO same as createShareableLink but also handle lens connect, open to share
+      onClick: () => createShareableLink(content),
       disabled: !connected,
     },
   ];

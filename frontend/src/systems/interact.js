@@ -1,5 +1,9 @@
 import { ethers } from 'ethers';
-import { prepareWriteContract, writeContract } from '@wagmi/core';
+import {
+  prepareWriteContract,
+  writeContract,
+  watchContractEvent,
+} from '@wagmi/core';
 import config from '@/data';
 
 const { networkMapping, eclipseAbi, chainId } = config;
@@ -71,18 +75,58 @@ export const getFavorites = async (userAddress) => {
   }
 };
 
-export const addFavorite = async (userAddress, favoriteId, allowlisted) => {
-  if (allowlisted) {
-    return await sendTxSponsored('addFavorite', [userAddress, favoriteId]);
-  } else {
-    return await sendTxRegular('addFavorite', [userAddress, favoriteId]);
+export const getShortenedUrl = async (id) => {
+  try {
+    const client = await getClient();
+    const url = await client.getShortenedURL(id);
+    return url;
+  } catch (err) {
+    console.error(err);
+    return null;
   }
 };
 
+export const addFavorite = async (userAddress, favoriteId, allowlisted) => {
+  return allowlisted
+    ? await sendTxSponsored('addFavorite', [userAddress, favoriteId])
+    : await sendTxRegular('addFavorite', [userAddress, favoriteId]);
+};
+
 export const removeFavorite = async (userAddress, favoriteId, allowlisted) => {
-  if (allowlisted) {
-    return await sendTxSponsored('removeFavorite', [userAddress, favoriteId]);
-  } else {
-    return await sendTxRegular('removeFavorite', [userAddress, favoriteId]);
-  }
+  return allowlisted
+    ? await sendTxSponsored('removeFavorite', [userAddress, favoriteId])
+    : await sendTxRegular('removeFavorite', [userAddress, favoriteId]);
+};
+
+export const shortenUrl = async (url, allowlisted) => {
+  const event = new Promise((resolve, reject) => {
+    // Set up a listener for the event
+    const unwatch = watchContractEvent(
+      {
+        address: eclipseAddress,
+        abi: eclipseAbi,
+        eventName: 'VISUALIZE__URL_SHORTENED',
+      },
+      (event) => {
+        unwatch();
+        resolve({
+          data: `${config.baseUrl}shared?id=${event.toString()}`,
+          success: true,
+          error: null,
+        });
+      },
+    );
+
+    // Give 3 minutes for the event to fire
+    setTimeout(() => {
+      unwatch();
+      reject({ data: null, success: false, error: 'Timeout' });
+    }, 180000);
+  });
+
+  allowlisted
+    ? await sendTxSponsored('shortenURL', [`${config.baseUrl}${url}`])
+    : await sendTxRegular('shortenURL', [`${config.baseUrl}${url}`]);
+
+  return event;
 };

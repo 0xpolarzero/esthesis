@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import Island from './Island';
 import stores from '@/stores';
+import config from '@/data';
 
 const Render = () => {
   const retrieveLink = stores.useInteract((state) => state.retrieveLink);
@@ -29,7 +30,7 @@ const Render = () => {
       // Format it
       const formatted = isShortened
         ? // Parse the JSON
-          JSON.parse(retrievedParams)
+          JSON.parse(retrievedParams.replace(config.baseUrl, ''))
         : // Format it a bit better
           {
             colorA: {

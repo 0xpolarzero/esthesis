@@ -61,6 +61,7 @@ const Swarm = () => {
     theme: state.theme,
     updateTheme: state.updateTheme,
   }));
+  const playing = stores.useAudio((state) => state.playing);
 
   const { isMobile } = hooks.useWindowSize();
   const [isCreatingLink, setIsCreatingLink] = useState(false);
@@ -71,25 +72,9 @@ const Swarm = () => {
     setIsCreatingLink(true);
     notification.current = toast.loading('creating link...');
 
-    const res = await createShareableLink();
+    await createShareableLink(playing.data);
     setIsCreatingLink(false);
-
-    if (res.error) {
-      toast.update(notification.current, {
-        render: res.message || 'an error occurred',
-        type: 'error',
-        isLoading: false,
-        autoClose: 2000,
-      });
-    } else {
-      navigator.clipboard.writeText(res.data);
-      toast.update(notification.current, {
-        render: 'link copied to clipboard',
-        type: 'info',
-        isLoading: false,
-        autoClose: 2000,
-      });
-    }
+    toast.dismiss(notification.current);
   };
 
   const preview = () => {

@@ -6,6 +6,9 @@ import allowlist from './constants/allowlist.json';
 
 const chainId = 80001;
 
+// const baseUrl = 'https://eclipse.art';
+const baseUrl = 'https://visualize.polarzero.xyz/';
+
 const config = {
   options: {
     backgrounds,
@@ -15,8 +18,9 @@ const config = {
   swarm,
   networkMapping,
   eclipseAbi,
-  chainId,
   allowlist,
+  chainId,
+  baseUrl,
 };
 
 export default config;
