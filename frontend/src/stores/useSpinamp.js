@@ -116,8 +116,10 @@ export default create((set, get) => ({
       });
     }
 
-    set({
-      rememberTracks: pages,
+    pages.forEach((page, i) => {
+      set({
+        rememberTracks: { ...get().rememberTracks, [i + 1]: page },
+      });
     });
 
     // Set all tracks in one array for search
