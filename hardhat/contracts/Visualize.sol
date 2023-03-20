@@ -22,7 +22,11 @@ error VISUALIZE__INVALID_URL();
 
 contract Visualize is ERC2771Context {
     /// Structs
-    // ...
+    struct ShortenedURL {
+        uint256 id;
+        string url;
+        address sender;
+    }
 
     /// Constants
     // ...
@@ -32,7 +36,7 @@ contract Visualize is ERC2771Context {
     address private s_trustedForwarder;
     string private s_baseUrl;
     // Shortened URLs
-    string[] private s_shortenedURLs;
+    ShortenedURL[] private s_shortenedURLs;
 
     /// Mappings
     // Allowlist
@@ -135,7 +139,7 @@ contract Visualize is ERC2771Context {
         if (!isCorrectBaseURL(_url)) revert VISUALIZE__INVALID_URL();
 
         id = s_shortenedURLs.length;
-        s_shortenedURLs.push(_url);
+        s_shortenedURLs.push(ShortenedURL(id, _url, _msgSender()));
 
         emit VISUALIZE__URL_SHORTENED(id, _url, _msgSender());
     }
@@ -239,7 +243,9 @@ contract Visualize is ERC2771Context {
      * @notice Get the complete URL for an ID
      * @param _id The ID of the shortened URL
      */
-    function getShortenedURL(uint256 _id) public view returns (string memory) {
+    function getShortenedURL(
+        uint256 _id
+    ) public view returns (ShortenedURL memory) {
         return s_shortenedURLs[_id];
     }
 
