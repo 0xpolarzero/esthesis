@@ -13,7 +13,7 @@ module.exports = async function ({ getNamedAccounts, deployments }) {
 
   const args = [TRUSTED_FORWARDER_POLYGON_MUMBAI, BASE_DOMAIN];
 
-  const visualize = await deploy('Visualize', {
+  const eclipse = await deploy('Eclipse', {
     from: deployer,
     args,
     log: true,
@@ -25,7 +25,7 @@ module.exports = async function ({ getNamedAccounts, deployments }) {
     process.env.ARBISCAN_API_KEY
   ) {
     console.log('Verifying contract...');
-    await verify(visualize.address, args);
+    await verify(eclipse.address, args);
   }
 };
 

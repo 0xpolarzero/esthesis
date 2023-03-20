@@ -4,23 +4,23 @@ pragma solidity ^0.8.16;
 import "@openzeppelin/contracts/metatx/ERC2771Context.sol";
 
 /**
- * @title Visualize contract
- * @notice This contract is used to interact with the visualize app database
+ * @title Eclipse contract
+ * @notice This contract is used to interact with the eclipse app database
  * @author polarzero
  * @dev ...
  */
 
 /// Errors
-error VISUALIZE__NOT_OWNER();
-error VISUALIZE__NOT_IN_ALLOWLIST(); // ? only on mainnet
+error ECLIPSE__NOT_OWNER();
+error ECLIPSE__NOT_IN_ALLOWLIST(); // ? only on mainnet
 error ERC2771Context__NOT_FORWARDER();
 // Favorites
-error VISUALIZE__ALREADY_FAVORITE();
-error VISUALIZE__NOT_FAVORITE();
+error ECLIPSE__ALREADY_FAVORITE();
+error ECLIPSE__NOT_FAVORITE();
 // URL
-error VISUALIZE__INVALID_URL();
+error ECLIPSE__INVALID_URL();
 
-contract Visualize is ERC2771Context {
+contract Eclipse is ERC2771Context {
     /// Structs
     struct ShortenedURL {
         uint256 id;
@@ -45,24 +45,24 @@ contract Visualize is ERC2771Context {
     mapping(address => string[]) private s_favorites;
 
     /// Events
-    event VISUALIZE__ALLOWLISTED(address[] _addresses); // ? only on mainnet
-    event VISUALIZE__REMOVED_FROM_ALLOWLIST(address[] _addresses); // ? only on mainnet
-    event VISUALIZE__FAVORITE_ADDED(address _address, string _favorite);
-    event VISUALIZE__FAVORITE_REMOVED(address _address, string _favorite);
-    event VISUALIZE__URL_SHORTENED(uint256 _id, string _url, address _sender);
+    event ECLIPSE__ALLOWLISTED(address[] _addresses); // ? only on mainnet
+    event ECLIPSE__REMOVED_FROM_ALLOWLIST(address[] _addresses); // ? only on mainnet
+    event ECLIPSE__FAVORITE_ADDED(address _address, string _favorite);
+    event ECLIPSE__FAVORITE_REMOVED(address _address, string _favorite);
+    event ECLIPSE__URL_SHORTENED(uint256 _id, string _url, address _sender);
     // Dev functions
     event ERC2771Context__TRUSTED_FORWARDER_UPDATED(address _address);
-    event VISUALIZE__BASE_URL_UPDATED(string _baseUrl);
+    event ECLIPSE__BASE_URL_UPDATED(string _baseUrl);
 
     /// Modifiers
     modifier onlyOwner() {
-        if (_msgSender() != i_owner) revert VISUALIZE__NOT_OWNER();
+        if (_msgSender() != i_owner) revert ECLIPSE__NOT_OWNER();
         _;
     }
 
     // ? only on mainnet
     modifier onlyAllowlist() {
-        if (!s_allowlist[_msgSender()]) revert VISUALIZE__NOT_IN_ALLOWLIST();
+        if (!s_allowlist[_msgSender()]) revert ECLIPSE__NOT_IN_ALLOWLIST();
         _;
     }
 
@@ -99,11 +99,11 @@ contract Visualize is ERC2771Context {
         // Is it already in the list?
         uint256 index = getFavoriteIndex(_address, _favorite);
         if (index != s_favorites[_address].length)
-            revert VISUALIZE__ALREADY_FAVORITE();
+            revert ECLIPSE__ALREADY_FAVORITE();
 
         s_favorites[_address].push(_favorite);
 
-        emit VISUALIZE__FAVORITE_ADDED(_address, _favorite);
+        emit ECLIPSE__FAVORITE_ADDED(_address, _favorite);
     }
 
     /**
@@ -117,7 +117,7 @@ contract Visualize is ERC2771Context {
     ) external /* onlyAllowlist */ {
         uint256 index = getFavoriteIndex(_address, _favorite);
         if (index == s_favorites[_address].length)
-            revert VISUALIZE__NOT_FAVORITE();
+            revert ECLIPSE__NOT_FAVORITE();
 
         uint256 length = s_favorites[_address].length;
         for (uint256 i = index; i < length - 1; i++) {
@@ -125,7 +125,7 @@ contract Visualize is ERC2771Context {
         }
         s_favorites[_address].pop();
 
-        emit VISUALIZE__FAVORITE_REMOVED(_address, _favorite);
+        emit ECLIPSE__FAVORITE_REMOVED(_address, _favorite);
     }
 
     /**
@@ -136,12 +136,12 @@ contract Visualize is ERC2771Context {
     function shortenURL(
         string calldata _url /* onlyAllowlist */
     ) external returns (uint256 id) {
-        if (!isCorrectBaseURL(_url)) revert VISUALIZE__INVALID_URL();
+        if (!isCorrectBaseURL(_url)) revert ECLIPSE__INVALID_URL();
 
         id = s_shortenedURLs.length;
         s_shortenedURLs.push(ShortenedURL(id, _url, _msgSender()));
 
-        emit VISUALIZE__URL_SHORTENED(id, _url, _msgSender());
+        emit ECLIPSE__URL_SHORTENED(id, _url, _msgSender());
     }
 
     /**
@@ -153,7 +153,7 @@ contract Visualize is ERC2771Context {
             s_allowlist[_addresses[i]] = true;
         }
 
-        emit VISUALIZE__ALLOWLISTED(_addresses);
+        emit ECLIPSE__ALLOWLISTED(_addresses);
     }
 
     /**
@@ -167,7 +167,7 @@ contract Visualize is ERC2771Context {
             s_allowlist[_addresses[i]] = false;
         }
 
-        emit VISUALIZE__REMOVED_FROM_ALLOWLIST(_addresses);
+        emit ECLIPSE__REMOVED_FROM_ALLOWLIST(_addresses);
     }
 
     /**
@@ -185,7 +185,7 @@ contract Visualize is ERC2771Context {
      */
     function updateBaseURL(string calldata _baseUrl) external onlyOwner {
         s_baseUrl = _baseUrl;
-        emit VISUALIZE__BASE_URL_UPDATED(_baseUrl);
+        emit ECLIPSE__BASE_URL_UPDATED(_baseUrl);
     }
 
     /**

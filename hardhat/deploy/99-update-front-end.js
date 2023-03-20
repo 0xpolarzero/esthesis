@@ -19,14 +19,14 @@ async function updateContractAddresses(chainId) {
     fs.readFileSync(frontEndContractsFile, 'utf8'),
   );
 
-  const visualize = await ethers.getContract('Visualize');
+  const eclipse = await ethers.getContract('Eclipse');
 
   if (chainId in contractAddresses) {
-    if (!contractAddresses[chainId]['Visualize'].includes(visualize.address))
-      contractAddresses[chainId]['Visualize'].push(visualize.address);
+    if (!contractAddresses[chainId]['Eclipse'].includes(eclipse.address))
+      contractAddresses[chainId]['Eclipse'].push(eclipse.address);
   } else {
     contractAddresses[chainId] = {
-      Visualize: [visualize.address],
+      Eclipse: [eclipse.address],
     };
   }
 
@@ -36,10 +36,10 @@ async function updateContractAddresses(chainId) {
 }
 
 async function updateAbi(chainId) {
-  const visualize = await ethers.getContract('Visualize');
+  const eclipse = await ethers.getContract('Eclipse');
   fs.writeFileSync(
-    `${frontEndAbiFolder}Visualize.json`,
-    visualize.interface.format(ethers.utils.FormatTypes.json),
+    `${frontEndAbiFolder}Eclipse.json`,
+    eclipse.interface.format(ethers.utils.FormatTypes.json),
   );
 }
 

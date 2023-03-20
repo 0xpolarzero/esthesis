@@ -78,8 +78,8 @@ export const getFavorites = async (userAddress) => {
 export const getShortenedUrl = async (id) => {
   try {
     const client = await getClient();
-    const url = await client.getShortenedURL(id);
-    return url;
+    const shortened = await client.getShortenedURL(id);
+    return shortened.url;
   } catch (err) {
     console.error(err);
     return null;
