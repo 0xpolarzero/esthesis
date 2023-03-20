@@ -44,7 +44,11 @@ const Navigation = () => {
       ) : filteredBy ? (
         <div className='filter'>
           <span>
-            showing tracks {filteredBy.type === 'artist' ? 'from' : 'on'}{' '}
+            {filteredBy.type === 'artist'
+              ? 'tracks by '
+              : filteredBy.type === 'platform'
+              ? 'tracks on '
+              : 'favorite tracks for '}
             <span className='emphasize'>{filteredBy.value}</span>
           </span>
           <button className='button-primary' onClick={filterAll}>

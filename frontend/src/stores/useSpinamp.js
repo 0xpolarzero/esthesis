@@ -2,6 +2,7 @@ import { fetchAllTracks, fetchTrackById } from '@spinamp/spinamp-sdk';
 import { matchSorter } from 'match-sorter';
 import { create } from 'zustand';
 import useAudio from './useAudio';
+import useInteract from './useInteract';
 
 export default create((set, get) => ({
   // Tracks
@@ -172,11 +173,22 @@ export default create((set, get) => ({
    */
   filterBy: async (type, value) => {
     const { unpaginatedTracks } = get();
+    const { favorites } = useInteract.getState();
 
-    const filtered =
-      type === 'artist'
-        ? unpaginatedTracks.filter((track) => track.artist.name === value)
-        : unpaginatedTracks.filter((track) => track.platformId === value);
+    let filtered;
+    if (type === 'artist') {
+      filtered = unpaginatedTracks.filter(
+        (track) => track.artist.name === value,
+      );
+    } else if (type === 'platform') {
+      filtered = unpaginatedTracks.filter(
+        (track) => track.platformId === value,
+      );
+    } else if (type === 'favorites') {
+      filtered = unpaginatedTracks.filter((track) =>
+        favorites.includes(track.id),
+      );
+    }
 
     // Create pages of 100 tracks with pagination info
     const pagesAmount = Math.ceil(filtered.length / 100);

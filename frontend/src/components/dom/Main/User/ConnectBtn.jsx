@@ -1,15 +1,17 @@
 import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { Dropdown, Tooltip } from 'antd';
 import {
   AiOutlineHeart,
   AiOutlineShareAlt,
   AiOutlineUser,
   AiOutlineWarning,
 } from 'react-icons/ai';
-import hooks from '@/hooks';
 import { MdKeyboardArrowRight } from 'react-icons/md';
-import { Dropdown } from 'antd';
+import stores from '@/stores';
+import hooks from '@/hooks';
 
 const ConnectBtn = () => {
+  const filterBy = stores.useSpinamp((state) => state.filterBy);
   const { isMobile } = hooks.useWindowSize();
 
   return (
@@ -37,7 +39,18 @@ const ConnectBtn = () => {
             key: '1',
             label: 'show favorites',
             icon: <AiOutlineHeart size={20} />,
-            onClick: () => console.log('favorites'),
+            onClick: () =>
+              filterBy(
+                'favorites',
+                <Tooltip title={account.address}>
+                  <a>
+                    {account.name ??
+                      `${account.address.slice(0, 6)}...${account.address.slice(
+                        -4,
+                      )}`}
+                  </a>
+                </Tooltip>,
+              ),
           },
           {
             key: '2',
