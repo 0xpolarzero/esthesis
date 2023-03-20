@@ -165,12 +165,12 @@ export default create((set, get) => ({
     // const newLink = new URL(`${window.location.href}shared?id=${data}`);
 
     // return { data: newLink, error: false, message: 'success' };
-    const notif = toast.loading('Creating link...');
+    const notif = toast.loading('creating link...');
     const res = await shortenUrl(link);
 
     if (res?.success) {
       toast.update(notif, {
-        render: 'Link created!',
+        render: 'link created!',
         type: 'success',
         isLoading: false,
         autoClose: 3000,
@@ -184,7 +184,7 @@ export default create((set, get) => ({
             onClick={() => {
               navigator.clipboard.writeText(res?.data);
               toast.update(linkNotif, {
-                render: 'Copied to clipboard',
+                render: 'copied to clipboard',
                 type: 'success',
                 isLoading: false,
                 autoClose: 3000,
@@ -197,14 +197,16 @@ export default create((set, get) => ({
           autoClose: false,
         },
       );
-    } else {
+    } else if (res?.error !== 'rejected transaction') {
       toast.update(notif, {
-        render: 'Error creating link',
+        render: 'error creating link',
         type: 'error',
         isLoading: false,
         autoClose: 3000,
       });
       console.error(res?.error);
+    } else {
+      toast.dismiss(notif);
     }
 
     return res;

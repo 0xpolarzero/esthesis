@@ -66,19 +66,14 @@ const Swarm = () => {
   const { isMobile } = hooks.useWindowSize();
   const [isCreatingLink, setIsCreatingLink] = useState(false);
 
-  const notification = useRef(null);
-
   const copyShareableLink = async () => {
     setIsCreatingLink(true);
-    notification.current = toast.loading('creating link...');
-
     await createShareableLink(playing.data);
     setIsCreatingLink(false);
-    toast.dismiss(notification.current);
   };
 
   const preview = () => {
-    const res = createPreviewLink();
+    const res = createPreviewLink(playing.data);
     if (res.error) {
       toast.error(res.message || 'an error occurred');
     } else {
@@ -218,12 +213,15 @@ const Swarm = () => {
               />
             </div>
             <div className='link'>
-              <button className='button-primary' onClick={preview}>
+              <button
+                className='button-primary'
+                onClick={preview}
+                disabled={!playing}>
                 preview
               </button>
               <button
                 className='button-primary special'
-                disabled={isCreatingLink}
+                disabled={isCreatingLink || !playing}
                 onClick={copyShareableLink}>
                 copy shareable link
               </button>

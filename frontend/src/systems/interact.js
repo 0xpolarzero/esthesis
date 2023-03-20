@@ -34,7 +34,7 @@ const sendTxSponsored = async (selector, args) => {
     if (receipt.status === 1) {
       return { data: tx, success: true, error: null };
     } else {
-      return { data: tx, success: false, error: 'Transaction failed' };
+      return { data: tx, success: false, error: 'transaction failed' };
     }
   } catch (err) {
     console.error(err);
@@ -56,11 +56,16 @@ const sendTxRegular = async (selector, args) => {
     if (data.status === 1) {
       return { data, success: true, error: null };
     } else {
-      return { data, success: false, error: 'Transaction failed' };
+      return { data, success: false, error: 'transaction failed' };
     }
   } catch (err) {
+    console.log('catched error');
     console.error(err);
-    return { data: null, success: false, error: err };
+    return {
+      data: null,
+      success: false,
+      error: err.code === 4001 ? 'rejected transaction' : err,
+    };
   }
 };
 
@@ -137,9 +142,13 @@ export const shortenUrl = async (url, allowlisted) => {
     }, 180000);
   });
 
-  allowlisted
+  const tx = allowlisted
     ? await sendTxSponsored('shortenURL', [`${config.baseUrl}${url}`])
     : await sendTxRegular('shortenURL', [`${config.baseUrl}${url}`]);
+
+  if (!tx.success) {
+    return tx;
+  }
 
   return event;
 };
