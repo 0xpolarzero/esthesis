@@ -12,6 +12,9 @@ import hooks from '@/hooks';
 
 const ConnectBtn = () => {
   const filterBy = stores.useSpinamp((state) => state.filterBy);
+  const retrieveLinksForUser = stores.useInteract(
+    (state) => state.retrieveLinksForUser,
+  );
   const { isMobile } = hooks.useWindowSize();
 
   return (
@@ -56,7 +59,7 @@ const ConnectBtn = () => {
             key: '2',
             label: 'created links',
             icon: <AiOutlineShareAlt size={20} />,
-            onClick: () => console.log('created links'),
+            onClick: async () => console.log(await retrieveLinksForUser()),
           },
           {
             key: '3',

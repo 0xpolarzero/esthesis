@@ -8,6 +8,7 @@ import {
   removeFavorite,
   shortenUrl,
   getShortenedUrl,
+  getAllShortenedUrls,
 } from '@/systems/interact';
 import config from '@/data';
 
@@ -225,20 +226,15 @@ export default create((set, get) => ({
   },
 
   // Retrieve the link from the ID
-  retrieveLink: async (id) => {
-    // const res = await fetch('/api/google-api', {
-    //   method: 'POST',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //   },
-    //   body: JSON.stringify({
-    //     functionName: 'retrieve',
-    //     arg: id,
-    //   }),
-    // });
+  retrieveLink: async (id) => await getShortenedUrl(id),
+  // Retrieve all links for a given address
+  retrieveLinksForUser: async () => {
+    const { connected, address } = get();
+    if (!connected) return [];
 
-    // const data = await res.json();
-    // if (data.statusCode === 500) return null;
-    return await getShortenedUrl(id);
+    const links = await getAllShortenedUrls();
+    return links.filter(
+      (link) => link.sender.toLowerCase() === address.toLowerCase(),
+    );
   },
 }));

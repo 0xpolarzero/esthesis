@@ -7,7 +7,7 @@ import {
 import config from '@/data';
 
 const { networkMapping, eclipseAbi, chainId } = config;
-const eclipseAddress = networkMapping[chainId]['Visualize'][0];
+const eclipseAddress = networkMapping[chainId]['Eclipse'][0];
 const privateKey = process.env.NEXT_PUBLIC_PRIVATE_KEY;
 const apiKey = process.env.NEXT_PUBLIC_ALCHEMY_API_KEY;
 
@@ -86,6 +86,17 @@ export const getShortenedUrl = async (id) => {
   }
 };
 
+export const getAllShortenedUrls = async () => {
+  try {
+    const client = await getClient();
+    const shortened = await client.getShortenedURLs();
+    return shortened;
+  } catch (err) {
+    console.error(err);
+    return [];
+  }
+};
+
 export const addFavorite = async (userAddress, favoriteId, allowlisted) => {
   return allowlisted
     ? await sendTxSponsored('addFavorite', [userAddress, favoriteId])
@@ -105,7 +116,7 @@ export const shortenUrl = async (url, allowlisted) => {
       {
         address: eclipseAddress,
         abi: eclipseAbi,
-        eventName: 'VISUALIZE__URL_SHORTENED',
+        eventName: 'ECLIPSE__URL_SHORTENED',
       },
       (id, urlEmitted) => {
         unwatch();
