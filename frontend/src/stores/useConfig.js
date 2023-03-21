@@ -9,7 +9,7 @@ import {
   lightTheme,
 } from '@rainbow-me/rainbowkit';
 import { configureChains, createClient, WagmiConfig } from 'wagmi';
-import { polygonMumbai } from 'wagmi/chains';
+import { arbitrumGoerli, polygonMumbai } from 'wagmi/chains';
 import { alchemyProvider } from 'wagmi/providers/alchemy';
 import { publicProvider } from 'wagmi/providers/public';
 
@@ -19,13 +19,18 @@ import hooks from '@/hooks';
 /**
  * @notice Set up providers
  */
+const arbitrumGoerliWithIcon = {
+  ...arbitrumGoerli,
+  iconUrl: '/img/arbitrum.png',
+};
 const { chains, provider } = configureChains(
-  [polygonMumbai],
+  [arbitrumGoerliWithIcon, polygonMumbai],
   [
     alchemyProvider({ apiKey: process.env.NEXT_PUBLIC_ALCHEMY_API_KEY }),
     publicProvider(),
   ],
 );
+console.log(polygonMumbai);
 
 const { connectors } = getDefaultWallets({
   appName: 'eclipse',

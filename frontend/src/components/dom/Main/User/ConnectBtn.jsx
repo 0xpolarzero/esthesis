@@ -94,13 +94,13 @@ const ConnectBtn = () => {
 
                 if (chain.unsupported) {
                   return (
-                    <button onClick={openChainModal} type='button'>
+                    <a className='emphasize' onClick={openChainModal}>
                       {isMobile ? (
                         <AiOutlineWarning size={20} />
                       ) : (
-                        'Wrong network'
+                        'network not supported'
                       )}
-                    </button>
+                    </a>
                   );
                 }
 

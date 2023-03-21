@@ -54,14 +54,16 @@ export default create((set, get) => ({
           autoClose: 3000,
         });
         set((state) => ({ favorites: [...favorites, id] }));
-      } else {
+      } else if (error !== 'rejected transaction') {
         toast.update(notif, {
-          render: 'Error adding to favorites',
+          render: 'error creating link',
           type: 'error',
           isLoading: false,
           autoClose: 3000,
         });
         console.error(error);
+      } else {
+        toast.dismiss(notif);
       }
     } else {
       const notif = toast.loading('Removing from favorites...');
@@ -166,7 +168,7 @@ export default create((set, get) => ({
 
     // return { data: newLink, error: false, message: 'success' };
     const notif = toast.loading('creating link...');
-    const res = await shortenUrl(link);
+    const res = await shortenUrl(link, get().address);
 
     if (res?.success) {
       toast.update(notif, {

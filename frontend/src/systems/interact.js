@@ -3,22 +3,25 @@ import {
   prepareWriteContract,
   writeContract,
   watchContractEvent,
+  getNetwork,
 } from '@wagmi/core';
 import config from '@/data';
 
-const { networkMapping, eclipseAbi, chainId } = config;
-const eclipseAddress = networkMapping[chainId]['Eclipse'][0];
+const { networkMapping, eclipseAbi } = config;
+const eclipseAddress = (chainId) => networkMapping[chainId]['Eclipse'][0];
 const privateKey = process.env.NEXT_PUBLIC_PRIVATE_KEY;
 const apiKey = process.env.NEXT_PUBLIC_ALCHEMY_API_KEY;
 
 const getClient = async () => {
+  const { chain } = getNetwork();
   // Create a provider with the private key and rpc url to interact with the contract
-  const provider = new ethers.providers.AlchemyProvider(chainId, apiKey, {
-    name: 'mumbai',
-    chainId: 80001,
-  });
+  const provider = new ethers.providers.AlchemyProvider(chain.id, apiKey);
   const wallet = new ethers.Wallet(privateKey, provider);
-  const client = new ethers.Contract(eclipseAddress, eclipseAbi, wallet);
+  const client = new ethers.Contract(
+    eclipseAddress(chain.id),
+    eclipseAbi,
+    wallet,
+  );
 
   return client;
 };
@@ -43,9 +46,11 @@ const sendTxSponsored = async (selector, args) => {
 };
 
 const sendTxRegular = async (selector, args) => {
+  const { chain } = getNetwork();
+
   try {
     const config = await prepareWriteContract({
-      address: eclipseAddress,
+      address: eclipseAddress(chain.id),
       abi: eclipseAbi,
       functionName: selector,
       args,
@@ -59,7 +64,6 @@ const sendTxRegular = async (selector, args) => {
       return { data, success: false, error: 'transaction failed' };
     }
   } catch (err) {
-    console.log('catched error');
     console.error(err);
     return {
       data: null,
@@ -104,28 +108,30 @@ export const getAllShortenedUrls = async () => {
 
 export const addFavorite = async (userAddress, favoriteId, allowlisted) => {
   return allowlisted
-    ? await sendTxSponsored('addFavorite', [userAddress, favoriteId])
-    : await sendTxRegular('addFavorite', [userAddress, favoriteId]);
+    ? await sendTxSponsored('addFavorite', [favoriteId, userAddress])
+    : await sendTxRegular('addFavorite', [favoriteId, userAddress]);
 };
 
 export const removeFavorite = async (userAddress, favoriteId, allowlisted) => {
   return allowlisted
-    ? await sendTxSponsored('removeFavorite', [userAddress, favoriteId])
-    : await sendTxRegular('removeFavorite', [userAddress, favoriteId]);
+    ? await sendTxSponsored('removeFavorite', [favoriteId, userAddress])
+    : await sendTxRegular('removeFavorite', [favoriteId, userAddress]);
 };
 
-export const shortenUrl = async (properties, allowlisted) => {
+export const shortenUrl = async (properties, address, allowlisted) => {
+  const { chain } = getNetwork();
+
   const event = new Promise((resolve, reject) => {
     // Set up a listener for the event
     const unwatch = watchContractEvent(
       {
-        address: eclipseAddress,
+        address: eclipseAddress(chain.id),
         abi: eclipseAbi,
         eventName: 'ECLIPSE__URL_SHORTENED',
       },
-      (id, propertiesEmitted) => {
+      (id, propertiesEmitted, addressEmitted) => {
         unwatch();
-        if (propertiesEmitted === properties) {
+        if (propertiesEmitted === properties && addressEmitted === address) {
           resolve({
             data: `${config.baseUrl}shared?id=${id.toString()}`,
             success: true,
@@ -143,8 +149,8 @@ export const shortenUrl = async (properties, allowlisted) => {
   });
 
   const tx = allowlisted
-    ? await sendTxSponsored('shortenURL', [properties])
-    : await sendTxRegular('shortenURL', [properties]);
+    ? await sendTxSponsored('shortenURL', [properties, address])
+    : await sendTxRegular('shortenURL', [properties, address]);
 
   if (!tx.success) {
     return tx;
