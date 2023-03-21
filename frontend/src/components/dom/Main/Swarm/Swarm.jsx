@@ -16,7 +16,6 @@ import { toast } from 'react-toastify';
 import stores from '@/stores';
 import hooks from '@/hooks';
 import config from '@/data';
-import Image from 'next/image';
 
 const { Panel } = Collapse;
 const { Group } = Radio;
@@ -25,6 +24,7 @@ const {
   backgrounds: BACKGROUNDS,
   count: COUNT,
   shaders: SHADERS,
+  themes: THEMES,
 } = config.options;
 
 const Swarm = () => {
@@ -36,6 +36,8 @@ const Swarm = () => {
     setCount,
     setPattern,
     toggleArtworkBg,
+    initialTheme,
+    setInitialTheme,
     setScaleEffects,
     setMovementEffects,
     setColorEffects,
@@ -47,6 +49,8 @@ const Swarm = () => {
     setCount: state.setCount,
     setPattern: state.setPattern,
     toggleArtworkBg: state.toggleArtworkBg,
+    initialTheme: state.initialTheme,
+    setInitialTheme: state.setInitialTheme,
     setScaleEffects: state.setScaleEffects,
     setMovementEffects: state.setMovementEffects,
     setColorEffects: state.setColorEffects,
@@ -212,6 +216,19 @@ const Swarm = () => {
                 onChange={setCount}
               />
             </div>
+            {/* Initial theme with radio 2 btns */}
+            <div className='colors'>
+              initial theme
+              <Group
+                onChange={(e) => setInitialTheme(e.target.value)}
+                value={initialTheme}>
+                {THEMES.map((t) => (
+                  <Radio value={t} key={t}>
+                    {t}
+                  </Radio>
+                ))}
+              </Group>
+            </div>
             <div className='link'>
               <button
                 className='button-primary'
@@ -234,9 +251,11 @@ const Swarm = () => {
                   copy shareable link
                 </button>
               </Tooltip>
-              <Tooltip title='the link points to an immersive render of this song, using the customized settings'>
-                <AiOutlineInfoCircle size={20} />
-              </Tooltip>
+              <span className='with-icon interact-svg'>
+                <Tooltip title='the link points to an immersive render of this song, using the customized settings'>
+                  <AiOutlineInfoCircle size={20} />
+                </Tooltip>
+              </span>
             </div>
           </div>
         </Panel>
