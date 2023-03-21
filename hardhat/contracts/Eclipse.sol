@@ -69,10 +69,13 @@ contract Eclipse {
     function addFavorite(string calldata _favorite, address _user) external {
         address sender = getSender(_user);
 
+        // ? We actually don't really need this check, it would just be a waste of gas
+        // ? If a user wants to interact with the contract and adds a duplicate, it's not a big deal
+        // ? since it will be filtered out on the app side
         // Is it already in the list?
-        string[] memory favorites = s_favorites[sender];
-        uint256 index = getFavoriteIndex(favorites, _favorite);
-        if (index != favorites.length) revert ECLIPSE__ALREADY_FAVORITE();
+        // string[] memory favorites = s_favorites[sender];
+        // uint256 index = getFavoriteIndex(favorites, _favorite);
+        // if (index != favorites.length) revert ECLIPSE__ALREADY_FAVORITE();
 
         s_favorites[sender].push(_favorite);
 

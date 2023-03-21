@@ -38,16 +38,16 @@ const { developmentChains, FORWARDER } = require('../../helper-hardhat-config');
        */
 
       describe('addFavorite', function () {
-        it('Should revert if already a favorite', async () => {
-          await eclipseUser.addFavorite('0x1234', user.address);
-          assert.sameMembers(await eclipseUser.getFavorites(user.address), [
-            '0x1234',
-          ]);
+        // it('Should revert if already a favorite', async () => {
+        //   await eclipseUser.addFavorite('0x1234', user.address);
+        //   assert.sameMembers(await eclipseUser.getFavorites(user.address), [
+        //     '0x1234',
+        //   ]);
 
-          await expect(
-            eclipseUser.addFavorite('0x1234', user.address),
-          ).to.be.revertedWith('ECLIPSE__ALREADY_FAVORITE');
-        });
+        //   await expect(
+        //     eclipseUser.addFavorite('0x1234', user.address),
+        //   ).to.be.revertedWith('ECLIPSE__ALREADY_FAVORITE');
+        // });
 
         it('Should successfully add a favorite and emit the correct event', async () => {
           await expect(await eclipseUser.addFavorite('0x1234', user.address))
