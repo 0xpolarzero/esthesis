@@ -43,6 +43,10 @@ export default create((set, get) => ({
     updateTheme(type);
   },
 
+  // Theme
+  initialTheme: 'dark',
+  setInitialTheme: (theme) => set({ initialTheme: theme }),
+
   // Pattern
   pattern: PATTERN,
   setPattern: (index) => set({ pattern: OPTIONS_SHADERS.vertex[index] }),
@@ -69,7 +73,7 @@ export default create((set, get) => ({
    *
    * @notice Init an entity based on parameters
    */
-  initSwarm: (params) => {
+  initSwarm: (params, initialTheme = 'dark') => {
     const {
       setColorA,
       setColorB,
@@ -85,8 +89,13 @@ export default create((set, get) => ({
       setColorA(params.colorA.light, 'light');
       setColorB(params.colorB.dark, 'dark');
       setColorB(params.colorB.light, 'light');
-      setBackground(params.background.dark, 'dark');
-      setBackground(params.background.light, 'light');
+      if (initialTheme === 'dark') {
+        setBackground(params.background.light, 'light');
+        setBackground(params.background.dark, 'dark');
+      } else {
+        setBackground(params.background.dark, 'dark');
+        setBackground(params.background.light, 'light');
+      }
       setPattern(params.pattern);
       setCount(params.count);
       setScaleEffects(params.effects.scale);

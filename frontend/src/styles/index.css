@@ -415,6 +415,12 @@ a.emphasize.min:hover {
 .ant-input-number:hover {
   background: rgba(var(--background-main-rgb), 0.5) !important;
 }
+.ant-skeleton-paragraph {
+  margin: 0;
+}
+.ant-skeleton-input {
+  width: 100% !important;
+}
 
 .iekbcc0 {
   font-family: var(--font-main) !important;

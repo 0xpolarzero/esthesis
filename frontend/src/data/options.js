@@ -1,5 +1,7 @@
 import shaders from './shaders';
 
+const themes = ['dark', 'light'];
+
 const backgrounds = {
   dark: [
     '#101010',
@@ -42,4 +44,4 @@ const count = {
   max: 10000,
 };
 
-export { backgrounds, baseColors, count, shaders };
+export { backgrounds, baseColors, count, shaders, themes };

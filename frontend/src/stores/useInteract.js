@@ -93,8 +93,15 @@ export default create((set, get) => ({
   },
   // Get the exhaustive args for the link
   getLink: (track) => {
-    const { colorA, colorB, background, pattern, count, effects } =
-      useSwarm.getState();
+    const {
+      colorA,
+      colorB,
+      background,
+      initialTheme,
+      pattern,
+      count,
+      effects,
+    } = useSwarm.getState();
 
     const patternIndex = OPTIONS_SHADERS.vertex.findIndex(
       (p) => p.name === pattern.name,
@@ -109,6 +116,7 @@ export default create((set, get) => ({
         'background',
         `${background.dark},${background.light}`,
       );
+      url.searchParams.set('initialTheme', `${initialTheme}`);
       url.searchParams.set('pattern', `${patternIndex}`);
       url.searchParams.set('count', `${count}`);
       Object.keys(effects).forEach((key) => {
@@ -126,6 +134,7 @@ export default create((set, get) => ({
         colorA,
         colorB,
         background,
+        initialTheme,
         pattern: patternIndex,
         count,
         effects,

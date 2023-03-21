@@ -30,7 +30,7 @@ const Render = () => {
       // Format it
       const formatted = isShortened
         ? // Parse the JSON
-          JSON.parse(retrievedParams.replace(config.baseUrl, ''))
+          JSON.parse(retrievedParams)
         : // Format it a bit better
           {
             colorA: {
@@ -45,6 +45,7 @@ const Render = () => {
               dark: retrievedParams.background.split(',')[0],
               light: retrievedParams.background.split(',')[1],
             },
+            initialTheme: retrievedParams.initialTheme,
             count: Number(retrievedParams.count),
             pattern: Number(retrievedParams.pattern),
             effects: {
@@ -55,7 +56,7 @@ const Render = () => {
             sound: retrievedParams.sound,
           };
 
-      const swarmSuccess = initSwarm(formatted);
+      const swarmSuccess = initSwarm(formatted, formatted.initialTheme);
       const soundSuccess = await initSound(formatted.sound);
 
       if (!swarmSuccess || !soundSuccess) {
