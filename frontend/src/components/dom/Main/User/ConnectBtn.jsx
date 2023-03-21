@@ -10,12 +10,12 @@ import {
 import { MdKeyboardArrowRight } from 'react-icons/md';
 import stores from '@/stores';
 import hooks from '@/hooks';
-import LinksModal from './LinksModal';
+import LinksDrawer from './LinksDrawer';
 
 const ConnectBtn = () => {
   const filterBy = stores.useSpinamp((state) => state.filterBy);
   const { isMobile } = hooks.useWindowSize();
-  const [linksModalOpen, setLinksModalOpen] = useState(false);
+  const [linksDrawerOpen, setLinksDrawerOpen] = useState(false);
 
   return (
     <>
@@ -61,7 +61,7 @@ const ConnectBtn = () => {
               key: '2',
               label: 'created links',
               icon: <AiOutlineShareAlt size={20} />,
-              onClick: () => setLinksModalOpen(true),
+              onClick: () => setLinksDrawerOpen(true),
             },
             {
               key: '3',
@@ -133,7 +133,7 @@ const ConnectBtn = () => {
           );
         }}
       </ConnectButton.Custom>
-      <LinksModal open={linksModalOpen} setOpen={setLinksModalOpen} />
+      <LinksDrawer open={linksDrawerOpen} setOpen={setLinksDrawerOpen} />
     </>
   );
 };
