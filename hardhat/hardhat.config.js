@@ -58,8 +58,11 @@ module.exports = {
     deployer: {
       default: 0,
     },
-    user: {
+    forwarder: {
       default: 1,
+    },
+    user: {
+      default: 2,
     },
   },
   etherscan: {

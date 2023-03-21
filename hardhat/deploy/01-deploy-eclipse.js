@@ -1,17 +1,12 @@
 const { network, ethers } = require('hardhat');
-const {
-  developmentChains,
-  TRUSTED_FORWARDER_POLYGON,
-  TRUSTED_FORWARDER_POLYGON_MUMBAI,
-  BASE_DOMAIN,
-} = require('../helper-hardhat-config');
+const { developmentChains, FORWARDER } = require('../helper-hardhat-config');
 const { verify } = require('../utils/verify');
 
 module.exports = async function ({ getNamedAccounts, deployments }) {
   const { deploy } = deployments;
   const { deployer } = await getNamedAccounts();
 
-  const args = [TRUSTED_FORWARDER_POLYGON_MUMBAI, BASE_DOMAIN];
+  const args = [FORWARDER[network.name]];
 
   const eclipse = await deploy('Eclipse', {
     from: deployer,
