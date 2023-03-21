@@ -30,7 +30,6 @@ const { chains, provider } = configureChains(
     publicProvider(),
   ],
 );
-console.log(polygonMumbai);
 
 const { connectors } = getDefaultWallets({
   appName: 'eclipse',

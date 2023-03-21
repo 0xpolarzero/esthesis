@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Drawer, Skeleton, Table, Tooltip } from 'antd';
+import { Divider, Drawer, Skeleton, Table, Tooltip } from 'antd';
 import stores from '@/stores';
 import hooks from '@/hooks';
 import TableSkeleton from '../../Utils/TableSkeleton';
@@ -36,12 +36,6 @@ const LinksDrawer = ({ open, setOpen }) => {
     toast.info('Customization loaded', {
       autoClose: 2000,
     });
-  };
-
-  const onClose = () => {
-    // setDataSource([]);
-    // setRetrievingLinks(true);
-    setOpen(false);
   };
 
   const columns = [
@@ -121,7 +115,7 @@ const LinksDrawer = ({ open, setOpen }) => {
     <Drawer
       className={`links-modal ${isMobile ? 'mobile' : 'desktop'}`}
       open={open}
-      onClose={onClose}
+      onClose={() => setOpen(false)}
       footer={null}
       title='Created links'
       width={isMobile ? '100%' : 'min(90%, 1400px)'}>
@@ -146,7 +140,7 @@ const LinksDrawer = ({ open, setOpen }) => {
       ) : dataSource.length === 0 ? (
         'no links created yet'
       ) : isMobile ? (
-        <TableMobile columns={columns} dataSource={dataSource} />
+        <TableMobile dataSource={dataSource} />
       ) : (
         <Table columns={columns} dataSource={dataSource} />
       )}
@@ -154,24 +148,48 @@ const LinksDrawer = ({ open, setOpen }) => {
   );
 };
 
-export default LinksDrawer;
+const TableMobile = ({ dataSource }) => {
+  const setModalContent = stores.useSpinamp((state) => state.setModalContent);
+  const initSwarm = stores.useSwarm((state) => state.initSwarm);
+  const theme = stores.useConfig((state) => state.theme);
 
-// track name, artist, link, load customization
+  const copyLink = (link) => {
+    navigator.clipboard.writeText(link);
+    toast.info('Link copied to clipboard', {
+      autoClose: 2000,
+      position: 'bottom-right',
+    });
+  };
 
-const TableMobile = ({ columns, dataSource }) => {
+  const loadConfig = (properties) => {
+    initSwarm(properties, theme);
+    toast.info('Customization loaded', {
+      autoClose: 2000,
+      position: 'bottom-right',
+    });
+  };
+
   return (
-    <div className='table-mobile'>
-      {dataSource.map((row) => (
-        <div className='table-mobile-row' key={row.id}>
-          {columns.map((column) => (
-            <div className='table-mobile-cell' key={column.key}>
-              {column.render
-                ? column.render(row[column.key], row)
-                : row[column.key]}
-            </div>
-          ))}
+    <div>
+      {dataSource.map((row, index) => (
+        <div key={row.id}>
+          <a onClick={() => setModalContent(row.trackInfo)}>{row.track}</a>
+          <span
+            className='with-icon interact-svg'
+            style={{ justifyContent: 'space-between' }}>
+            <a href={row.url} target='_blank' rel='noreferrer'>
+              {`${row.url.slice(0, 16)}...${row.url.slice(-12)}`}
+            </a>
+            <Tooltip title='Copy link to clipboard'>
+              <AiOutlineCopy size={20} onClick={() => copyLink(row.url)} />
+            </Tooltip>
+          </span>
+          <a onClick={() => loadConfig(row.properties)}>Load customization</a>
+          {index !== dataSource.length - 1 && <Divider type='horizontal' />}
         </div>
       ))}
     </div>
   );
 };
+
+export default LinksDrawer;

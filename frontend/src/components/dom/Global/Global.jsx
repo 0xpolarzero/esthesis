@@ -8,8 +8,8 @@ const Global = ({ type = 'default' }) => {
     return (
       <>
         <Background />
-        <Controls type={type} />
         <Render />
+        <Controls type={type} />
       </>
     );
 

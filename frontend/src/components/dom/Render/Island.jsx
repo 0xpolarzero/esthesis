@@ -3,8 +3,21 @@ import { Collapse, Divider } from 'antd';
 import { RiExternalLinkLine } from 'react-icons/ri';
 import stores from '@/stores';
 import hooks from '@/hooks';
+import ElapsedTime from '../Utils/ElapsedTime';
 
 const { Panel } = Collapse;
+
+const needDangerousHTML = [
+  '<br>',
+  '<br/>',
+  '<br />',
+  '<p>',
+  '</p>',
+  '<div>',
+  '</div>',
+  '<span>',
+  '</span>',
+];
 
 const Island = () => {
   const playing = stores.useAudio((state) => state.playing);
@@ -13,6 +26,7 @@ const Island = () => {
   const [isExpanded, setIsExpanded] = useState(!isMobile);
 
   if (!playing) return null;
+  console.log(playing.data);
 
   return (
     <div
@@ -24,7 +38,11 @@ const Island = () => {
           {playing.data.artist.name} <Divider type='vertical' />{' '}
           {playing.data.title}
         </span>
-        <a className='platform with-icon'>
+        <a
+          className='platform with-icon'
+          href={playing.data.websiteUrl}
+          target='_blank'
+          rel='noreferrer'>
           <RiExternalLinkLine size={20} />
           listen on {playing.data.platformId}
         </a>
@@ -42,7 +60,7 @@ const Island = () => {
                       <a
                         key={i}
                         className='profile with-icon'
-                        href={playing.data.artist.profiles[profile]}
+                        href={playing.data.artist.profiles[profile].websiteUrl}
                         target='_blank'
                         rel='noreferrer'>
                         <RiExternalLinkLine size={20} />
@@ -54,19 +72,28 @@ const Island = () => {
               </div>
               <div className='date'>
                 <span className='label'>date</span>
-                {new Date(playing.data.createdAtTime).toLocaleDateString()}
+                {new Date(playing.data.createdAtTime).toLocaleDateString()} (
+                <ElapsedTime date={new Date(playing.data.createdAtTime)} />)
               </div>
               <div className='description'>
                 <span className='label'>context</span>
-                {playing.data.description &&
-                playing.data.description.length &&
-                playing.data.description !== '<br>' ? (
-                  playing.data.description.split('\n').map((line, i) => (
-                    <span key={i}>
-                      {line}
-                      <br />
-                    </span>
-                  ))
+                {playing.data.description && playing.data.description.length ? (
+                  needDangerousHTML.some((html) =>
+                    playing.data.description.includes(html),
+                  ) ? (
+                    <span
+                      dangerouslySetInnerHTML={{
+                        __html: playing.data.description,
+                      }}
+                    />
+                  ) : (
+                    playing.data.description.split('\n').map((line, i) => (
+                      <span key={i}>
+                        {line}
+                        <br />
+                      </span>
+                    ))
+                  )
                 ) : (
                   <span className='empty'>
                     no description provided for this track
