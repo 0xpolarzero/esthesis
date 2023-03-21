@@ -10,7 +10,10 @@ import hooks from '@/hooks';
 import { FavoritesIcon, FavoritesLabel } from './Favorites';
 
 const TrackRow = ({ track, onClick, setModalContent }) => {
-  const playing = stores.useAudio((state) => state.playing);
+  const { playing, start } = stores.useAudio((state) => ({
+    playing: state.playing,
+    start: state.start,
+  }));
   const { filterBy, loadingAllTracks } = stores.useSpinamp((state) => ({
     filterBy: state.filterBy,
     loadingAllTracks: state.loadingAllTracks,
@@ -148,7 +151,9 @@ const TrackRow = ({ track, onClick, setModalContent }) => {
             track.title
           )}
           {isMobile ? (
-            <button className='button-primary small'>
+            <button
+              className='button-primary small'
+              onClick={() => start(track)}>
               <RiPlayFill size={20} />
             </button>
           ) : null}

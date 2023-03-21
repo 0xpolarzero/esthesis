@@ -62,7 +62,8 @@ const Sound = () => {
                   <div
                     className='track-card'
                     key={track.id}
-                    onClick={() => start(track)}>
+                    /* onClick={() => start(track)} */
+                  >
                     <TrackRow track={track} setModalContent={setModalContent} />
                   </div>
                   {tracks.items.indexOf(track) !== tracks.items.length - 1 ? (
