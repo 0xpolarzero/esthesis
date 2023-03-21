@@ -1,4 +1,8 @@
-import { fetchAllTracks, fetchTrackById } from '@spinamp/spinamp-sdk';
+import {
+  fetchAllTracks,
+  fetchTrackById,
+  fetchTracksByIds,
+} from '@spinamp/spinamp-sdk';
 import { matchSorter } from 'match-sorter';
 import { create } from 'zustand';
 import useAudio from './useAudio';
@@ -252,6 +256,23 @@ export default create((set, get) => ({
       tracks: pages[pageReq],
       page: pageReq,
     });
+  },
+
+  /**
+   * @notice Retrieve multiple tracks informations by ids
+   * @param {array} trackIds
+   * @returns {array} tracks
+   */
+  retrieveMultipleTracks: async (trackIds) => {
+    const { loadingAllTracks, errorAllTracks, unpaginatedTracks } = get();
+
+    if (loadingAllTracks || errorAllTracks) {
+      return await fetchTracksByIds(trackIds);
+    } else {
+      return trackIds.map((id) =>
+        unpaginatedTracks.find((track) => track.id === id),
+      );
+    }
   },
 
   /**

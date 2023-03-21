@@ -84,7 +84,7 @@ export const getShortenedUrl = async (id) => {
   try {
     const client = await getClient();
     const shortened = await client.getShortenedURL(id);
-    return shortened.url;
+    return shortened.properties;
   } catch (err) {
     console.error(err);
     return null;
@@ -114,7 +114,7 @@ export const removeFavorite = async (userAddress, favoriteId, allowlisted) => {
     : await sendTxRegular('removeFavorite', [userAddress, favoriteId]);
 };
 
-export const shortenUrl = async (url, allowlisted) => {
+export const shortenUrl = async (properties, allowlisted) => {
   const event = new Promise((resolve, reject) => {
     // Set up a listener for the event
     const unwatch = watchContractEvent(
@@ -123,9 +123,9 @@ export const shortenUrl = async (url, allowlisted) => {
         abi: eclipseAbi,
         eventName: 'ECLIPSE__URL_SHORTENED',
       },
-      (id, urlEmitted) => {
+      (id, propertiesEmitted) => {
         unwatch();
-        if (urlEmitted === `${config.baseUrl}${url}`) {
+        if (propertiesEmitted === properties) {
           resolve({
             data: `${config.baseUrl}shared?id=${id.toString()}`,
             success: true,
@@ -143,8 +143,8 @@ export const shortenUrl = async (url, allowlisted) => {
   });
 
   const tx = allowlisted
-    ? await sendTxSponsored('shortenURL', [`${config.baseUrl}${url}`])
-    : await sendTxRegular('shortenURL', [`${config.baseUrl}${url}`]);
+    ? await sendTxSponsored('shortenURL', [properties])
+    : await sendTxRegular('shortenURL', [properties]);
 
   if (!tx.success) {
     return tx;
