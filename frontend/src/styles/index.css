@@ -100,7 +100,6 @@ body,
 
 .bg-overlay {
   background: rgba(var(--background-main-rgb), 0.6);
-  backdrop-filter: blur(6px);
   width: 100%;
   height: 100%;
 }
@@ -420,6 +419,9 @@ a.emphasize.min:hover {
 }
 .ant-skeleton-input {
   width: 100% !important;
+}
+.ant-input-affix-wrapper input {
+  background: none !important;
 }
 
 .iekbcc0 {

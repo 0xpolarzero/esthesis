@@ -44,4 +44,11 @@ const count = {
   max: 10000,
 };
 
-export { backgrounds, baseColors, count, shaders, themes };
+const blurBg = {
+  default: 4,
+  low: 2,
+  medium: 4,
+  high: 6,
+};
+
+export { backgrounds, baseColors, count, shaders, themes, blurBg };

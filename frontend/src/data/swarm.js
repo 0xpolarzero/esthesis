@@ -1,4 +1,4 @@
-import { backgrounds, baseColors, count, shaders } from './options';
+import { backgrounds, baseColors, count, shaders, blurBg } from './options';
 
 const swarm = {
   colors: baseColors,
@@ -9,6 +9,7 @@ const swarm = {
   pattern: shaders.vertex[0],
   count: count.max, // So it enables max vertices
   allowDynamicEffects: true,
+  blurBg: blurBg.default,
 };
 
 export default swarm;

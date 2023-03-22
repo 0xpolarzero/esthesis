@@ -9,6 +9,7 @@ const {
   pattern: PATTERN,
   count: COUNT,
   allowDynamicEffects: ALLOW_DYNAMIC_EFFECTS,
+  blurBg: BLUR_BG,
 } = config.swarm;
 const { shaders: OPTIONS_SHADERS } = config.options;
 
@@ -68,6 +69,9 @@ export default create((set, get) => ({
   // Artwork background
   artworkBg: false,
   toggleArtworkBg: () => set({ artworkBg: !get().artworkBg }),
+  setArtworkBg: (value) => set({ artworkBg: value }),
+  blurBg: BLUR_BG,
+  setBlurBg: (value) => set({ blurBg: value }),
 
   /**
    *
@@ -83,6 +87,8 @@ export default create((set, get) => ({
       setScaleEffects,
       setMovementEffects,
       setColorEffects,
+      setArtworkBg,
+      setBlurBg,
     } = get();
     try {
       setColorA(params.colorA.dark, 'dark');
@@ -101,6 +107,8 @@ export default create((set, get) => ({
       setScaleEffects(params.effects.scale);
       setMovementEffects(params.effects.movement);
       setColorEffects(params.effects.color);
+      setArtworkBg(params.artworkBg);
+      setBlurBg(params.blurBg);
 
       return true;
     } catch (err) {

@@ -25,6 +25,7 @@ const {
   count: COUNT,
   shaders: SHADERS,
   themes: THEMES,
+  blurBg: BLUR_BG,
 } = config.options;
 
 const Swarm = () => {
@@ -33,9 +34,11 @@ const Swarm = () => {
     pattern,
     effects,
     artworkBg,
+    blurBg,
     setCount,
     setPattern,
     toggleArtworkBg,
+    setBlurBg,
     initialTheme,
     setInitialTheme,
     setScaleEffects,
@@ -46,9 +49,11 @@ const Swarm = () => {
     pattern: state.pattern,
     effects: state.effects,
     artworkBg: state.artworkBg,
+    blurBg: state.blurBg,
     setCount: state.setCount,
     setPattern: state.setPattern,
     toggleArtworkBg: state.toggleArtworkBg,
+    setBlurBg: state.setBlurBg,
     initialTheme: state.initialTheme,
     setInitialTheme: state.setInitialTheme,
     setScaleEffects: state.setScaleEffects,
@@ -136,6 +141,21 @@ const Swarm = () => {
                   onChange={artworkBg ? toggleArtworkBg : null}
                 />
               </Popconfirm>
+            </div>
+            <div className='colors'>
+              blur background
+              <Group
+                onChange={(e) => setBlurBg(e.target.value)}
+                value={blurBg}
+                disabled={!artworkBg}>
+                {Object.keys(BLUR_BG).map((key) =>
+                  key === 'default' ? null : (
+                    <Radio value={BLUR_BG[key]} key={key}>
+                      {key}
+                    </Radio>
+                  ),
+                )}
+              </Group>
             </div>
             <div className='colors'>
               <span className='header'>audiovisual effects_</span>

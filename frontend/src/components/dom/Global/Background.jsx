@@ -3,7 +3,10 @@ import stores from '@/stores';
 
 const Background = () => {
   const playing = stores.useAudio((state) => state.playing);
-  const artworkBg = stores.useSwarm((state) => state.artworkBg);
+  const { artworkBg, blurBg } = stores.useSwarm((state) => ({
+    artworkBg: state.artworkBg,
+    blurBg: state.blurBg,
+  }));
 
   if (!playing || !artworkBg) return null;
 
@@ -17,7 +20,10 @@ const Background = () => {
           fill
           style={{ objectFit: 'cover' }}
         />
-        <div className='bg-overlay' />
+        <div
+          className='bg-overlay'
+          style={{ backdropFilter: `blur(${blurBg}px)` }}
+        />
       </div>
     </>
   );

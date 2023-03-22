@@ -1,5 +1,5 @@
 import swarm from './swarm';
-import { backgrounds, count, shaders, themes } from './options';
+import { backgrounds, count, shaders, themes, blurBg } from './options';
 import networkMapping from './constants/networkMapping.json';
 import eclipseAbi from './constants/Eclipse.json';
 import allowlist from './constants/allowlist.json';
@@ -15,6 +15,7 @@ const config = {
     count,
     shaders,
     themes,
+    blurBg,
   },
   swarm,
   networkMapping,

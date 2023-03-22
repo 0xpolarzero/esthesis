@@ -26,7 +26,6 @@ const Island = () => {
   const [isExpanded, setIsExpanded] = useState(!isMobile);
 
   if (!playing) return null;
-  console.log(playing.data);
 
   return (
     <div

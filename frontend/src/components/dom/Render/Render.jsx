@@ -53,6 +53,8 @@ const Render = () => {
               movement: Number(retrievedParams.movement),
               color: Number(retrievedParams.color),
             },
+            artworkBg: retrievedParams.artworkBg === 'true',
+            blurBg: retrievedParams.blurBg,
             sound: retrievedParams.sound,
           };
 

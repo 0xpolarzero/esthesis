@@ -39,7 +39,10 @@ const TrackRow = ({ track, onClick, setModalContent }) => {
       ),
       large: (
         <Tooltip title='more info'>
-          <AiOutlineInfoCircle size={20} />
+          <AiOutlineInfoCircle
+            size={20}
+            onClick={() => setModalContent(track)}
+          />
         </Tooltip>
       ),
       onClick: () => setModalContent(track),
