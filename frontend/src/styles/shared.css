@@ -6,6 +6,8 @@
   height: min-content;
   max-height: 100%;
   overflow: scroll;
+
+  transition: backdrop-filter 0.25s ease;
 }
 .island.mobile {
   padding: 0.5 1rem;
@@ -14,7 +16,7 @@
   padding: 1rem 2rem;
 }
 .island.expanded {
-  backdrop-filter: blur(1px);
+  backdrop-filter: blur(6px);
 }
 
 .island .content,
