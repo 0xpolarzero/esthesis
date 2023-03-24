@@ -32,7 +32,7 @@ const { chains, provider } = configureChains(
 );
 
 const { connectors } = getDefaultWallets({
-  appName: 'eclipse',
+  appName: 'esthesis',
   chains,
 });
 

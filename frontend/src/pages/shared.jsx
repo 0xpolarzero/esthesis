@@ -12,5 +12,5 @@ export default function Page(props) {
 Page.canvas = (props) => <Experience />;
 
 export async function getStaticProps() {
-  return { props: { title: 'eclipse', type: 'shared' } };
+  return { props: { title: 'esthesis', type: 'shared' } };
 }

@@ -8,7 +8,7 @@ module.exports = async function ({ getNamedAccounts, deployments }) {
 
   const args = [FORWARDER[network.name]];
 
-  const eclipse = await deploy('Eclipse', {
+  const esthesis = await deploy('Esthesis', {
     from: deployer,
     args,
     log: true,
@@ -20,7 +20,7 @@ module.exports = async function ({ getNamedAccounts, deployments }) {
     process.env.ARBISCAN_API_KEY
   ) {
     console.log('Verifying contract...');
-    await verify(eclipse.address, args);
+    await verify(esthesis.address, args);
   }
 };
 

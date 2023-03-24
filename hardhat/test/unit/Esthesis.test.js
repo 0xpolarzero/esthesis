@@ -4,20 +4,20 @@ const { developmentChains, FORWARDER } = require('../../helper-hardhat-config');
 
 !developmentChains.includes(network.name)
   ? describe.skip
-  : describe('Eclipse unit tests', function () {
+  : describe('Esthesis unit tests', function () {
       let deployer;
       let forwarder;
       let user;
-      let eclipseDeployer;
-      let eclipseForwarder;
-      let eclipseUser;
+      let esthesisDeployer;
+      let esthesisForwarder;
+      let esthesisUser;
 
       beforeEach(async () => {
         [deployer, forwarder, user] = await ethers.getSigners();
         await deployments.fixture(['main']);
-        eclipseDeployer = await ethers.getContract('Eclipse', deployer);
-        eclipseForwarder = await ethers.getContract('Eclipse', forwarder);
-        eclipseUser = await ethers.getContract('Eclipse', user);
+        esthesisDeployer = await ethers.getContract('Esthesis', deployer);
+        esthesisForwarder = await ethers.getContract('Esthesis', forwarder);
+        esthesisUser = await ethers.getContract('Esthesis', user);
       });
 
       /**
@@ -25,9 +25,9 @@ const { developmentChains, FORWARDER } = require('../../helper-hardhat-config');
        */
       describe('constructor', function () {
         it('Should initialize the variables with the right value', async () => {
-          assert.equal(await eclipseDeployer.getOwner(), deployer.address);
+          assert.equal(await esthesisDeployer.getOwner(), deployer.address);
           assert.equal(
-            await eclipseDeployer.getForwarder(),
+            await esthesisDeployer.getForwarder(),
             FORWARDER[network.name],
           );
         });
@@ -39,41 +39,41 @@ const { developmentChains, FORWARDER } = require('../../helper-hardhat-config');
 
       describe('addFavorite', function () {
         // it('Should revert if already a favorite', async () => {
-        //   await eclipseUser.addFavorite('0x1234', user.address);
-        //   assert.sameMembers(await eclipseUser.getFavorites(user.address), [
+        //   await esthesisUser.addFavorite('0x1234', user.address);
+        //   assert.sameMembers(await esthesisUser.getFavorites(user.address), [
         //     '0x1234',
         //   ]);
 
         //   await expect(
-        //     eclipseUser.addFavorite('0x1234', user.address),
-        //   ).to.be.revertedWith('ECLIPSE__ALREADY_FAVORITE');
+        //     esthesisUser.addFavorite('0x1234', user.address),
+        //   ).to.be.revertedWith('ESTHESIS__ALREADY_FAVORITE');
         // });
 
         it('Should successfully add a favorite and emit the correct event', async () => {
-          await expect(await eclipseUser.addFavorite('0x1234', user.address))
-            .to.emit(eclipseUser, 'ECLIPSE__FAVORITE_ADDED')
+          await expect(await esthesisUser.addFavorite('0x1234', user.address))
+            .to.emit(esthesisUser, 'ESTHESIS__FAVORITE_ADDED')
             .withArgs(user.address, '0x1234');
 
-          assert.sameMembers(await eclipseUser.getFavorites(user.address), [
+          assert.sameMembers(await esthesisUser.getFavorites(user.address), [
             '0x1234',
           ]);
         });
 
         it('Should set the correct address when called or not by the forwarder', async () => {
-          await eclipseForwarder.addFavorite('0x1234', user.address);
+          await esthesisForwarder.addFavorite('0x1234', user.address);
           assert.sameMembers(
-            await eclipseForwarder.getFavorites(user.address),
+            await esthesisForwarder.getFavorites(user.address),
             ['0x1234'],
           );
 
-          await eclipseUser.addFavorite('0x5678', deployer.address);
+          await esthesisUser.addFavorite('0x5678', deployer.address);
           // Should not be able to set an arbitrary address
-          assert.sameMembers(await eclipseUser.getFavorites(user.address), [
+          assert.sameMembers(await esthesisUser.getFavorites(user.address), [
             '0x1234',
             '0x5678',
           ]);
           assert.sameMembers(
-            await eclipseUser.getFavorites(deployer.address),
+            await esthesisUser.getFavorites(deployer.address),
             [],
           );
         });
@@ -81,39 +81,41 @@ const { developmentChains, FORWARDER } = require('../../helper-hardhat-config');
       describe('removeFavorite', function () {
         it('Should revert if not a favorite', async () => {
           await expect(
-            eclipseUser.removeFavorite('0x1234', user.address),
-          ).to.be.revertedWith('ECLIPSE__NOT_FAVORITE');
+            esthesisUser.removeFavorite('0x1234', user.address),
+          ).to.be.revertedWith('ESTHESIS__NOT_FAVORITE');
         });
 
         it('Should successfully remove a favorite and emit the correct event', async () => {
-          await eclipseUser.addFavorite('0x1234', user.address);
-          assert.sameMembers(await eclipseUser.getFavorites(user.address), [
+          await esthesisUser.addFavorite('0x1234', user.address);
+          assert.sameMembers(await esthesisUser.getFavorites(user.address), [
             '0x1234',
           ]);
 
-          await expect(await eclipseUser.removeFavorite('0x1234', user.address))
-            .to.emit(eclipseUser, 'ECLIPSE__FAVORITE_REMOVED')
+          await expect(
+            await esthesisUser.removeFavorite('0x1234', user.address),
+          )
+            .to.emit(esthesisUser, 'ESTHESIS__FAVORITE_REMOVED')
             .withArgs(user.address, '0x1234');
-          assert.sameMembers(await eclipseUser.getFavorites(user.address), []);
+          assert.sameMembers(await esthesisUser.getFavorites(user.address), []);
         });
 
         it('Should work using the forwarder and not allow to remove a favorite from another address', async () => {
-          await eclipseForwarder.addFavorite('0x1234', user.address);
-          await eclipseForwarder.addFavorite('0x5678', user.address);
+          await esthesisForwarder.addFavorite('0x1234', user.address);
+          await esthesisForwarder.addFavorite('0x5678', user.address);
           assert.sameMembers(
-            await eclipseForwarder.getFavorites(user.address),
+            await esthesisForwarder.getFavorites(user.address),
             ['0x1234', '0x5678'],
           );
 
-          await eclipseForwarder.removeFavorite('0x1234', user.address);
+          await esthesisForwarder.removeFavorite('0x1234', user.address);
           assert.sameMembers(
-            await eclipseForwarder.getFavorites(user.address),
+            await esthesisForwarder.getFavorites(user.address),
             ['0x5678'],
           );
 
           await expect(
-            eclipseDeployer.removeFavorite('0x1234', user.address),
-          ).to.be.revertedWith('ECLIPSE__NOT_FAVORITE');
+            esthesisDeployer.removeFavorite('0x1234', user.address),
+          ).to.be.revertedWith('ESTHESIS__NOT_FAVORITE');
         });
       });
 
@@ -126,11 +128,11 @@ const { developmentChains, FORWARDER } = require('../../helper-hardhat-config');
           const properties = `test_properties`;
           const expectedId = 0;
 
-          await expect(await eclipseUser.shortenURL(properties, user.address))
-            .to.emit(eclipseUser, 'ECLIPSE__URL_SHORTENED')
+          await expect(await esthesisUser.shortenURL(properties, user.address))
+            .to.emit(esthesisUser, 'ESTHESIS__URL_SHORTENED')
             .withArgs(expectedId, properties, user.address);
 
-          const returned = await eclipseUser.getShortenedURL(expectedId);
+          const returned = await esthesisUser.getShortenedURL(expectedId);
           assert.equal(returned.id.toString(), expectedId);
           assert.equal(returned.properties, properties);
           assert.equal(returned.sender, user.address);
@@ -140,10 +142,10 @@ const { developmentChains, FORWARDER } = require('../../helper-hardhat-config');
           const properties = `test_properties`;
           const expectedIds = [0, 1];
 
-          await eclipseForwarder.shortenURL(properties, user.address);
-          await eclipseUser.shortenURL(properties, deployer.address);
+          await esthesisForwarder.shortenURL(properties, user.address);
+          await esthesisUser.shortenURL(properties, deployer.address);
 
-          const returned = await eclipseForwarder.getShortenedURLs();
+          const returned = await esthesisForwarder.getShortenedURLs();
 
           assert.equal(returned[0].id.toString(), expectedIds[0]);
           assert.equal(returned[0].properties, properties);
@@ -161,17 +163,17 @@ const { developmentChains, FORWARDER } = require('../../helper-hardhat-config');
       describe('updateForwarder', function () {
         it('Should revert if not owner', async () => {
           await expect(
-            eclipseUser.updateForwarder(user.address),
-          ).to.be.revertedWith('ECLIPSE__NOT_OWNER');
+            esthesisUser.updateForwarder(user.address),
+          ).to.be.revertedWith('ESTHESIS__NOT_OWNER');
         });
 
         it('Should successfully update the trusted forwarder', async () => {
           const newForwarder = user.address;
-          await expect(await eclipseDeployer.updateForwarder(newForwarder))
-            .to.emit(eclipseDeployer, 'ECLIPSE__FORWARDER_UPDATED')
+          await expect(await esthesisDeployer.updateForwarder(newForwarder))
+            .to.emit(esthesisDeployer, 'ESTHESIS__FORWARDER_UPDATED')
             .withArgs(newForwarder);
 
-          assert.equal(await eclipseDeployer.getForwarder(), newForwarder);
+          assert.equal(await esthesisDeployer.getForwarder(), newForwarder);
         });
       });
     });

@@ -2,20 +2,20 @@
 pragma solidity ^0.8.16;
 
 /**
- * @title Eclipse contract
- * @notice This contract is used to interact with the eclipse app database
+ * @title Esthesis contract
+ * @notice This contract is used to interact with the esthesis app database
  * @author polarzero
  * @dev ...
  */
 
 /// Errors
-error ECLIPSE__NOT_OWNER();
-error ECLIPSE__NOT_IN_ALLOWLIST(); // ? only on mainnet
+error ESTHESIS__NOT_OWNER();
+error ESTHESIS__NOT_IN_ALLOWLIST(); // ? only on mainnet
 // Favorites
-error ECLIPSE__ALREADY_FAVORITE();
-error ECLIPSE__NOT_FAVORITE();
+error ESTHESIS__ALREADY_FAVORITE();
+error ESTHESIS__NOT_FAVORITE();
 
-contract Eclipse {
+contract Esthesis {
     /// Structs
     struct ShortenedURL {
         uint256 id;
@@ -37,18 +37,18 @@ contract Eclipse {
     mapping(address => string[]) private s_favorites;
 
     /// Events
-    event ECLIPSE__FAVORITE_ADDED(address _address, string _favorite);
-    event ECLIPSE__FAVORITE_REMOVED(address _address, string _favorite);
-    event ECLIPSE__URL_SHORTENED(
+    event ESTHESIS__FAVORITE_ADDED(address _address, string _favorite);
+    event ESTHESIS__FAVORITE_REMOVED(address _address, string _favorite);
+    event ESTHESIS__URL_SHORTENED(
         uint256 _id,
         string _properties,
         address _sender
     );
-    event ECLIPSE__FORWARDER_UPDATED(address _address);
+    event ESTHESIS__FORWARDER_UPDATED(address _address);
 
     /// Modifiers
     modifier onlyOwner() {
-        if (msg.sender != i_owner) revert ECLIPSE__NOT_OWNER();
+        if (msg.sender != i_owner) revert ESTHESIS__NOT_OWNER();
         _;
     }
 
@@ -75,11 +75,11 @@ contract Eclipse {
         // Is it already in the list?
         // string[] memory favorites = s_favorites[sender];
         // uint256 index = getFavoriteIndex(favorites, _favorite);
-        // if (index != favorites.length) revert ECLIPSE__ALREADY_FAVORITE();
+        // if (index != favorites.length) revert ESTHESIS__ALREADY_FAVORITE();
 
         s_favorites[sender].push(_favorite);
 
-        emit ECLIPSE__FAVORITE_ADDED(sender, _favorite);
+        emit ESTHESIS__FAVORITE_ADDED(sender, _favorite);
     }
 
     /**
@@ -92,14 +92,14 @@ contract Eclipse {
         string[] memory favorites = s_favorites[sender];
 
         uint256 index = getFavoriteIndex(favorites, _favorite);
-        if (index == favorites.length) revert ECLIPSE__NOT_FAVORITE();
+        if (index == favorites.length) revert ESTHESIS__NOT_FAVORITE();
 
         for (uint256 i = index; i < favorites.length - 1; i++) {
             s_favorites[sender][i] = favorites[i + 1];
         }
         s_favorites[sender].pop();
 
-        emit ECLIPSE__FAVORITE_REMOVED(sender, _favorite);
+        emit ESTHESIS__FAVORITE_REMOVED(sender, _favorite);
     }
 
     /**
@@ -117,7 +117,7 @@ contract Eclipse {
         id = s_shortenedURLs.length;
         s_shortenedURLs.push(ShortenedURL(id, _properties, sender));
 
-        emit ECLIPSE__URL_SHORTENED(id, _properties, sender);
+        emit ESTHESIS__URL_SHORTENED(id, _properties, sender);
     }
 
     /**
@@ -126,7 +126,7 @@ contract Eclipse {
      */
     function updateForwarder(address _address) external onlyOwner {
         s_forwarder = _address;
-        emit ECLIPSE__FORWARDER_UPDATED(_address);
+        emit ESTHESIS__FORWARDER_UPDATED(_address);
     }
 
     /**

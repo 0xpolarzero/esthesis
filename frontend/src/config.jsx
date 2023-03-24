@@ -1,8 +1,8 @@
 import Head from 'next/head';
 
-const titleDefault = 'eclipse';
-const url = 'https://eclipse.polarzero.xyz/';
-const description = 'Music NFTs immersive eclipser';
+const titleDefault = 'esthesis';
+const url = 'https://esthesis.polarzero.xyz/';
+const description = 'Music NFTs immersive visualizer';
 const author = 'polarzero';
 
 const noOverlayWorkaroundScript = `

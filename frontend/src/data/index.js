@@ -1,13 +1,13 @@
 import swarm from './swarm';
 import { backgrounds, count, shaders, themes, blurBg } from './options';
 import networkMapping from './constants/networkMapping.json';
-import eclipseAbi from './constants/Eclipse.json';
+import esthesisAbi from './constants/Eclipse.json';
 import allowlist from './constants/allowlist.json';
 
 const chainId = 80001;
 
-// const baseUrl = 'https://eclipse.art';
-const baseUrl = 'https://eclipse.polarzero.xyz/';
+// const baseUrl = 'https://esthesis.art';
+const baseUrl = 'https://esthesis.polarzero.xyz/';
 
 const config = {
   options: {
@@ -19,7 +19,7 @@ const config = {
   },
   swarm,
   networkMapping,
-  eclipseAbi,
+  esthesisAbi,
   allowlist,
   chainId,
   baseUrl,

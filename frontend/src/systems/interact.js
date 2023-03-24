@@ -7,8 +7,8 @@ import {
 } from '@wagmi/core';
 import config from '@/data';
 
-const { networkMapping, eclipseAbi } = config;
-const eclipseAddress = (chainId) => networkMapping[chainId]['Eclipse'][0];
+const { networkMapping, esthesisAbi } = config;
+const esthesisAddress = (chainId) => networkMapping[chainId]['Eclipse'][0];
 const privateKey = process.env.NEXT_PUBLIC_PRIVATE_KEY;
 const apiKey = process.env.NEXT_PUBLIC_ALCHEMY_API_KEY;
 
@@ -18,8 +18,8 @@ const getClient = async () => {
   const provider = new ethers.providers.AlchemyProvider(chain.id, apiKey);
   const wallet = new ethers.Wallet(privateKey, provider);
   const client = new ethers.Contract(
-    eclipseAddress(chain.id),
-    eclipseAbi,
+    esthesisAddress(chain.id),
+    esthesisAbi,
     wallet,
   );
 
@@ -50,8 +50,8 @@ const sendTxRegular = async (selector, args) => {
 
   try {
     const config = await prepareWriteContract({
-      address: eclipseAddress(chain.id),
-      abi: eclipseAbi,
+      address: esthesisAddress(chain.id),
+      abi: esthesisAbi,
       functionName: selector,
       args,
     });
@@ -125,8 +125,8 @@ export const shortenUrl = async (properties, address, allowlisted) => {
     // Set up a listener for the event
     const unwatch = watchContractEvent(
       {
-        address: eclipseAddress(chain.id),
-        abi: eclipseAbi,
+        address: esthesisAddress(chain.id),
+        abi: esthesisAbi,
         eventName: 'ECLIPSE__URL_SHORTENED',
       },
       (id, propertiesEmitted, addressEmitted) => {
