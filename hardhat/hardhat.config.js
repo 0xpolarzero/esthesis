@@ -8,9 +8,9 @@ require('dotenv').config();
 
 const POLYGON_MUMBAI_RPC_URL = process.env.POLYGON_MUMBAI_RPC_URL || '';
 const ARBITRUM_GOERLI_RPC_URL = process.env.ARBITRUM_GOERLI_RPC_URL || '';
-const TEST_PRIVATE_KEY = process.env.TEST_PRIVATE_KEY;
-const TEST_PRIVATE_KEY_SECOND = process.env.TEST_PRIVATE_KEY_SECOND;
-const PROD_PRIVATE_KEY = process.env.PROD_PRIVATE_KEY;
+const PRIVATE_KEY_TEST_DEPLOYER = process.env.TEST_PRIVATE_KEY;
+const PRIVATE_KEY_TEST_USER = process.env.TEST_PRIVATE_KEY_SECOND;
+const PRIVATE_KEY_PROD_DEPLOYER = process.env.PROD_PRIVATE_KEY;
 
 const POLYGONSCAN_API_KEY = process.env.POLYGONSCAN_API_KEY;
 const ARBISCAN_API_KEY = process.env.ARBISCAN_API_KEY;
@@ -43,13 +43,13 @@ module.exports = {
     },
     mumbai: {
       url: POLYGON_MUMBAI_RPC_URL,
-      accounts: [TEST_PRIVATE_KEY, TEST_PRIVATE_KEY_SECOND],
+      accounts: [PRIVATE_KEY_TEST_DEPLOYER, PRIVATE_KEY_TEST_USER],
       chainId: 80001,
       blockConfirmations: 5,
     },
     arbitrumGoerli: {
       url: ARBITRUM_GOERLI_RPC_URL,
-      accounts: [TEST_PRIVATE_KEY, TEST_PRIVATE_KEY_SECOND],
+      accounts: [PRIVATE_KEY_TEST_DEPLOYER, PRIVATE_KEY_TEST_USER],
       chainId: 421613,
       blockConfirmations: 5,
     },
