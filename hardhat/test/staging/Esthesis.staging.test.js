@@ -192,7 +192,11 @@ developmentChains.includes(network.name)
           const expectedIds = [0, 1];
 
           await esthesisForwarder.shortenURL(properties, user.address);
-          await esthesisUser.shortenURL(properties, deployer.address);
+          const tx = await esthesisUser.shortenURL(
+            properties,
+            deployer.address,
+          );
+          await tx.wait(1);
 
           const returned = await esthesisForwarder.getShortenedURLs();
 
