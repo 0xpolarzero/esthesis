@@ -15,11 +15,12 @@ export default function App({ Component, pageProps = { title: 'polarzero' } }) {
     initTheme: state.initTheme,
     // setHighGraphics: state.setHighGraphics,
   }));
-  const { fetchTracks, fetchRemainingTracks } = stores.useSpinamp((state) => ({
-    fetchTracks: state.fetchTracks,
-    fetchRemainingTracks: state.fetchRemainingTracks,
-  }));
-  // const { isMobile } = hooks.useWindowSize();
+  const { fetchTracks, fetchRemainingTracks, updatePlatformId } =
+    stores.useSpinamp((state) => ({
+      fetchTracks: state.fetchTracks,
+      fetchRemainingTracks: state.fetchRemainingTracks,
+      updatePlatformId: state.updatePlatformId,
+    }));
 
   const layout = useRef();
   const loader = useRef();
@@ -31,7 +32,8 @@ export default function App({ Component, pageProps = { title: 'polarzero' } }) {
     initTheme();
     fetchTracks();
     fetchRemainingTracks();
-  }, [initTheme, fetchTracks, fetchRemainingTracks]);
+    updatePlatformId();
+  }, [initTheme, fetchTracks, fetchRemainingTracks, updatePlatformId]);
 
   // useEffect(() => {
   //   setHighGraphics(!isMobile);

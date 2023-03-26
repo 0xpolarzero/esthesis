@@ -1,4 +1,5 @@
 import {
+  fetchAllPlatforms,
   fetchAllTracks,
   fetchTrackById,
   fetchTracksByIds,
@@ -135,6 +136,37 @@ export default create((set, get) => ({
     set({
       loadingAllTracks: false,
       unpaginatedTracks,
+    });
+  },
+  /**
+   * @notice Update platformId on all tracks with the appropriate name
+   */
+  updatePlatformId: async () => {
+    const { unpaginatedTracks, rememberTracks, tracks, page } = get();
+    const platforms = await fetchAllPlatforms();
+
+    const updatedTracks = unpaginatedTracks.map((track) => {
+      const platform = platforms.find(
+        (platform) => platform.id === track.platformId,
+      );
+      return { ...track, platformId: platform.name };
+    });
+
+    // Do the same for pages
+    const updatedPages = Object.values(rememberTracks).map((page) => ({
+      ...page,
+      items: page.items.map((track) => {
+        const platform = platforms.find(
+          (platform) => platform.id === track.platformId,
+        );
+        return { ...track, platformId: platform.name };
+      }),
+    }));
+
+    set({
+      unpaginatedTracks: updatedTracks,
+      rememberTracks: updatedPages,
+      tracks: updatedPages[page],
     });
   },
 

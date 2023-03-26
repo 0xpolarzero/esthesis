@@ -9,7 +9,7 @@ const Layout = forwardRef(({ children, ...props }, ref) => {
 
   return (
     <Config>
-      <div {...props} ref={localRef} className='container'>
+      <div /* {...props} */ ref={localRef} className='container'>
         <Nav {...props} />
         {children}
       </div>
