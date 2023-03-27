@@ -1,7 +1,9 @@
 import {
   fetchAllPlatforms,
   fetchAllTracks,
+  fetchArtistBySlug,
   fetchTrackById,
+  fetchTrackBySlug,
   fetchTracksByIds,
 } from '@spinamp/spinamp-sdk';
 import { matchSorter } from 'match-sorter';
@@ -31,6 +33,9 @@ export default create((set, get) => ({
   errorAllTracks: false,
   filteredBy: null,
 
+  // Platforms
+  platforms: [],
+
   // Modal
   modalContent: null,
   setModalContent: (value) => set({ modalContent: value }),
@@ -39,10 +44,12 @@ export default create((set, get) => ({
    * @notice Fetch paginated tracks
    */
   fetchTracks: async (pageReq = 0) => {
-    const { rememberTracks } = get();
+    const { rememberTracks, updatePlatformId } = get();
+    set({ loadingTracks: true, tracks: {} });
     // Was this page already fetched?
     if (rememberTracks[pageReq]) {
       set({ tracks: rememberTracks[pageReq], page: pageReq });
+      updatePlatformId();
       return;
     }
 
@@ -62,31 +69,14 @@ export default create((set, get) => ({
       totalCount: res.totalCount,
       loadingTracks: false,
     });
+
+    updatePlatformId();
   },
 
   /**
    * @notice Fetch all tracks in the background to prepare for search and navigation
    */
   fetchRemainingTracks: async () => {
-    // let latest = { pageInfo: { hasNextPage: true } };
-    // let i = 1;
-    // while (latest.pageInfo.hasNextPage) {
-    //   const res = await fetchAllTracks({
-    //     first: 100,
-    //     offset: i * 100,
-    //   }).catch((err) => {
-    //     console.log('err', err);
-    //     set({ errorAllTracks: true });
-    //   });
-    //   console.log(i, res);
-
-    //   set({
-    //     rememberTracks: { ...get().rememberTracks, [i]: res },
-    //   });
-    //   latest = res;
-    //   i++;
-    // }
-
     // Fetch tracks by batch of 1000
     let allTracks = [];
     let hasNextPage = true;
@@ -138,36 +128,66 @@ export default create((set, get) => ({
       unpaginatedTracks,
     });
   },
+
   /**
    * @notice Update platformId on all tracks with the appropriate name
    */
   updatePlatformId: async () => {
-    const { unpaginatedTracks, rememberTracks, tracks, page } = get();
-    const platforms = await fetchAllPlatforms();
+    const { platforms, tracks } = get();
+    const platformsLocal = platforms.length
+      ? platforms
+      : await fetchAllPlatforms();
 
-    const updatedTracks = unpaginatedTracks.map((track) => {
-      const platform = platforms.find(
+    const updatedTracks = tracks.items.map((track) => {
+      const platform = platformsLocal.find(
         (platform) => platform.id === track.platformId,
       );
-      return { ...track, platformId: platform.name };
-    });
 
-    // Do the same for pages
-    const updatedPages = Object.values(rememberTracks).map((page) => ({
-      ...page,
-      items: page.items.map((track) => {
-        const platform = platforms.find(
-          (platform) => platform.id === track.platformId,
-        );
-        return { ...track, platformId: platform.name };
-      }),
-    }));
+      const updatedProfiles = Object.values(track.artist.profiles).map(
+        (profile) => {
+          const platform = platformsLocal.find(
+            (platform) => platform.id === profile.platformId,
+          );
+
+          return { ...profile, platformId: platform.name };
+        },
+      );
+
+      return {
+        ...track,
+        platformId: platform.name,
+        artist: { ...track.artist, profiles: updatedProfiles },
+      };
+    });
 
     set({
-      unpaginatedTracks: updatedTracks,
-      rememberTracks: updatedPages,
-      tracks: updatedPages[page],
+      platforms: platformsLocal,
+      tracks: { ...tracks, items: updatedTracks },
     });
+
+    // const updatedTracks = unpaginatedTracks.map((track) => {
+    //   const platform = platforms.find(
+    //     (platform) => platform.id === track.platformId,
+    //   );
+    //   return { ...track, platformId: platform.name };
+    // });
+
+    // // Do the same for pages
+    // const updatedPages = Object.values(rememberTracks).map((page) => ({
+    //   ...page,
+    //   items: page.items.map((track) => {
+    //     const platform = platforms.find(
+    //       (platform) => platform.id === track.platformId,
+    //     );
+    //     return { ...track, platformId: platform.name };
+    //   }),
+    // }));
+
+    // set({
+    //   unpaginatedTracks: updatedTracks,
+    //   rememberTracks: updatedPages,
+    //   tracks: updatedPages[page],
+    // });
   },
 
   /**
@@ -177,18 +197,12 @@ export default create((set, get) => ({
    * then set all tracks so nothing will need to be fetched again even in paginated results
    */
   onSearchTrack: async (value) => {
-    const { unpaginatedTracks, tracks, rememberTracks, page } = get();
+    const { unpaginatedTracks, rememberTracks, page, updatePlatformId } = get();
     // If there is no search, display recent tracks
     if (!value || value.length < 3) {
       set({ tracks: rememberTracks[page] });
       return;
     }
-
-    // const filtered = unpaginatedTracks.filter(
-    //   (track) =>
-    //     track.title.toLowerCase().includes(value.toLowerCase()) ||
-    //     track.artist.name.toLowerCase().includes(value.toLowerCase()),
-    // );
     // Sort by most accurate match
     const sorted = matchSorter(unpaginatedTracks, value, {
       keys: ['title', 'artist.name', 'platformId'],
@@ -201,7 +215,10 @@ export default create((set, get) => ({
         pageInfo: { hasNextPage: false, hasPreviousPage: false },
       },
       filteredBy: null,
+      loadingTracks: false,
     });
+
+    updatePlatformId();
   },
 
   /**
