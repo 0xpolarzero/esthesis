@@ -27,66 +27,66 @@ const Search = () => {
   const [options, setOptions] = useState([]);
   const [searchValue, setSearchValue] = useState('');
 
-  useEffect(() => {
-    if (!unpaginatedTracks) return;
+  // useEffect(() => {
+  //   if (!unpaginatedTracks) return;
 
-    let list = { titles: [], artists: [], platforms: [] };
-    unpaginatedTracks.map((track) => {
-      const { title, artist, id, platformId } = track;
-      list.titles.push({ value: title, key: `${id}-title` });
+  //   let list = { titles: [], artists: [], platforms: [] };
+  //   unpaginatedTracks.map((track) => {
+  //     const { title, artist, id, platformId } = track;
+  //     list.titles.push({ value: title, key: `${id}-title` });
 
-      if (!list.artists.find((a) => a.value === artist.name)) {
-        list.artists.push({ value: artist.name, key: artist.id });
-      }
+  //     if (!list.artists.find((a) => a.value === artist.name)) {
+  //       list.artists.push({ value: artist.name, key: artist.id });
+  //     }
 
-      if (!list.platforms.find((p) => p.value === platformId)) {
-        list.platforms.push({ value: platformId, key: platformId });
-      }
-    });
+  //     if (!list.platforms.find((p) => p.value === platformId)) {
+  //       list.platforms.push({ value: platformId, key: platformId });
+  //     }
+  //   });
 
-    // Format
-    const options = list.titles
-      .map((title) => ({
-        value: title.value,
-        key: title.key,
-        label: (
-          <span
-            className={`option-label title ${isMobile ? 'mobile' : 'desktop'}`}>
-            {title.value}
-          </span>
-        ),
-      }))
-      .concat(
-        list.artists.map((artist) => ({
-          value: artist.value,
-          key: artist.key,
-          label: (
-            <span
-              className={`option-label artist ${
-                isMobile ? 'mobile' : 'desktop'
-              }`}>
-              {artist.value}
-            </span>
-          ),
-        })),
-      )
-      .concat(
-        list.platforms.map((platform) => ({
-          value: platform.value,
-          key: platform.key,
-          label: (
-            <span
-              className={`option-label platform ${
-                isMobile ? 'mobile' : 'desktop'
-              }`}>
-              {platform.value}
-            </span>
-          ),
-        })),
-      );
+  //   // Format
+  //   const options = list.titles
+  //     .map((title) => ({
+  //       value: title.value,
+  //       key: title.key,
+  //       label: (
+  //         <span
+  //           className={`option-label title ${isMobile ? 'mobile' : 'desktop'}`}>
+  //           {title.value}
+  //         </span>
+  //       ),
+  //     }))
+  //     .concat(
+  //       list.artists.map((artist) => ({
+  //         value: artist.value,
+  //         key: artist.key,
+  //         label: (
+  //           <span
+  //             className={`option-label artist ${
+  //               isMobile ? 'mobile' : 'desktop'
+  //             }`}>
+  //             {artist.value}
+  //           </span>
+  //         ),
+  //       })),
+  //     )
+  //     .concat(
+  //       list.platforms.map((platform) => ({
+  //         value: platform.value,
+  //         key: platform.key,
+  //         label: (
+  //           <span
+  //             className={`option-label platform ${
+  //               isMobile ? 'mobile' : 'desktop'
+  //             }`}>
+  //             {platform.value}
+  //           </span>
+  //         ),
+  //       })),
+  //     );
 
-    setOptions(options);
-  }, [unpaginatedTracks]);
+  //   setOptions(options);
+  // }, [unpaginatedTracks]);
 
   useEffect(() => {
     if (searchValue.length < 3) {
@@ -103,7 +103,7 @@ const Search = () => {
       </div>
     );
 
-  if (loadingAllTracks || !options.length)
+  if (loadingAllTracks)
     return (
       <div className='search'>
         <Skeleton.Input

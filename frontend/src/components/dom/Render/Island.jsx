@@ -72,7 +72,7 @@ const Island = () => {
               <div className='date'>
                 <span className='label'>date</span>
                 {new Date(playing.data.createdAtTime).toLocaleDateString()} (
-                <ElapsedTime date={new Date(playing.data.createdAtTime)} />)
+                <ElapsedTime time={new Date(playing.data.createdAtTime)} />)
               </div>
               <div className='description'>
                 <span className='label'>context</span>
