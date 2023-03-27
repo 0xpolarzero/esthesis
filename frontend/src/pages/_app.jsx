@@ -15,12 +15,10 @@ export default function App({ Component, pageProps = { title: 'polarzero' } }) {
     initTheme: state.initTheme,
     // setHighGraphics: state.setHighGraphics,
   }));
-  const { fetchTracks, fetchRemainingTracks, updatePlatformId } =
-    stores.useSpinamp((state) => ({
-      fetchTracks: state.fetchTracks,
-      fetchRemainingTracks: state.fetchRemainingTracks,
-      updatePlatformId: state.updatePlatformId,
-    }));
+  const { fetchTracks, fetchRemainingTracks } = stores.useSpinamp((state) => ({
+    fetchTracks: state.fetchTracks,
+    fetchRemainingTracks: state.fetchRemainingTracks,
+  }));
 
   const layout = useRef();
   const loader = useRef();
@@ -30,10 +28,8 @@ export default function App({ Component, pageProps = { title: 'polarzero' } }) {
       loader.current.classList.add('hidden');
 
     initTheme();
-    fetchTracks();
-    fetchRemainingTracks();
-    updatePlatformId();
-  }, [initTheme, fetchTracks, fetchRemainingTracks, updatePlatformId]);
+    fetchTracks().then(() => fetchRemainingTracks());
+  }, [initTheme, fetchTracks, fetchRemainingTracks]);
 
   // useEffect(() => {
   //   setHighGraphics(!isMobile);
