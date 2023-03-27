@@ -102,6 +102,7 @@ export default create((set, get) => ({
       count,
       effects,
       artworkBg,
+      blurBg,
     } = useSwarm.getState();
 
     const patternIndex = OPTIONS_SHADERS.vertex.findIndex(
@@ -124,6 +125,7 @@ export default create((set, get) => ({
         url.searchParams.set(key, `${effects[key]}`);
       });
       url.searchParams.set('artworkBg', `${artworkBg}`);
+      url.searchParams.set('blurBg', `${blurBg}`);
       url.searchParams.set('sound', `${track.id}`);
 
       return url;
@@ -141,6 +143,7 @@ export default create((set, get) => ({
         count,
         effects,
         artworkBg,
+        blurBg,
         sound: track.id,
       });
     };

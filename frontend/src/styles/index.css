@@ -420,7 +420,7 @@ a.emphasize.min:hover {
 .ant-skeleton-input {
   width: 100% !important;
 }
-.ant-input-affix-wrapper input {
+.ant-input-search * {
   background: none !important;
 }
 

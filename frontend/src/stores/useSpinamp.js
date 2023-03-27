@@ -132,26 +132,32 @@ export default create((set, get) => ({
   /**
    * @notice Update platformId on all tracks with the appropriate name
    */
-  updatePlatformId: async () => {
+  updatePlatformId: async (track = null) => {
     const { platforms, tracks } = get();
+    // Fetch only if platforms are not already fetched
     const platformsLocal = platforms.length
       ? platforms
       : await fetchAllPlatforms();
+    // Use the track if provided, otherwise use the tracks from the store
+    const tracksLocal = track ? [track] : tracks.items;
 
-    const updatedTracks = tracks.items.map((track) => {
+    const updatedTracks = tracksLocal.map((track) => {
       const platform = platformsLocal.find(
         (platform) => platform.id === track.platformId,
       );
 
-      const updatedProfiles = Object.values(track.artist.profiles).map(
-        (profile) => {
+      // Update artist profiles
+      const updatedProfiles = Object.values(track.artist.profiles)
+        .map((profile) => {
           const platform = platformsLocal.find(
             (platform) => platform.id === profile.platformId,
           );
-
           return { ...profile, platformId: platform.name };
-        },
-      );
+        })
+        .reduce((acc, profile) => {
+          acc[profile.platformId] = profile;
+          return acc;
+        }, {});
 
       return {
         ...track,
@@ -164,6 +170,8 @@ export default create((set, get) => ({
       platforms: platformsLocal,
       tracks: { ...tracks, items: updatedTracks },
     });
+
+    if (track) return updatedTracks[0];
 
     // const updatedTracks = unpaginatedTracks.map((track) => {
     //   const platform = platforms.find(
@@ -201,6 +209,7 @@ export default create((set, get) => ({
     // If there is no search, display recent tracks
     if (!value || value.length < 3) {
       set({ tracks: rememberTracks[page] });
+      updatePlatformId();
       return;
     }
     // Sort by most accurate match
@@ -328,10 +337,16 @@ export default create((set, get) => ({
    * @notice Init sound based on track id
    */
   initSound: async (trackId) => {
+    const { updatePlatformId } = get();
     const { start } = useAudio.getState();
     try {
       const track = await fetchTrackById(trackId);
       start(track, true /* meaning don't try to init the audio context yet */);
+
+      // Update platform id
+      const updated = await updatePlatformId(track);
+      if (updated) start(updated, true);
+
       return true;
     } catch (err) {
       console.log('err', err);

@@ -6,17 +6,12 @@
   height: min-content;
   max-height: 100%;
   overflow: scroll;
-
-  transition: backdrop-filter 0.25s ease;
 }
 .island.mobile {
-  padding: 0.5 1rem;
+  padding: 0.5rem 1rem;
 }
 .island.desktop {
   padding: 1rem 2rem;
-}
-.island.expanded {
-  backdrop-filter: blur(6px);
 }
 
 .island .content,
@@ -26,6 +21,13 @@
   text-align: justify;
   gap: 1rem;
   max-width: 100ch;
+  border-radius: 6px;
+  padding: 1rem;
+  transition: all 0.25s ease;
+}
+.island.expanded .content {
+  backdrop-filter: blur(6px);
+  background: rgba(var(--background-main-rgb), 0.3);
 }
 
 .island .ant-collapse-header {

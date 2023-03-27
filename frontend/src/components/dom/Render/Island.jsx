@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Collapse, Divider } from 'antd';
 import { RiExternalLinkLine } from 'react-icons/ri';
 import stores from '@/stores';
@@ -23,7 +23,11 @@ const Island = () => {
   const playing = stores.useAudio((state) => state.playing);
   const { isMobile } = hooks.useWindowSize();
 
-  const [isExpanded, setIsExpanded] = useState(!isMobile);
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  useEffect(() => {
+    if (isMobile) setIsExpanded(true);
+  }, [isMobile]);
 
   if (!playing) return null;
 
@@ -48,7 +52,8 @@ const Island = () => {
         <Collapse
           bordered={false}
           ghost
-          onChange={(e) => setIsExpanded(e.length)}>
+          onChange={(e) => setIsExpanded(e.length)}
+          defaultActiveKey={isMobile ? ['1'] : []}>
           <Panel header='more' key='1'>
             <div className='expand'>
               <div className='profiles'>
