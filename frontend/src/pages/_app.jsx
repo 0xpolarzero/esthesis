@@ -28,7 +28,7 @@ export default function App({ Component, pageProps = { title: 'polarzero' } }) {
       loader.current.classList.add('hidden');
 
     initTheme();
-    fetchTracks().then(() => fetchRemainingTracks());
+    fetchTracks(); /* .then(() => fetchRemainingTracks()); */
   }, [initTheme, fetchTracks, fetchRemainingTracks]);
 
   // useEffect(() => {

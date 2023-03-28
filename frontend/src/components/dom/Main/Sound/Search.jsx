@@ -10,7 +10,7 @@ const Search = () => {
     tracks,
     onSearchTrack,
     unpaginatedTracks,
-    loadingAllTracks,
+    loadingTracks,
     errorTracks,
     errorAllTracks,
     setIsSearching,
@@ -18,7 +18,7 @@ const Search = () => {
     tracks: state.tracks,
     onSearchTrack: state.onSearchTrack,
     unpaginatedTracks: state.unpaginatedTracks,
-    loadingAllTracks: state.loadingAllTracks,
+    loadingTracks: state.loadingTracks,
     errorTracks: state.errorTracks,
     errorAllTracks: state.errorAllTracks,
     setIsSearching: state.setIsSearching,
@@ -103,16 +103,16 @@ const Search = () => {
       </div>
     );
 
-  if (loadingAllTracks)
-    return (
-      <div className='search'>
-        <Skeleton.Input
-          style={{ width: isMobile ? '90%' : '100%' }}
-          size='small'
-          active
-        />
-      </div>
-    );
+  // if (loadingAllTracks)
+  //   return (
+  //     <div className='search'>
+  //       <Skeleton.Input
+  //         style={{ width: isMobile ? '90%' : '100%' }}
+  //         size='small'
+  //         active
+  //       />
+  //     </div>
+  //   );
 
   return (
     <>
@@ -134,7 +134,7 @@ const Search = () => {
           }>
           <SearchBar
             size='medium'
-            placeholder='search a track, artist or platform'
+            placeholder='search a track or artist'
             allowClear
             onSearch={onSearchTrack}
             onChange={(e) => setSearchValue(e.target.value)}

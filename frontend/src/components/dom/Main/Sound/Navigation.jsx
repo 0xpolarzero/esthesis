@@ -1,10 +1,12 @@
 import { AiOutlineLeft, AiOutlineRight } from 'react-icons/ai';
 import stores from '@/stores';
+import { Skeleton } from 'antd';
 
 const Navigation = () => {
   const {
     tracks,
     errorTracks,
+    loadingTracks,
     page,
     navigatePage,
     totalCount,
@@ -14,6 +16,7 @@ const Navigation = () => {
   } = stores.useSpinamp((state) => ({
     tracks: state.tracks,
     errorTracks: state.errorTracks,
+    loadingTracks: state.loadingTracks,
     page: state.page,
     navigatePage: state.navigatePage,
     totalCount: state.totalCount,
@@ -62,13 +65,19 @@ const Navigation = () => {
       {tracks ? (
         <div className='filter' style={{ marginBottom: '1rem' }}>
           <span style={{ opacity: 0.7 }}>
-            {isSearching
-              ? tracks.items.length === 100
-                ? 'more than 100 results'
-                : `${tracks.items.length} results`
-              : `${page * 100 + 1}-${page * 100 + 100} of ${
-                  totalCount || '...'
-                } results`}
+            {isSearching ? (
+              loadingTracks ? (
+                <Skeleton.Input size='small' />
+              ) : tracks.items.length === 100 ? (
+                'more than 100 results'
+              ) : (
+                `${tracks.items.length} results`
+              )
+            ) : (
+              `${page * 100 + 1}-${page * 100 + 100} of ${
+                totalCount || '...'
+              } results`
+            )}
           </span>
           <div className='navigation'>
             <button

@@ -54,7 +54,7 @@ const Sound = () => {
             <div>
               There was an error loading tracks. Please try to reload the page.
             </div>
-          ) : tracks?.items ? (
+          ) : tracks?.items && !loadingTracks ? (
             tracks.items.map((track) =>
               // Render a card on mobile, a row on desktop
               isMobile ? (

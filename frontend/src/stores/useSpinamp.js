@@ -1,4 +1,5 @@
 import {
+  fetchAllArtists,
   fetchAllPlatforms,
   fetchAllTracks,
   fetchArtistBySlug,
@@ -92,8 +93,10 @@ export default create((set, get) => ({
         set({ errorAllTracks: true });
       });
 
-      allTracks.push(...res.items);
-      hasNextPage = res.pageInfo.hasNextPage;
+      if (res) {
+        allTracks.push(...res.items);
+        hasNextPage = res.pageInfo.hasNextPage;
+      }
       offset += 1000;
       if (!totalCount) totalCount = res.totalCount;
     }
@@ -212,10 +215,26 @@ export default create((set, get) => ({
       updatePlatformId();
       return;
     }
+    set({ loadingTracks: true });
+
+    const searchTracks = await fetchAllTracks({
+      filter: {
+        or: [
+          { title: { includesInsensitive: value } },
+          { artistByArtistId: { name: { includesInsensitive: value } } },
+        ],
+      },
+    });
+    // const searchArtists = await fetchAllArtists({
+    //   filter: { name: { includesInsensitive: value } },
+    // });
+    console.log('searchTracks', searchTracks);
     // Sort by most accurate match
-    const sorted = matchSorter(unpaginatedTracks, value, {
-      keys: ['title', 'artist.name', 'platformId'],
-    }).slice(0, 100);
+    const sorted = matchSorter(
+      searchTracks.items /* ...searchArtists.items */,
+      value,
+      { keys: ['title', 'artist.name'] },
+    ).slice(0, 100);
 
     // Set tracks & remember them
     set({
