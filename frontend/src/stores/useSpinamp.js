@@ -36,6 +36,7 @@ export default create((set, get) => ({
 
   // Platforms
   platforms: [],
+  fetchPlatforms: async () => set({ platforms: await fetchAllPlatforms() }),
 
   // Modal
   modalContent: null,
@@ -45,12 +46,15 @@ export default create((set, get) => ({
    * @notice Fetch paginated tracks
    */
   fetchTracks: async (pageReq = 0) => {
-    const { rememberTracks, updatePlatformId } = get();
+    const { rememberTracks } = get();
     set({ loadingTracks: true, tracks: {} });
     // Was this page already fetched?
     if (rememberTracks[pageReq]) {
-      set({ tracks: rememberTracks[pageReq], page: pageReq });
-      updatePlatformId();
+      set({
+        tracks: rememberTracks[pageReq],
+        page: pageReq,
+        loadingTracks: false,
+      });
       return;
     }
 
@@ -70,8 +74,6 @@ export default create((set, get) => ({
       totalCount: res.totalCount,
       loadingTracks: false,
     });
-
-    updatePlatformId();
   },
 
   /**
@@ -155,7 +157,7 @@ export default create((set, get) => ({
           const platform = platformsLocal.find(
             (platform) => platform.id === profile.platformId,
           );
-          return { ...profile, platformId: platform.name };
+          return { ...profile, platform };
         })
         .reduce((acc, profile) => {
           acc[profile.platformId] = profile;
@@ -203,16 +205,13 @@ export default create((set, get) => ({
 
   /**
    * @notice Fetch tracks by search
-   * @dev Will fetch all tracks to be able to filter them
-   * On first search, it will take some time to fetch all tracks,
-   * then set all tracks so nothing will need to be fetched again even in paginated results
+   * @dev Will fetch all tracks with filters
    */
   onSearchTrack: async (value) => {
-    const { unpaginatedTracks, rememberTracks, page, updatePlatformId } = get();
+    const { unpaginatedTracks, rememberTracks, page } = get();
     // If there is no search, display recent tracks
     if (!value || value.length < 3) {
       set({ tracks: rememberTracks[page] });
-      updatePlatformId();
       return;
     }
     set({ loadingTracks: true });
@@ -225,10 +224,7 @@ export default create((set, get) => ({
         ],
       },
     });
-    // const searchArtists = await fetchAllArtists({
-    //   filter: { name: { includesInsensitive: value } },
-    // });
-    console.log('searchTracks', searchTracks);
+
     // Sort by most accurate match
     const sorted = matchSorter(
       searchTracks.items /* ...searchArtists.items */,
@@ -245,43 +241,43 @@ export default create((set, get) => ({
       filteredBy: null,
       loadingTracks: false,
     });
-
-    updatePlatformId();
   },
 
   /**
    * @notice Filter tracks by artist or platform
    */
-  filterBy: async (type, value) => {
-    const { unpaginatedTracks } = get();
+  filterBy: async (type, value, id) => {
     const { favorites } = useInteract.getState();
+    set({ loadingTracks: true });
+    console.log(id);
 
     let filtered;
     if (type === 'artist') {
-      filtered = unpaginatedTracks.filter(
-        (track) => track.artist.name === value,
-      );
+      filtered = await fetchAllTracks({
+        filter: { artistId: { equalToInsensitive: id } },
+      });
     } else if (type === 'platform') {
-      filtered = unpaginatedTracks.filter(
-        (track) => track.platformId === value,
-      );
+      filtered = await fetchAllTracks({
+        filter: { platformId: { equalTo: id } },
+      });
     } else if (type === 'favorites') {
-      filtered = unpaginatedTracks.filter((track) =>
-        favorites.includes(track.id),
-      );
+      filtered = await fetchAllTracks({
+        filter: { id: { in: favorites } },
+      });
     }
+    console.log(filtered);
 
     // Create pages of 100 tracks with pagination info
-    const pagesAmount = Math.ceil(filtered.length / 100);
+    const pagesAmount = Math.ceil(filtered.totalCount / 100);
     const pages = [];
     for (let i = 0; i < pagesAmount; i++) {
       pages.push({
-        items: filtered.slice(i * 100, (i + 1) * 100),
+        items: filtered?.items.slice(i * 100, (i + 1) * 100),
         pageInfo: {
           hasNextPage: i < pagesAmount - 1,
           hasPreviousPage: i > 0,
         },
-        totalCount: filtered.length,
+        totalCount: filtered.totalCount,
       });
     }
 
@@ -289,12 +285,13 @@ export default create((set, get) => ({
     set({
       tracks: pages[0],
       page: 0,
-      totalCount: filtered.length,
+      totalCount: filtered.totalCount,
       filteredBy: {
         type,
         value,
         pages,
       },
+      loadingTracks: false,
     });
   },
 
@@ -302,11 +299,11 @@ export default create((set, get) => ({
    * @notice Filter back to all tracks
    */
   filterAll: async () => {
-    const { rememberTracks, page } = get();
+    const { rememberTracks } = get();
     set({
-      tracks: rememberTracks[page],
+      tracks: rememberTracks[0],
       filteredBy: null,
-      totalCount: rememberTracks[page].totalCount,
+      totalCount: rememberTracks[0].totalCount,
       page: 0,
     });
   },
@@ -356,15 +353,10 @@ export default create((set, get) => ({
    * @notice Init sound based on track id
    */
   initSound: async (trackId) => {
-    const { updatePlatformId } = get();
     const { start } = useAudio.getState();
     try {
       const track = await fetchTrackById(trackId);
       start(track, true /* meaning don't try to init the audio context yet */);
-
-      // Update platform id
-      const updated = await updatePlatformId(track);
-      if (updated) start(updated, true);
 
       return true;
     } catch (err) {

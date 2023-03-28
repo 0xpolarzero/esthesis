@@ -4,6 +4,7 @@ import { RiExternalLinkLine } from 'react-icons/ri';
 import stores from '@/stores';
 import hooks from '@/hooks';
 import ElapsedTime from '../Utils/ElapsedTime';
+import { getPlatformName } from '@/systems/utils';
 
 const { Panel } = Collapse;
 
@@ -47,7 +48,7 @@ const Island = () => {
           target='_blank'
           rel='noreferrer'>
           <RiExternalLinkLine size={20} />
-          listen on {playing.data.platformId}
+          listen on {getPlatformName(playing.data)}
         </a>
         <Collapse
           bordered={false}

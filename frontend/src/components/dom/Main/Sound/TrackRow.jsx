@@ -8,15 +8,16 @@ import ElapsedTime from '../../Utils/ElapsedTime';
 import stores from '@/stores';
 import hooks from '@/hooks';
 import { FavoritesIcon, FavoritesLabel } from './Favorites';
+import { getPlatformName } from '@/systems/utils';
 
 const TrackRow = ({ track, onClick, setModalContent }) => {
   const { playing, start } = stores.useAudio((state) => ({
     playing: state.playing,
     start: state.start,
   }));
-  const { filterBy, loadingAllTracks } = stores.useSpinamp((state) => ({
+  const { filterBy, platforms } = stores.useSpinamp((state) => ({
     filterBy: state.filterBy,
-    loadingAllTracks: state.loadingAllTracks,
+    platforms: state.platforms,
   }));
   const { connected, favoritesLoaded, toggleFavorite } = stores.useInteract(
     (state) => ({
@@ -56,7 +57,7 @@ const TrackRow = ({ track, onClick, setModalContent }) => {
           target='_blank'
           rel='noreferrer'
           style={{ opacity: 1 }}>
-          open in {track.platformId}
+          open in {getPlatformName(track)}
         </a>
       ),
       icon: <RiExternalLinkLine size={20} />,
@@ -66,7 +67,7 @@ const TrackRow = ({ track, onClick, setModalContent }) => {
         </a>
       ),
       large: (
-        <Tooltip title={`open in ${track.platformId}`}>
+        <Tooltip title={`open in ${getPlatformName(track)}`}>
           <a href={track.websiteUrl} target='_blank' rel='noreferrer'>
             <RiExternalLinkLine size={20} />
           </a>
@@ -93,15 +94,15 @@ const TrackRow = ({ track, onClick, setModalContent }) => {
         <a
           onClick={(e) => {
             e.stopPropagation();
-            if (loadingAllTracks) return;
-            filterBy('artist', track.artist.name);
+            filterBy('artist', track.artist.name, track.artistId);
           }}
-          className={loadingAllTracks ? 'disabled' : ''}>
+          /* className={loadingAllTracks ? 'disabled' : ''} */
+        >
           tracks by {track.artist.name}
         </a>
       ),
       icon: <AiOutlineFilter size={20} />,
-      disabled: loadingAllTracks,
+      // disabled: loadingAllTracks,
     },
     {
       key: '2',
@@ -109,17 +110,50 @@ const TrackRow = ({ track, onClick, setModalContent }) => {
       label: `open profile on`,
       icon: <AiOutlineInfoCircle size={20} />,
       children: Object.keys(track.artist.profiles).map((profile) => ({
-        key: track.artist.profiles[profile].platformId,
+        key: getPlatformName(track.artist.profiles[profile]),
         label: (
           <a
             href={track.artist.profiles[profile].websiteUrl}
             target='_blank'
             rel='noreferrer'>
-            {track.artist.profiles[profile].platformId}
+            {getPlatformName(track.artist.profiles[profile])}
           </a>
         ),
         icon: <RiExternalLinkLine size={20} />,
       })),
+    },
+  ];
+
+  const platformDropdown = [
+    {
+      key: '1',
+      label: (
+        <a
+          onClick={(e) => {
+            e.stopPropagation();
+            filterBy(
+              'platform',
+              getPlatformName(track, platforms),
+              track.platformId,
+            );
+          }}
+          /* className={loadingAllTracks ? 'disabled' : ''} */
+        >
+          tracks on {getPlatformName(track)}
+        </a>
+      ),
+      icon: <AiOutlineFilter size={20} />,
+      // disabled: loadingAllTracks,
+    },
+    {
+      key: '2',
+      label: (
+        <a href={track.websiteUrl} target='_blank' rel='noreferrer'>
+          open in {getPlatformName(track)}
+        </a>
+      ),
+      icon: <RiExternalLinkLine size={20} />,
+      disabled: false,
     },
   ];
 
@@ -178,24 +212,22 @@ const TrackRow = ({ track, onClick, setModalContent }) => {
         </Dropdown>
       </div>
       <div className='track-row__platform'>
-        <a
-          className='with-icon'
-          onClick={(e) => {
-            e.stopPropagation();
-            if (loadingAllTracks) return;
-            filterBy('platform', track.platformId);
-          }}>
-          {/* RxDashboard, RxGlobe, RxLayers */}
-          {isMobile ? <RxRocket size={20} /> : null}
-          {track.platformId.length > 20 ? (
-            <Tooltip title={track.platformId} arrow={false}>
-              {track.platformId.substring(0, 6)}...
-              {track.platformId.substring(track.platformId.length - 4)}
-            </Tooltip>
-          ) : (
-            track.platformId
-          )}
-        </a>
+        <Dropdown menu={{ items: platformDropdown }}>
+          <a className='with-icon' onClick={(e) => e.stopPropagation()}>
+            {/* RxDashboard, RxGlobe, RxLayers */}
+            {isMobile ? <RxRocket size={20} /> : null}
+            {getPlatformName(track).length > 20 ? (
+              <Tooltip title={getPlatformName(track)} arrow={false}>
+                {getPlatformName(track).substring(0, 6)}...
+                {getPlatformName(track).substring(
+                  getPlatformName(track).length - 4,
+                )}
+              </Tooltip>
+            ) : (
+              getPlatformName(track)
+            )}
+          </a>
+        </Dropdown>
       </div>
       <div className='track-row__date'>
         <span className='with-icon'>

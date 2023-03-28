@@ -6,6 +6,7 @@ import { RiExternalLinkLine } from 'react-icons/ri';
 import stores from '@/stores';
 import hooks from '@/hooks';
 import { FavoritesIcon, FavoritesLabel } from './Favorites';
+import { getPlatformName } from '@/systems/utils';
 
 const { Panel } = Collapse;
 
@@ -119,7 +120,7 @@ const Header = ({ content }) => {
           href={content.websiteUrl}
           target='_blank'
           rel='noreferrer'>
-          <RiExternalLinkLine size={20} /> listen on {content.platformId}
+          <RiExternalLinkLine size={20} /> listen on {getPlatformName(content)}
         </a>
         {isMobile ? <span className='separator horizontal' /> : null}
         <div className='profiles'>
@@ -128,12 +129,12 @@ const Header = ({ content }) => {
             {Object.keys(content.artist.profiles).map((profile) => (
               <a
                 className='with-icon'
-                key={content.artist.profiles[profile].platformId}
+                key={getPlatformName(content.artist.profiles[profile])}
                 href={content.artist.profiles[profile].websiteUrl}
                 target='_blank'
                 rel='noreferrer'>
                 <RiExternalLinkLine size={20} />
-                {content.artist.profiles[profile].platformId}
+                {getPlatformName(content.artist.profiles[profile])}
               </a>
             ))}
           </div>

@@ -1,3 +1,6 @@
+import stores from '@/stores';
+import { fetchAllPlatforms } from '@spinamp/spinamp-sdk';
+
 export const waitForElem = async (selector) => {
   return new Promise((resolve) => {
     if (document.querySelector(selector)) {
@@ -16,4 +19,13 @@ export const waitForElem = async (selector) => {
       subtree: true,
     });
   });
+};
+
+export const getPlatformName = (data, platforms = null) => {
+  if (!platforms) platforms = stores.useSpinamp((state) => state.platforms);
+
+  if (!platforms.length) return data.platformId;
+
+  const platform = platforms.find((p) => p.id === data.platformId);
+  return platform.name;
 };
