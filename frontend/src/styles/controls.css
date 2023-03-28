@@ -1,4 +1,5 @@
 .controls {
+  position: relative;
   backdrop-filter: blur(10px);
   /* position: fixed;
   left: 50%;
