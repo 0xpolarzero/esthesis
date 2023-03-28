@@ -21,7 +21,8 @@ const Nav = ({ type = 'default' }) => {
       <div className='title'>
         {type === 'shared' ? null : (
           <>
-            ecl<span className='emphasize'>ipse</span>
+            {/* ecl<span className='emphasize'>ipse</span> */}
+            esthesis
           </>
         )}
       </div>
