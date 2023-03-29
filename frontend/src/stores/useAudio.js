@@ -27,7 +27,8 @@ export default create((set, get) => ({
   reset: () => set({ ready: false, suspended: true, playing: null }),
 
   start: (data, onlyPrepare = false) => {
-    const { ready, init, playing, createAnalyser, navigate, loop } = get();
+    const { ready, init, play, playing, createAnalyser, navigate, loop } =
+      get();
     if (!ready && !onlyPrepare) init();
 
     // Just to make sure
@@ -50,7 +51,11 @@ export default create((set, get) => ({
     audio.loop = loop;
     audio.preload = 'none';
     audio.crossOrigin = 'anonymous';
-    if (!onlyPrepare) audio.play();
+    if (!onlyPrepare) {
+      audio.play();
+      createAnalyser(audio);
+      set({ suspended: false });
+    }
 
     // Set the duration when the song is loaded
     audio.addEventListener('loadedmetadata', () => {
@@ -60,11 +65,6 @@ export default create((set, get) => ({
     audio.addEventListener('ended', () => {
       navigate('next');
     });
-
-    if (!onlyPrepare) {
-      createAnalyser(audio);
-      set({ suspended: false });
-    }
 
     set({ playing: { audio, data } });
   },
