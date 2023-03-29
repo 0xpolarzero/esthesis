@@ -2,9 +2,8 @@
 
 /* Local */
 @import './nav.css';
+@import './main/main.css';
 @import './controls.css';
-@import './sound.css';
-@import './swarm.css';
 @import './search.css';
 @import './shared.css';
 

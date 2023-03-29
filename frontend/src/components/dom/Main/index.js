@@ -1,5 +1,5 @@
-import Sound from './Sound';
-import Swarm from './Swarm';
+import Explore from './Explore';
+import Customize from './Customize';
 import User from './User';
 
-export { Sound, Swarm, User };
+export { Explore, Customize, User };

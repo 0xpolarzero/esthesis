@@ -1,0 +1,57 @@
+.customize {
+  display: grid;
+  gap: 0.5rem;
+  min-width: 100%;
+  padding-bottom: 1rem;
+}
+.main.desktop .customize {
+  gap: 1rem;
+}
+
+.customize .colors,
+.customize .pattern,
+.customize .count,
+.customize .artwork {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 1rem;
+}
+.main.desktop .customize .colors {
+  column-gap: 3rem;
+}
+.main.desktop .customize .colors .header {
+  grid-column: span 2;
+}
+.main.mobile .customize .colors {
+  grid-template-columns: 1fr;
+  gap: 0.5rem;
+}
+
+/* Count */
+.customize .count .ant-slider {
+  grid-column: span 2;
+}
+.customize .count .ant-switch {
+  justify-self: flex-end;
+}
+
+/* Link */
+.customize .link {
+  margin-top: 2rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  align-items: center;
+  gap: 1rem;
+}
+.main.mobile .customize .link {
+  grid-template-columns: 1fr auto;
+  margin-bottom: 1rem;
+}
+.main.mobile .customize .link button:first-of-type {
+  grid-column: span 2;
+}
+
+/* Switch */
+.customize .ant-switch {
+  max-width: 1rem !important;
+}

@@ -1,41 +1,10 @@
-.sound,
-.swarm {
-  justify-self: center;
-  width: 100%;
-  max-width: 1600px;
-  overflow: scroll;
-  z-index: 1;
-  transition: background 0.2s ease;
-}
-
-.sound .ant-collapse {
-  padding: 0 1rem;
-}
-.sound .ant-collapse-header {
-  position: fixed !important;
-  backdrop-filter: blur(2px) !important;
-  padding-top: 1rem !important;
-  z-index: 1;
-}
-.sound .panel.mobile .ant-collapse-header {
-  padding: 0;
-  backdrop-filter: none;
-}
-.sound .ant-collapse-header-text {
-  padding-right: 1rem;
-}
-
-.sound .panel .ant-collapse-content-box {
-  padding-top: 3rem !important;
-}
-
-.sound .panel.desktop .ant-collapse-content-box {
+.main.desktop .explore {
   display: grid;
   grid-template-columns: 1fr auto auto auto auto;
   gap: 0.5rem 2rem;
 }
 
-.sound .panel.mobile .ant-collapse-content-box {
+.main.mobile .explore {
   display: grid;
   grid-template-columns: 1fr;
   gap: 1rem;
@@ -43,58 +12,58 @@
 }
 
 /* Row */
-.sound .track-card {
+.explore .track-card {
   display: flex;
   flex-direction: column;
   gap: 0.3rem;
   padding-right: 1rem;
 }
-.sound .track-row__title {
+.explore .track-row__title {
   display: flex;
   align-items: center;
   gap: 0.5rem;
 }
-.sound .track-row__title.active {
+.explore .track-row__title.active {
   color: var(--text-link);
 }
-.sound .track-row__title:hover {
+.explore .track-row__title:hover {
   cursor: var(--cursor-hover);
 }
-.sound .panel.mobile .track-row__title {
+.main.mobile .explore .track-row__title {
   display: grid;
   grid-template-columns: auto auto 1fr;
 }
-.sound .panel.mobile .track-row__title button {
+.main.mobile .explore .track-row__title button {
   justify-self: flex-end;
 }
-.sound .track-row__more {
+.explore .track-row__more {
   display: flex;
   align-items: center;
   gap: 1rem;
 }
-.sound .panel.mobile .track-row__more {
+.main.mobile .explore .track-row__more {
   margin-top: 0.5rem;
 }
-.sound .track-row__more a {
+.explore .track-row__more a {
   display: flex;
 }
 
 /* Filter */
-.sound .filter {
+.explore .filter {
   display: flex;
 }
-.sound .panel.mobile .filter {
+.main.mobile .explore .filter {
   flex-direction: column;
   gap: 0.5rem;
 }
-.sound .panel.desktop .filter {
+.main.desktop .explore .filter {
   grid-column: span 5;
   justify-content: space-between;
   align-items: center;
 }
 
 /* Navigation */
-.sound .navigation {
+.explore .navigation {
   display: flex;
   gap: 1rem;
 }
@@ -189,6 +158,6 @@
 }
 
 /* Antd */
-.sound .ant-skeleton-paragraph {
+.explore .ant-skeleton-paragraph {
   margin: 0;
 }

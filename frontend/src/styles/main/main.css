@@ -1,0 +1,27 @@
+@import './explore.css';
+@import './customize.css';
+
+.main {
+  position: relative;
+  padding: 0 2rem;
+  width: 100%;
+  max-width: 1600px;
+  margin: 0 auto;
+  overflow: scroll;
+}
+.main.mobile {
+  padding: 0 1rem;
+}
+.main.wide {
+  padding-left: 1rem;
+}
+
+.main > .ant-tabs > .ant-tabs-nav {
+  position: sticky;
+  top: 0;
+  backdrop-filter: blur(6px);
+  z-index: 1;
+}
+.main .ant-tabs-tab {
+  padding: 0.8rem 1rem;
+}

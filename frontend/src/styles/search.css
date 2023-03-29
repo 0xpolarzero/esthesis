@@ -9,7 +9,7 @@
   /* background: transparent !important; */
 }
 
-.panel.desktop .search {
+.main.desktop .search {
   grid-column: span 5;
 }
 
@@ -38,10 +38,10 @@
   color: var(--text-warning);
   position: absolute;
 }
-.panel.mobile .search .status {
+.main.mobile .search .status {
   top: -1.5rem;
 }
-.panel.desktop .search .status {
+.main.desktop .search .status {
   top: 50%;
   right: 4rem;
   transform: translateY(-50%);
