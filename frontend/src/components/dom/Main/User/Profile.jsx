@@ -13,6 +13,7 @@ import hooks from '@/hooks';
 import LinksDrawer from './LinksDrawer';
 import { useAccount, useNetwork, useSignMessage } from 'wagmi';
 import { SiweMessage } from 'siwe';
+import { RiExternalLinkLine } from 'react-icons/ri';
 
 const Profile = () => {
   const { isSigned, setIsSigned, setAddress } = stores.useInteract((state) => ({
@@ -173,11 +174,14 @@ const SignBtn = () => {
 };
 
 const Menu = ({ setLinksDrawerOpen }) => {
-  const { address, setAddress, setConnected } = stores.useInteract((state) => ({
-    address: state.address,
-    setAddress: state.setAddress,
-    setConnected: state.setConnected,
-  }));
+  const { address, isAllowed, setAddress, setConnected } = stores.useInteract(
+    (state) => ({
+      address: state.address,
+      isAllowed: state.isAllowed,
+      setAddress: state.setAddress,
+      setConnected: state.setConnected,
+    }),
+  );
   const filterBy = stores.useSpinamp((state) => state.filterBy);
   const { isMobile } = hooks.useWindowSize();
 
@@ -187,7 +191,7 @@ const Menu = ({ setLinksDrawerOpen }) => {
     setConnected(false);
   };
 
-  const items = [
+  const itemsAllowlisted = [
     {
       key: '1',
       label: 'show favorites',
@@ -216,10 +220,23 @@ const Menu = ({ setLinksDrawerOpen }) => {
     },
   ];
 
+  const itemsNotAllowlisted = [
+    {
+      key: '1',
+      label: 'request access',
+      icon: <RiExternalLinkLine size={20} />,
+      onClick: () => null, // TODO Form to request access (take the address as input)
+    },
+    itemsAllowlisted[2],
+  ];
+
   if (isMobile)
     return (
       <span className='with-icon'>
-        <Dropdown menu={{ items }}>
+        <Dropdown
+          menu={{
+            items: isAllowed() ? itemsAllowlisted : itemsNotAllowlisted,
+          }}>
           <a>
             <AiOutlineUser
               size={20}
@@ -232,7 +249,8 @@ const Menu = ({ setLinksDrawerOpen }) => {
     );
 
   return (
-    <Dropdown menu={{ items }}>
+    <Dropdown
+      menu={{ items: isAllowed() ? itemsAllowlisted : itemsNotAllowlisted }}>
       <a className='with-icon' onClick={signOut}>
         {' '}
         {address ? `${address.slice(0, 6)}...${address.slice(-4)}` : null}{' '}
