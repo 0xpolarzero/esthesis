@@ -8,7 +8,7 @@ const FavoritesIcon = ({ id }) => {
     isFavorite: state.isFavorite,
   }));
 
-  if (!isAllowed)
+  if (!isAllowed())
     return (
       <AiOutlineHeart
         size={20}
@@ -42,7 +42,7 @@ const FavoritesLabel = ({ id, type }) => {
     return (
       <Tooltip
         title={
-          isAllowed
+          isAllowed()
             ? favoritesLoaded
               ? isFavorite(id)
                 ? 'remove from favorites'
@@ -50,14 +50,14 @@ const FavoritesLabel = ({ id, type }) => {
               : 'favorites are loading...'
             : 'you need to sign in & be in the allowlist to perform this action'
         }>
-        <AiOutlineHeart className={isAllowed ? '' : 'disabled'} size={20} />
+        <AiOutlineHeart className={isAllowed() ? '' : 'disabled'} size={20} />
       </Tooltip>
     );
 
   return (
     <Tooltip
       title={
-        isAllowed
+        isAllowed()
           ? favoritesLoaded
             ? null
             : 'favorites are loading...'

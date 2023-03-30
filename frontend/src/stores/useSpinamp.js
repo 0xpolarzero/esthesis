@@ -249,7 +249,6 @@ export default create((set, get) => ({
   filterBy: async (type, value, id) => {
     const { favorites } = useInteract.getState();
     set({ loadingTracks: true });
-    console.log(id);
 
     let filtered;
     if (type === 'artist') {
@@ -261,11 +260,12 @@ export default create((set, get) => ({
         filter: { platformId: { equalTo: id } },
       });
     } else if (type === 'favorites') {
-      filtered = await fetchAllTracks({
-        filter: { id: { in: favorites } },
-      });
+      filtered = favorites.length
+        ? await fetchAllTracks({
+            filter: { id: { in: favorites } },
+          })
+        : { items: [], totalCount: 0 };
     }
-    console.log(filtered);
 
     // Create pages of 100 tracks with pagination info
     const pagesAmount = Math.ceil(filtered.totalCount / 100);

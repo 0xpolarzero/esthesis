@@ -138,7 +138,7 @@ const LinksDrawer = ({ open, setOpen }) => {
           <TableSkeleton colCount={columns.length} rowCount={5} />
         )
       ) : dataSource.length === 0 ? (
-        'no links created yet'
+        <span style={{ color: 'var(--text-main)' }}>no links created yet</span>
       ) : isMobile ? (
         <TableMobile dataSource={dataSource} />
       ) : (

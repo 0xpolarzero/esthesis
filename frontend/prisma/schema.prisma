@@ -1,0 +1,28 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
+}
+
+model User {
+  id            Int            @id @default(autoincrement())
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  address       String         @unique
+  favorites     Json
+  shortenedUrls ShortenedUrl[]
+}
+
+model ShortenedUrl {
+  id               Int      @id @default(autoincrement())
+  createdAt        DateTime @default(now())
+  properties       String
+  user             User     @relation(fields: [createdByAddress], references: [address])
+  createdByAddress String
+
+  @@index([createdByAddress], name: "createdByAddress")
+}

@@ -251,7 +251,7 @@ const Menu = ({ setLinksDrawerOpen }) => {
   return (
     <Dropdown
       menu={{ items: isAllowed() ? itemsAllowlisted : itemsNotAllowlisted }}>
-      <a className='with-icon' onClick={signOut}>
+      <a className='with-icon'>
         {' '}
         {address ? `${address.slice(0, 6)}...${address.slice(-4)}` : null}{' '}
         <MdKeyboardArrowRight size={20} />

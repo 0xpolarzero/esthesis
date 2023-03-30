@@ -82,14 +82,14 @@ const Header = ({ content }) => {
       text: <FavoritesLabel id={content.id} type='minimal' />,
       mobile: 'favorites',
       onClick: () => toggleFavorite(content.id),
-      disabled: !isAllowed || !favoritesLoaded,
+      disabled: !isAllowed() || !favoritesLoaded,
     },
     {
       icon: <AiOutlineShareAlt size={20} />,
       text: 'share',
       mobile: 'share',
       onClick: () => createShareableLink(content),
-      disabled: !isAllowed,
+      disabled: !isAllowed(),
     },
   ];
 
@@ -145,7 +145,7 @@ const Header = ({ content }) => {
             ? actions.map((action) => (
                 <Tooltip
                   title={
-                    isAllowed
+                    isAllowed()
                       ? null
                       : `you need to sign in & be in the allowlist to perform this action`
                   }
@@ -160,7 +160,7 @@ const Header = ({ content }) => {
             : actions.map((action) => (
                 <Tooltip
                   title={
-                    isAllowed
+                    isAllowed()
                       ? null
                       : `you need to sign in & be in the allowlist to perform this action`
                   }

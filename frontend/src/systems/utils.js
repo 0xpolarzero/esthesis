@@ -1,5 +1,4 @@
 import stores from '@/stores';
-import { fetchAllPlatforms } from '@spinamp/spinamp-sdk';
 
 export const waitForElem = async (selector) => {
   return new Promise((resolve) => {
@@ -28,4 +27,22 @@ export const getPlatformName = (data, platforms = null) => {
 
   const platform = platforms.find((p) => p.id === data.platformId);
   return platform.name;
+};
+
+export const callBackendFunction = async (functionName, args) => {
+  try {
+    const res = await fetch('/api/database', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ functionName, args }),
+    });
+    const data = await res.json();
+
+    return data;
+  } catch (err) {
+    console.error(err);
+    return { data: null, success: false, error: err };
+  }
 };

@@ -83,7 +83,7 @@ const TrackRow = ({ track, onClick, setModalContent }) => {
       mobile: <FavoritesIcon id={track.id} />,
       large: <FavoritesLabel id={track.id} type='extended' />,
       onClick: () => toggleFavorite(track.id),
-      disabled: !isAllowed || !favoritesLoaded,
+      disabled: !isAllowed() || !favoritesLoaded,
     },
   ];
 

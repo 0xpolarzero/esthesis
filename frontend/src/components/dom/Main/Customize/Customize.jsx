@@ -248,7 +248,7 @@ const Customize = () => {
         </button>
         <Tooltip
           title={
-            !isAllowed
+            !isAllowed()
               ? 'sign in & request allowlist to create links'
               : !playing
               ? 'choose a song to create a link'
@@ -256,7 +256,7 @@ const Customize = () => {
           }>
           <button
             className='button-primary special'
-            disabled={isCreatingLink || !playing || !isAllowed}
+            disabled={isCreatingLink || !playing || !isAllowed()}
             onClick={copyShareableLink}>
             copy shareable link
           </button>

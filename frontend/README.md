@@ -5,9 +5,6 @@
 <!-- Fix gifs flashing -->
 <!-- Fix customization not initializing on Island -->
 
-Try to gather explore & customize panels (open 1 close 2)
-Hide icon: on hover, set panels opacity to low
-
 Fix tracks not playing on mobile (need to pause + play again)
 ++ a few pixels too large on the right
 ++ loading screen stays up on safari
@@ -23,6 +20,11 @@ Share customized playlist as one-page
 Create home page with explanations, guide, etc + beta caption
 Find a way to scale (already hitting Alchemy throughput limit with 1 user)
 Form to fill for allowlist
+Export data button (get the favorites name & link with id, and shortened links?)
+
+### SIWE:
+
+- Before going to production, you likely want to invalidate nonces on logout to prevent replay attacks through session duplication (e.g. store expired nonce and make sure they can't be used again).
 
 ### Swarm
 
@@ -48,10 +50,12 @@ twitter
 
 # Tracks
 
+OAKK
 bloody white - RUN
 feels just like home
 All Night
 Blackbird
+The Holy - Generation
 
 # Names
 

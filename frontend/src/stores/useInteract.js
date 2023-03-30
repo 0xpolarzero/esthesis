@@ -2,14 +2,7 @@ import { create } from 'zustand';
 import { toast } from 'react-toastify';
 import useAudio from './useAudio';
 import useSwarm from './useSwarm';
-import {
-  getFavorites,
-  addFavorite,
-  removeFavorite,
-  shortenUrl,
-  getShortenedUrl,
-  getAllShortenedUrls,
-} from '@/systems/interact';
+import { callBackendFunction } from '@/systems/utils';
 import config from '@/data';
 
 const { shaders: OPTIONS_SHADERS } = config.options;
@@ -29,24 +22,27 @@ export default create((set, get) => ({
   isFavorite: (id) => get().favorites.includes(id),
   setFavorites: async (address) => {
     if (address) {
-      const favorites = await getFavorites(address);
-      set({ favorites, favoritesLoaded: true });
+      let favorites = await callBackendFunction('getFavorites', [address]);
+      if (!favorites.success) {
+        console.error(favorites.error);
+        favorites = [];
+      }
+      set({ favorites: favorites.data, favoritesLoaded: true });
     } else {
       set({ favorites: [], favoritesLoaded: true });
     }
   },
   toggleFavorite: async (id) => {
-    const { connected, address, isFavorite, favorites, isAllowlisted } = get();
+    const { connected, address, isFavorite, favorites } = get();
     if (!connected) return;
 
     if (!isFavorite(id)) {
       // OR
       const notif = toast.loading('Adding to favorites...');
-      const { success, error } = await addFavorite(
+      const { success, error } = await callBackendFunction('addFavorite', [
         address,
         id,
-        isAllowlisted(),
-      );
+      ]);
       if (success) {
         toast.update(notif, {
           render: 'Added to favorites',
@@ -55,7 +51,7 @@ export default create((set, get) => ({
           autoClose: 3000,
         });
         set((state) => ({ favorites: [...favorites, id] }));
-      } else if (error !== 'rejected transaction') {
+      } else {
         toast.update(notif, {
           render: 'error creating link',
           type: 'error',
@@ -63,16 +59,13 @@ export default create((set, get) => ({
           autoClose: 3000,
         });
         console.error(error);
-      } else {
-        toast.dismiss(notif);
       }
     } else {
       const notif = toast.loading('Removing from favorites...');
-      const { success, error } = await removeFavorite(
+      const { success, error } = await callBackendFunction('removeFavorite', [
         address,
         id,
-        isAllowlisted(),
-      );
+      ]);
       if (success) {
         toast.update(notif, {
           render: 'Removed from favorites',
@@ -165,28 +158,10 @@ export default create((set, get) => ({
         message: 'you need to choose a song first',
       };
 
-    // Call api to write to spreadsheet
-    // const res = await fetch('/api/google-api', {
-    //   method: 'POST',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //   },
-    //   body: JSON.stringify({
-    //     functionName: 'write',
-    //     arg: link,
-    //   }),
-    // });
-
-    // const data = await res.json();
-    // if (data.statusCode === 500) return { data, error: true, message: 'error' };
-
-    // const newLink = new URL(`${window.location.href}shared?id=${data}`);
-
-    // return { data: newLink, error: false, message: 'success' };
     const notif = toast.loading('creating link...');
-    const res = await shortenUrl(link, get().address);
+    const res = await callBackendFunction('createLink', [link, get().address]);
 
-    if (res?.success) {
+    if (res.success) {
       toast.update(notif, {
         render: 'link created!',
         type: 'success',
@@ -195,7 +170,7 @@ export default create((set, get) => ({
       });
       const linkNotif = toast.info(
         <div>
-          <em>{res?.data}</em>
+          <em>{res.data}</em>
           <br />
           <br />
           <a
@@ -215,14 +190,14 @@ export default create((set, get) => ({
           autoClose: false,
         },
       );
-    } else if (res?.error !== 'rejected transaction') {
+    } else if (res.error !== 'rejected transaction') {
       toast.update(notif, {
         render: 'error creating link',
         type: 'error',
         isLoading: false,
         autoClose: 3000,
       });
-      console.error(res?.error);
+      console.error(res.error);
     } else {
       toast.dismiss(notif);
     }
@@ -246,15 +221,23 @@ export default create((set, get) => ({
   },
 
   // Retrieve the link from the ID
-  retrieveLink: async (id) => await getShortenedUrl(id),
+  retrieveLink: async (id) =>
+    await (
+      await callBackendFunction('getShortenedUrl', [id])
+    ).data,
   // Retrieve all links for a given address
   retrieveLinksForUser: async () => {
     const { connected, address } = get();
     if (!connected) return [];
 
-    const links = await getAllShortenedUrls();
-    return links.filter(
-      (link) => link.sender.toLowerCase() === address.toLowerCase(),
-    );
+    const links = await callBackendFunction('getShortenedUrlsForAddress', [
+      address,
+    ]);
+    if (!links.success) {
+      console.error(links.error);
+      return [];
+    }
+
+    return links.data;
   },
 }));
