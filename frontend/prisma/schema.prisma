@@ -20,7 +20,7 @@ model User {
 model ShortenedUrl {
   id               Int      @id @default(autoincrement())
   createdAt        DateTime @default(now())
-  properties       String
+  properties       String   @db.Text
   user             User     @relation(fields: [createdByAddress], references: [address])
   createdByAddress String
 

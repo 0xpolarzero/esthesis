@@ -159,7 +159,7 @@ export default create((set, get) => ({
       };
 
     const notif = toast.loading('creating link...');
-    const res = await callBackendFunction('createLink', [link, get().address]);
+    const res = await callBackendFunction('shortenUrl', [link, get().address]);
 
     if (res.success) {
       toast.update(notif, {
@@ -190,7 +190,7 @@ export default create((set, get) => ({
           autoClose: false,
         },
       );
-    } else if (res.error !== 'rejected transaction') {
+    } else {
       toast.update(notif, {
         render: 'error creating link',
         type: 'error',
@@ -198,8 +198,6 @@ export default create((set, get) => ({
         autoClose: 3000,
       });
       console.error(res.error);
-    } else {
-      toast.dismiss(notif);
     }
 
     return res;

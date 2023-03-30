@@ -85,7 +85,7 @@ const functions = {
 
   getShortenedUrl: async (id) => {
     const url = await prisma.shortenedUrl.findUnique({
-      where: { id },
+      where: { id: Number(id) },
     });
 
     if (!url) return returnError('error getting shortened url');
