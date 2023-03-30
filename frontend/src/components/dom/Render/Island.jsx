@@ -22,13 +22,20 @@ const needDangerousHTML = [
 
 const Island = () => {
   const playing = stores.useAudio((state) => state.playing);
+  const platforms = stores.useSpinamp((state) => state.platforms);
   const { isMobile } = hooks.useWindowSize();
 
   const [isExpanded, setIsExpanded] = useState(false);
+  const [platformName, setPlatformName] = useState('');
 
   useEffect(() => {
     if (isMobile) setIsExpanded(true);
   }, [isMobile]);
+
+  useEffect(() => {
+    if (!playing || !platforms) return;
+    setPlatformName(getPlatformName(playing.data, platforms));
+  }, [playing, platforms]);
 
   if (!playing) return null;
 
@@ -48,7 +55,7 @@ const Island = () => {
           target='_blank'
           rel='noreferrer'>
           <RiExternalLinkLine size={20} />
-          listen on {getPlatformName(playing.data)}
+          listen on {platformName}
         </a>
         <Collapse
           bordered={false}
