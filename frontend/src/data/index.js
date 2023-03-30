@@ -3,6 +3,7 @@ import { backgrounds, count, shaders, themes, blurBg } from './options';
 import networkMapping from './constants/networkMapping.json';
 import esthesisAbi from './constants/Eclipse.json';
 import allowlist from './constants/allowlist.json';
+import referrals from './referrals';
 
 const chainId = 80001;
 
@@ -21,6 +22,7 @@ const config = {
   networkMapping,
   esthesisAbi,
   allowlist,
+  referrals,
   chainId,
   baseUrl,
 };

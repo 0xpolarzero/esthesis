@@ -1,3 +1,4 @@
+import config from '@/data';
 import {
   fetchAllArtists,
   fetchAllPlatforms,
@@ -29,9 +30,6 @@ export default create((set, get) => ({
   // Search
   isSearching: null,
   setIsSearching: (value) => set({ isSearching: value }),
-  unpaginatedTracks: [],
-  loadingAllTracks: true,
-  errorAllTracks: false,
   filteredBy: null,
 
   // Platforms
@@ -46,7 +44,7 @@ export default create((set, get) => ({
    * @notice Fetch paginated tracks
    */
   fetchTracks: async (pageReq = 0) => {
-    const { rememberTracks } = get();
+    const { rememberTracks, afterTracksFetched } = get();
     set({ loadingTracks: true, tracks: {} });
     // Was this page already fetched?
     if (rememberTracks[pageReq]) {
@@ -74,133 +72,8 @@ export default create((set, get) => ({
       totalCount: res.totalCount,
       loadingTracks: false,
     });
-  },
 
-  /**
-   * @notice Fetch all tracks in the background to prepare for search and navigation
-   */
-  fetchRemainingTracks: async () => {
-    // Fetch tracks by batch of 1000
-    let allTracks = [];
-    let hasNextPage = true;
-    let offset = 100; // first 100 tracks are already fetched
-    let totalCount = 0;
-
-    while (hasNextPage) {
-      const res = await fetchAllTracks({
-        first: 1000,
-        offset,
-      }).catch((err) => {
-        console.log('err', err);
-        set({ errorAllTracks: true });
-      });
-
-      if (res) {
-        allTracks.push(...res.items);
-        hasNextPage = res.pageInfo.hasNextPage;
-      }
-      offset += 1000;
-      if (!totalCount) totalCount = res.totalCount;
-    }
-
-    // Create pages of 100 tracks with pagination info
-    const pagesAmount = Math.ceil(allTracks.length / 100);
-    const pages = [];
-    for (let i = 0; i < pagesAmount; i++) {
-      pages.push({
-        items: allTracks.slice(i * 100, (i + 1) * 100),
-        pageInfo: {
-          hasNextPage: i < pagesAmount - 1,
-          hasPreviousPage: true, // i > 0 but here there is always page 0
-        },
-        totalCount,
-      });
-    }
-
-    pages.forEach((page, i) => {
-      set({
-        rememberTracks: { ...get().rememberTracks, [i + 1]: page },
-      });
-    });
-
-    // Set all tracks in one array for search
-    const unpaginatedTracks = Object.values(get().rememberTracks)
-      .reduce((acc, page) => [...acc, ...page.items], [])
-      .sort((a, b) => b.createdAt - a.createdAt);
-
-    set({
-      loadingAllTracks: false,
-      unpaginatedTracks,
-    });
-  },
-
-  /**
-   * @notice Update platformId on all tracks with the appropriate name
-   */
-  updatePlatformId: async (track = null) => {
-    const { platforms, tracks } = get();
-    // Fetch only if platforms are not already fetched
-    const platformsLocal = platforms.length
-      ? platforms
-      : await fetchAllPlatforms();
-    // Use the track if provided, otherwise use the tracks from the store
-    const tracksLocal = track ? [track] : tracks.items;
-
-    const updatedTracks = tracksLocal.map((track) => {
-      const platform = platformsLocal.find(
-        (platform) => platform.id === track.platformId,
-      );
-
-      // Update artist profiles
-      const updatedProfiles = Object.values(track.artist.profiles)
-        .map((profile) => {
-          const platform = platformsLocal.find(
-            (platform) => platform.id === profile.platformId,
-          );
-          return { ...profile, platform };
-        })
-        .reduce((acc, profile) => {
-          acc[profile.platformId] = profile;
-          return acc;
-        }, {});
-
-      return {
-        ...track,
-        platformId: platform.name,
-        artist: { ...track.artist, profiles: updatedProfiles },
-      };
-    });
-
-    set({
-      platforms: platformsLocal,
-      tracks: { ...tracks, items: updatedTracks },
-    });
-
-    if (track) return updatedTracks[0];
-
-    // const updatedTracks = unpaginatedTracks.map((track) => {
-    //   const platform = platforms.find(
-    //     (platform) => platform.id === track.platformId,
-    //   );
-    //   return { ...track, platformId: platform.name };
-    // });
-
-    // // Do the same for pages
-    // const updatedPages = Object.values(rememberTracks).map((page) => ({
-    //   ...page,
-    //   items: page.items.map((track) => {
-    //     const platform = platforms.find(
-    //       (platform) => platform.id === track.platformId,
-    //     );
-    //     return { ...track, platformId: platform.name };
-    //   }),
-    // }));
-
-    // set({
-    //   unpaginatedTracks: updatedTracks,
-    //   rememberTracks: updatedPages,
-    //   tracks: updatedPages[page],
-    // });
+    afterTracksFetched();
   },
 
   /**
@@ -208,7 +81,7 @@ export default create((set, get) => ({
    * @dev Will fetch all tracks with filters
    */
   onSearchTrack: async (value) => {
-    const { unpaginatedTracks, rememberTracks, page } = get();
+    const { rememberTracks, page, afterTracksFetched } = get();
     // If there is no search, display recent tracks
     if (!value || value.length < 3) {
       set({ tracks: rememberTracks[page] });
@@ -241,12 +114,15 @@ export default create((set, get) => ({
       filteredBy: null,
       loadingTracks: false,
     });
+
+    afterTracksFetched();
   },
 
   /**
    * @notice Filter tracks by artist or platform
    */
   filterBy: async (type, value, id) => {
+    const { afterTracksFetched } = get();
     const { favorites } = useInteract.getState();
     set({ loadingTracks: true });
 
@@ -293,23 +169,27 @@ export default create((set, get) => ({
       },
       loadingTracks: false,
     });
+
+    afterTracksFetched();
   },
 
   /**
    * @notice Filter back to all tracks
    */
   filterAll: async () => {
-    const { rememberTracks } = get();
+    const { rememberTracks, afterTracksFetched } = get();
     set({
       tracks: rememberTracks[0],
       filteredBy: null,
       totalCount: rememberTracks[0].totalCount,
       page: 0,
     });
+
+    afterTracksFetched();
   },
 
   navigatePage: async (direction = null) => {
-    const { filteredBy, page, fetchTracks } = get();
+    const { filteredBy, page, fetchTracks, afterTracksFetched } = get();
 
     const pageReq = direction
       ? direction === 'next'
@@ -330,6 +210,8 @@ export default create((set, get) => ({
       tracks: pages[pageReq],
       page: pageReq,
     });
+
+    afterTracksFetched();
   },
 
   /**
@@ -347,6 +229,27 @@ export default create((set, get) => ({
         unpaginatedTracks.find((track) => track.id === id),
       );
     }
+  },
+
+  /**
+   * @notice Do any formatting/updates after retrieving & displaying tracks
+   */
+  afterTracksFetched: () => {
+    const { tracks } = get();
+    const referrals = config.referrals;
+
+    // Update tracks with referral links if needed
+    const updatedTracks = tracks.items.map((track) => {
+      const referral = referrals.find(
+        (referral) => referral.platform === track.platformId,
+      );
+      if (referral) {
+        track.websiteUrl = referral.url(track.websiteUrl);
+      }
+      return track;
+    });
+
+    set({ tracks: { ...tracks, items: updatedTracks } });
   },
 
   /**
