@@ -66,9 +66,8 @@ const Controls = ({ type }) => {
         } else {
           pause();
         }
+        e.preventDefault();
       }
-
-      e.preventDefault();
     };
 
     document.addEventListener('keydown', listenKey);
