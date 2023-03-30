@@ -60,9 +60,9 @@ const Customize = () => {
     setMovementEffects: state.setMovementEffects,
     setColorEffects: state.setColorEffects,
   }));
-  const { connected, createPreviewLink, createShareableLink } =
+  const { isAllowed, createPreviewLink, createShareableLink } =
     stores.useInteract((state) => ({
-      connected: state.connected,
+      isAllowed: state.isAllowed,
       createPreviewLink: state.createPreviewLink,
       createShareableLink: state.createShareableLink,
     }));
@@ -248,15 +248,15 @@ const Customize = () => {
         </button>
         <Tooltip
           title={
-            !connected
-              ? 'connect your wallet to create a link'
+            !isAllowed
+              ? 'sign in & request allowlist to create links'
               : !playing
               ? 'choose a song to create a link'
               : ''
           }>
           <button
             className='button-primary special'
-            disabled={isCreatingLink || !playing || !connected}
+            disabled={isCreatingLink || !playing || !isAllowed}
             onClick={copyShareableLink}>
             copy shareable link
           </button>

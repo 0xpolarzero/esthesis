@@ -66,9 +66,9 @@ const More = () => {
 };
 
 const Header = ({ content }) => {
-  const { connected, favoritesLoaded, toggleFavorite, createShareableLink } =
+  const { isAllowed, favoritesLoaded, toggleFavorite, createShareableLink } =
     stores.useInteract((state) => ({
-      connected: state.connected,
+      isAllowed: state.isAllowed,
       favoritesLoaded: state.favoritesLoaded,
       toggleFavorite: state.toggleFavorite,
       createShareableLink: state.createShareableLink,
@@ -82,14 +82,14 @@ const Header = ({ content }) => {
       text: <FavoritesLabel id={content.id} type='minimal' />,
       mobile: 'favorites',
       onClick: () => toggleFavorite(content.id),
-      disabled: !connected || !favoritesLoaded,
+      disabled: !isAllowed || !favoritesLoaded,
     },
     {
       icon: <AiOutlineShareAlt size={20} />,
       text: 'share',
       mobile: 'share',
       onClick: () => createShareableLink(content),
-      disabled: !connected,
+      disabled: !isAllowed,
     },
   ];
 
@@ -145,9 +145,9 @@ const Header = ({ content }) => {
             ? actions.map((action) => (
                 <Tooltip
                   title={
-                    connected
+                    isAllowed
                       ? null
-                      : `you need to be connected to perform this action.`
+                      : `you need to sign in & be in the allowlist to perform this action`
                   }
                   key={action.text}>
                   <a
@@ -160,9 +160,9 @@ const Header = ({ content }) => {
             : actions.map((action) => (
                 <Tooltip
                   title={
-                    connected
+                    isAllowed
                       ? null
-                      : `you need to be connected to perform this action.`
+                      : `you need to sign in & be in the allowlist to perform this action`
                   }
                   className='button-primary with-icon large'
                   key={action.text}>

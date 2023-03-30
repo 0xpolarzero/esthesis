@@ -126,6 +126,7 @@ a:hover {
 a.disabled {
   color: var(--text-main);
   opacity: 0.5;
+  cursor: not-allowed;
 }
 
 h1 {

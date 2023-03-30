@@ -18,9 +18,10 @@ export default create((set, get) => ({
   // Connection status
   connected: false,
   setConnected: (connected) => set({ connected }),
-  address: null,
+  address: '',
   setAddress: (address) => set({ address }),
   isAllowlisted: () => config.allowlist.includes(get().address),
+  isAllowed: () => get().connected && get().isAllowlisted(),
 
   // Favorites
   favorites: [],

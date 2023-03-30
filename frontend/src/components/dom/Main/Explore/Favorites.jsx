@@ -3,12 +3,12 @@ import { AiOutlineHeart, AiFillHeart } from 'react-icons/ai';
 import stores from '@/stores';
 
 const FavoritesIcon = ({ id }) => {
-  const { connected, isFavorite } = stores.useInteract((state) => ({
-    connected: state.connected,
+  const { isAllowed, isFavorite } = stores.useInteract((state) => ({
+    isAllowed: state.isAllowed,
     isFavorite: state.isFavorite,
   }));
 
-  if (!connected)
+  if (!isAllowed)
     return (
       <AiOutlineHeart
         size={20}
@@ -27,9 +27,9 @@ const FavoritesIcon = ({ id }) => {
 };
 
 const FavoritesLabel = ({ id, type }) => {
-  const { connected, favoritesLoaded, isFavorite } = stores.useInteract(
+  const { isAllowed, favoritesLoaded, isFavorite } = stores.useInteract(
     (state) => ({
-      connected: state.connected,
+      isAllowed: state.isAllowed,
       favoritesLoaded: state.favoritesLoaded,
       isFavorite: state.isFavorite,
     }),
@@ -42,26 +42,26 @@ const FavoritesLabel = ({ id, type }) => {
     return (
       <Tooltip
         title={
-          connected
+          isAllowed
             ? favoritesLoaded
               ? isFavorite(id)
                 ? 'remove from favorites'
                 : 'add to favorites'
               : 'favorites are loading...'
-            : 'you need to connect to interact'
+            : 'you need to sign in & be in the allowlist to perform this action'
         }>
-        <AiOutlineHeart className={connected ? '' : 'disabled'} size={20} />
+        <AiOutlineHeart className={isAllowed ? '' : 'disabled'} size={20} />
       </Tooltip>
     );
 
   return (
     <Tooltip
       title={
-        connected
+        isAllowed
           ? favoritesLoaded
             ? null
             : 'favorites are loading...'
-          : 'you need to be connected to perform this action.'
+          : 'you need to sign in & be in the allowlist to perform this action'
       }>
       {isFavorite(id) ? 'remove from favorites' : 'add to favorites'}
     </Tooltip>

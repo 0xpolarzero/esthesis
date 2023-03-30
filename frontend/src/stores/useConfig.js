@@ -8,8 +8,7 @@ import {
   darkTheme,
   lightTheme,
 } from '@rainbow-me/rainbowkit';
-import { configureChains, createClient, WagmiConfig } from 'wagmi';
-import { arbitrumGoerli, polygonMumbai } from 'wagmi/chains';
+import { configureChains, createClient, WagmiConfig, mainnet } from 'wagmi';
 import { alchemyProvider } from 'wagmi/providers/alchemy';
 import { publicProvider } from 'wagmi/providers/public';
 
@@ -19,12 +18,12 @@ import hooks from '@/hooks';
 /**
  * @notice Set up providers
  */
-const arbitrumGoerliWithIcon = {
-  ...arbitrumGoerli,
-  iconUrl: '/img/arbitrum.png',
-};
+// const arbitrumGoerliWithIcon = {
+//   ...arbitrumGoerli,
+//   iconUrl: '/img/arbitrum.png',
+// };
 const { chains, provider } = configureChains(
-  [arbitrumGoerliWithIcon, polygonMumbai],
+  [mainnet],
   [
     alchemyProvider({ apiKey: process.env.NEXT_PUBLIC_ALCHEMY_API_KEY }),
     publicProvider(),

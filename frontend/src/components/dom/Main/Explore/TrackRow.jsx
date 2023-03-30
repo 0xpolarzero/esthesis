@@ -19,9 +19,9 @@ const TrackRow = ({ track, onClick, setModalContent }) => {
     filterBy: state.filterBy,
     platforms: state.platforms,
   }));
-  const { connected, favoritesLoaded, toggleFavorite } = stores.useInteract(
+  const { isAllowed, favoritesLoaded, toggleFavorite } = stores.useInteract(
     (state) => ({
-      connected: state.connected,
+      isAllowed: state.isAllowed,
       favoritesLoaded: state.favoritesLoaded,
       toggleFavorite: state.toggleFavorite,
     }),
@@ -83,7 +83,7 @@ const TrackRow = ({ track, onClick, setModalContent }) => {
       mobile: <FavoritesIcon id={track.id} />,
       large: <FavoritesLabel id={track.id} type='extended' />,
       onClick: () => toggleFavorite(track.id),
-      disabled: !connected || !favoritesLoaded,
+      disabled: !isAllowed || !favoritesLoaded,
     },
   ];
 
@@ -242,7 +242,7 @@ const TrackRow = ({ track, onClick, setModalContent }) => {
               key={index}
               title={
                 item.disabled
-                  ? 'You need to be connected to perform this action'
+                  ? 'You need to sign in & be in the allowlist to use this feature'
                   : null
               }>
               <a
