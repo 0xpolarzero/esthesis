@@ -5,6 +5,8 @@ import { AiOutlineInfoCircle, AiOutlineMenu } from 'react-icons/ai';
 import { CiDark, CiLight } from 'react-icons/ci';
 import { User } from './Main';
 import stores from '@/stores';
+import hooks from '@/hooks';
+import Image from 'next/image';
 
 const Nav = ({ type = 'default' }) => {
   const { theme, updateTheme /* highGraphics, toggleHighGraphics */ } =
@@ -14,6 +16,7 @@ const Nav = ({ type = 'default' }) => {
       // highGraphics: state.highGraphics,
       // toggleHighGraphics: state.toggleHighGraphics,
     }));
+  const { isMobile, isWideScreen } = hooks.useWindowSize();
   const router = useRouter();
 
   return (
@@ -21,8 +24,19 @@ const Nav = ({ type = 'default' }) => {
       <div className='title'>
         {type === 'shared' ? null : (
           <>
-            {/* ecl<span className='emphasize'>ipse</span> */}
-            esthesis
+            {!isMobile ? (
+              <span className='with-icon'>
+                <Image
+                  src={theme === 'dark' ? '/logo.png' : '/logo-light.png'}
+                  alt='logo'
+                  width={40}
+                  height={40}
+                />
+                esthesis
+              </span>
+            ) : (
+              'esthesis'
+            )}
           </>
         )}
       </div>
@@ -38,7 +52,7 @@ const Nav = ({ type = 'default' }) => {
         ) : (
           <>
             <User />
-            <Divider type='vertical' />
+            {isWideScreen ? null : <Divider type='vertical' />}
           </>
         )}
         <Tooltip
@@ -58,7 +72,14 @@ const Nav = ({ type = 'default' }) => {
               </a>
             </>
           }>
-          <AiOutlineInfoCircle size={20} />
+          {isWideScreen ? (
+            <a className='with-icon'>
+              <AiOutlineInfoCircle size={20} />
+              more
+            </a>
+          ) : (
+            <AiOutlineInfoCircle size={20} />
+          )}
         </Tooltip>
         {/* <Divider type='vertical' />
         <Tooltip
@@ -73,9 +94,21 @@ const Nav = ({ type = 'default' }) => {
             <BsThermometerLow size={20} onClick={toggleHighGraphics} />
           )}
         </Tooltip> */}
-        <Divider type='vertical' />
+        {isWideScreen ? null : <Divider type='vertical' />}
         {theme === 'dark' ? (
-          <CiDark size={20} onClick={() => updateTheme('light')} />
+          isWideScreen ? (
+            <a className='with-icon' onClick={() => updateTheme('light')}>
+              <CiDark size={20} />
+              {theme}
+            </a>
+          ) : (
+            <CiDark size={20} onClick={() => updateTheme('light')} />
+          )
+        ) : isWideScreen ? (
+          <a className='with-icon' onClick={() => updateTheme('dark')}>
+            <CiLight size={20} />
+            {theme}
+          </a>
         ) : (
           <CiLight size={20} onClick={() => updateTheme('dark')} />
         )}

@@ -3,19 +3,27 @@ import Profile from './Profile';
 import stores from '@/stores';
 
 const User = () => {
-  const { connected, address, setFavorites } = stores.useInteract((state) => ({
-    connected: state.connected,
-    address: state.address,
-    setFavorites: state.setFavorites,
+  const { connected, address, initFavorites, resetFavorites } =
+    stores.useInteract((state) => ({
+      connected: state.connected,
+      address: state.address,
+      initFavorites: state.initFavorites,
+      resetFavorites: state.resetFavorites,
+    }));
+  const { initPlaylists, resetPlaylists } = stores.useSpinamp((state) => ({
+    initPlaylists: state.initPlaylists,
+    resetPlaylists: state.resetPlaylists,
   }));
 
   useEffect(() => {
     if (connected && address) {
-      setFavorites(address);
+      initFavorites();
+      initPlaylists();
     } else {
-      setFavorites(null);
+      resetFavorites();
+      resetPlaylists();
     }
-  }, [connected, address, setFavorites]);
+  }, [connected, address, initFavorites, resetFavorites]);
 
   return <Profile />;
 };

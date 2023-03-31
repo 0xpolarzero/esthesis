@@ -418,6 +418,10 @@ a.emphasize.min:hover {
 .ant-select-dropdown {
   z-index: 99999;
 }
+.ant-dropdown-menu-submenu-title {
+  display: flex !important;
+  align-items: center !important;
+}
 .ant-radio-inner,
 .ant-input-number {
   background: rgba(var(--background-main-rgb), 0.3) !important;
@@ -464,5 +468,12 @@ a.emphasize.min:hover {
 @media (max-width: 768px) {
   input[type='color'] {
     border: 1px solid rgba(var(--text-main-rgb), 0.1);
+  }
+}
+
+@media (min-width: 1200px) {
+  .container:not(.shared) {
+    grid-template-columns: auto 1fr;
+    grid-template-rows: 1fr auto;
   }
 }

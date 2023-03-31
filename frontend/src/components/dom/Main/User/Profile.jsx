@@ -13,7 +13,11 @@ import hooks from '@/hooks';
 import LinksDrawer from './LinksDrawer';
 import { useAccount, useNetwork, useSignMessage } from 'wagmi';
 import { SiweMessage } from 'siwe';
-import { RiExternalLinkLine } from 'react-icons/ri';
+import {
+  RiExternalLinkLine,
+  RiPlayListAddLine,
+  RiPlayListLine,
+} from 'react-icons/ri';
 
 const Profile = () => {
   const { isSigned, setIsSigned, setAddress } = stores.useInteract((state) => ({
@@ -174,16 +178,22 @@ const SignBtn = () => {
 };
 
 const Menu = ({ setLinksDrawerOpen }) => {
-  const { address, isAllowed, setAddress, setConnected } = stores.useInteract(
-    (state) => ({
+  const { address, favoritesLoaded, isAllowed, setAddress, setConnected } =
+    stores.useInteract((state) => ({
       address: state.address,
+      favoritesLoaded: state.favoritesLoaded,
       isAllowed: state.isAllowed,
       setAddress: state.setAddress,
       setConnected: state.setConnected,
-    }),
-  );
-  const filterBy = stores.useSpinamp((state) => state.filterBy);
-  const { isMobile } = hooks.useWindowSize();
+    }));
+  const { filterBy, playlists, playlistsLoaded, getPlaylistsMenu } =
+    stores.useSpinamp((state) => ({
+      filterBy: state.filterBy,
+      playlists: state.playlists,
+      playlistsLoaded: state.playlistsLoaded,
+      getPlaylistsMenu: state.getPlaylistsMenu,
+    }));
+  const { isMobile, isWideScreen } = hooks.useWindowSize();
 
   const signOut = async () => {
     await fetch('/api/logout');
@@ -194,7 +204,7 @@ const Menu = ({ setLinksDrawerOpen }) => {
   const itemsAllowlisted = [
     {
       key: '1',
-      label: 'show favorites',
+      label: 'favorites',
       icon: <AiOutlineHeart size={20} />,
       onClick: () =>
         filterBy(
@@ -205,15 +215,23 @@ const Menu = ({ setLinksDrawerOpen }) => {
             </a>
           </Tooltip>,
         ),
+      disabled: !favoritesLoaded,
     },
     {
       key: '2',
+      label: 'playlists',
+      icon: <RiPlayListLine size={20} />,
+      disabled: !playlistsLoaded,
+      children: getPlaylistsMenu(),
+    },
+    {
+      key: '3',
       label: 'created links',
       icon: <AiOutlineShareAlt size={20} />,
       onClick: () => setLinksDrawerOpen(true),
     },
     {
-      key: '3',
+      key: '4',
       label: 'sign out',
       icon: <AiOutlineLogout size={20} />,
       onClick: signOut,
@@ -227,7 +245,7 @@ const Menu = ({ setLinksDrawerOpen }) => {
       icon: <RiExternalLinkLine size={20} />,
       onClick: () => null, // TODO Form to request access (take the address as input)
     },
-    itemsAllowlisted[2],
+    itemsAllowlisted.find((item) => item.label === 'sign out'),
   ];
 
   if (isMobile)
@@ -246,6 +264,35 @@ const Menu = ({ setLinksDrawerOpen }) => {
           </a>
         </Dropdown>
       </span>
+    );
+
+  if (isWideScreen)
+    return (
+      <div className='links-wide'>
+        {(isAllowed() ? itemsAllowlisted : itemsNotAllowlisted).map((item) => {
+          if (item.children)
+            return (
+              <Dropdown
+                key={item.key}
+                menu={{ items: item.children }}
+                className='with-icon'>
+                <a className={item.disabled ? 'disabled' : ''}>
+                  {item.icon}
+                  {item.label}
+                </a>
+              </Dropdown>
+            );
+          return (
+            <a
+              key={item.key}
+              onClick={item.onClick}
+              className={item.disabled ? 'disabled with-icon' : 'with-icon'}>
+              {item.icon}
+              {item.label}
+            </a>
+          );
+        })}
+      </div>
     );
 
   return (
