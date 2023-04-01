@@ -25,12 +25,12 @@ const Nav = ({ type = 'default' }) => {
         {type === 'shared' ? null : (
           <>
             {!isMobile ? (
-              <span className='with-icon'>
+              <span className='with-icon' style={{ alignItems: 'flex-start' }}>
                 <Image
                   src={theme === 'dark' ? '/logo.png' : '/logo-light.png'}
                   alt='logo'
-                  width={40}
-                  height={40}
+                  width={30}
+                  height={30}
                 />
                 esthesis
               </span>
