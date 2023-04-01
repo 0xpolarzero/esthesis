@@ -9,12 +9,10 @@ const handler = async (req, res) => {
         const result = await functions[functionName](...args);
         res.status(200).json(result);
       } catch (err) {
-        res
-          .status(500)
-          .json({
-            message: 'Error executing function',
-            error: err.message || err,
-          });
+        res.status(500).json({
+          message: 'Error executing function',
+          error: err.message || err,
+        });
       }
     } else {
       res.status(400).json({ message: 'Invalid function name' });

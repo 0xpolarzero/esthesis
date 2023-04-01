@@ -50,7 +50,11 @@ const FavoritesLabel = ({ id, type }) => {
               : 'favorites are loading...'
             : 'you need to sign in & be in the allowlist to perform this action'
         }>
-        <AiOutlineHeart className={isAllowed() ? '' : 'disabled'} size={20} />
+        {isFavorite(id) ? (
+          <AiFillHeart className={isAllowed() ? '' : 'disabled'} size={20} />
+        ) : (
+          <AiOutlineHeart className={isAllowed() ? '' : 'disabled'} size={20} />
+        )}
       </Tooltip>
     );
 

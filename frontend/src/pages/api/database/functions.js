@@ -1,5 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import config from '@/data';
+import stores from '@/stores';
 
 let prisma;
 if (process.env.NODE_ENV === 'production') {
@@ -39,12 +40,13 @@ const getUser = async (userAddress) => {
 };
 
 const functions = {
-  addFavorite: async (userAddress, favoriteId, userInstance = null) => {
-    const user = await (userInstance || (await getUser(userAddress)));
-
-    const updatedFavorites = user?.favorites
-      ? [...user.favorites, favoriteId]
-      : [favoriteId];
+  addFavorite: async (
+    userAddress,
+    favoriteId,
+    currentFavorites /* , userInstance = null */,
+  ) => {
+    // const user = await (userInstance || (await getUser(userAddress)));
+    const updatedFavorites = [...new Set([...currentFavorites, favoriteId])];
 
     const update = await prisma.user.update({
       where: { address: userAddress },
@@ -55,11 +57,13 @@ const functions = {
     return returnSuccess(updatedFavorites);
   },
 
-  removeFavorite: async (userAddress, favoriteId, userInstance = null) => {
-    const user = await (userInstance || (await getUser(userAddress)));
-
-    const updatedFavorites =
-      user?.favorites.filter((id) => id !== favoriteId) || null;
+  removeFavorite: async (
+    userAddress,
+    favoriteId,
+    currentFavorites /* , userInstance = null */,
+  ) => {
+    // const user = await (userInstance || (await getUser(userAddress)));
+    const updatedFavorites = currentFavorites.filter((id) => id !== favoriteId);
 
     const update = await prisma.user.update({
       where: { address: userAddress },
@@ -84,8 +88,8 @@ const functions = {
     );
   },
 
-  getFavorites: async (userAddress, userInstance = null) => {
-    const user = await (userInstance || (await getUser(userAddress)));
+  getFavorites: async (userAddress /* , userInstance = null */) => {
+    const user = await getUser(userAddress);
 
     if (!user) return returnError('error getting favorites');
     return returnSuccess(user.favorites);
@@ -109,7 +113,7 @@ const functions = {
     return returnSuccess(urls);
   },
 
-  getUser,
+  // getUser,
 };
 
 export default functions;

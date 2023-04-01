@@ -81,7 +81,13 @@ const TrackRow = ({ track, onClick, setModalContent }) => {
       label: <FavoritesLabel id={track.id} type='default' />,
       icon: <FavoritesIcon id={track.id} />,
       mobile: <FavoritesIcon id={track.id} />,
-      large: <FavoritesLabel id={track.id} type='extended' />,
+      large: (
+        <FavoritesLabel
+          id={track.id}
+          type='extended'
+          onClick={() => toggleFavorite(track.id)}
+        />
+      ),
       onClick: () => toggleFavorite(track.id),
       disabled: !isAllowed() || !favoritesLoaded,
     },
@@ -254,7 +260,11 @@ const TrackRow = ({ track, onClick, setModalContent }) => {
           ))
         ) : isWideScreen ? (
           <div className='with-icon'>
-            {infoDropdown.map((item, index) => item.large)}
+            {infoDropdown.map((item, index) => (
+              <a key={index} onClick={item.onClick}>
+                {item.large}
+              </a>
+            ))}
           </div>
         ) : (
           <Dropdown menu={{ items: infoDropdown }} placement='bottomLeft'>

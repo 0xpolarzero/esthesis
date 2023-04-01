@@ -16,33 +16,36 @@ export default create((set, get) => ({
   isAllowed: () => get().connected && get().isAllowlisted(),
 
   // User (prisma), to remember the user and limit row queries
-  userInstance: null,
-  initUserInstance: async () => {
-    const { address } = get();
-    if (address) {
-      const user = await callBackendFunction('getUser', [address]);
-      if (user) set({ userInstance: user });
-    }
-  },
-  resetUserInstance: () => set({ userInstance: null }),
+  // userInstance: null,
+  // initUserInstance: async () => {
+  //   const { address } = get();
+  //   if (address) {
+  //     const user = await callBackendFunction('getUser', [address]);
+  //     if (user) set({ userInstance: user });
+  //   }
+  // },
+  // resetUserInstance: () => set({ userInstance: null }),
 
   // Favorites
   favorites: [],
   favoritesLoaded: false,
   isFavorite: (id) => get().favorites.includes(id),
-  initFavorites: async (address) => {
-    const { userInstance } = get();
+  initFavorites: async () => {
+    const { address /* userInstance */ } = get();
 
     if (address) {
       let favorites = await callBackendFunction('getFavorites', [
         address,
-        userInstance,
+        // userInstance,
       ]);
+      console.log('favorites', favorites);
       if (!favorites.success) {
         console.error(favorites.error);
         favorites = [];
+      } else {
+        favorites = [...new Set(favorites.data)];
       }
-      set({ favorites: favorites.data, favoritesLoaded: true });
+      set({ favorites, favoritesLoaded: true });
     } else {
       set({ favorites: [], favoritesLoaded: true });
     }
@@ -50,20 +53,22 @@ export default create((set, get) => ({
   resetFavorites: () => set({ favorites: [] }),
 
   toggleFavorite: async (id) => {
-    const { connected, address, isFavorite, favorites, userInstance } = get();
+    const { connected, address, isFavorite, favorites /* userInstance */ } =
+      get();
     if (!connected) return;
 
     if (!isFavorite(id)) {
       // OR
-      const notif = toast.loading('Adding to favorites...');
+      const notif = toast.loading('adding to favorites...');
       const { success, error } = await callBackendFunction('addFavorite', [
         address,
         id,
-        userInstance,
+        favorites,
+        // userInstance,
       ]);
       if (success) {
         toast.update(notif, {
-          render: 'Added to favorites',
+          render: 'added to favorites',
           type: 'success',
           isLoading: false,
           autoClose: 3000,
@@ -71,7 +76,7 @@ export default create((set, get) => ({
         set({ favorites: [...favorites, id] });
       } else {
         toast.update(notif, {
-          render: 'error creating link',
+          render: 'error adding to favorites',
           type: 'error',
           isLoading: false,
           autoClose: 3000,
@@ -79,15 +84,16 @@ export default create((set, get) => ({
         console.error(error);
       }
     } else {
-      const notif = toast.loading('Removing from favorites...');
+      const notif = toast.loading('removing from favorites...');
       const { success, error } = await callBackendFunction('removeFavorite', [
         address,
         id,
-        userInstance,
+        favorites,
+        // userInstance,
       ]);
       if (success) {
         toast.update(notif, {
-          render: 'Removed from favorites',
+          render: 'removed from favorites',
           type: 'success',
           isLoading: false,
           autoClose: 3000,
@@ -95,7 +101,7 @@ export default create((set, get) => ({
         set({ favorites: favorites.filter((f) => f !== id) });
       } else {
         toast.update(notif, {
-          render: 'Error removing from favorites',
+          render: 'error removing from favorites',
           type: 'error',
           isLoading: false,
           autoClose: 3000,

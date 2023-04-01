@@ -8,15 +8,15 @@ const User = () => {
     address,
     initFavorites,
     resetFavorites,
-    initUserInstance,
-    resetUserInstance,
+    // initUserInstance,
+    // resetUserInstance,
   } = stores.useInteract((state) => ({
     connected: state.connected,
     address: state.address,
     initFavorites: state.initFavorites,
     resetFavorites: state.resetFavorites,
-    initUserInstance: state.initUserInstance,
-    resetUserInstance: state.resetUserInstance,
+    // initUserInstance: state.initUserInstance,
+    // resetUserInstance: state.resetUserInstance,
   }));
   const { initPlaylists, resetPlaylists } = stores.useSpinamp((state) => ({
     initPlaylists: state.initPlaylists,
@@ -25,10 +25,11 @@ const User = () => {
 
   useEffect(() => {
     if (connected && address) {
-      initUserInstance().then(() => initFavorites());
+      // initUserInstance().then(() => initFavorites());
+      initFavorites();
       initPlaylists();
     } else {
-      resetUserInstance();
+      // resetUserInstance();
       resetFavorites();
       resetPlaylists();
     }
@@ -39,8 +40,8 @@ const User = () => {
     resetFavorites,
     initPlaylists,
     resetPlaylists,
-    initUserInstance,
-    resetUserInstance,
+    // initUserInstance,
+    // resetUserInstance,
   ]);
 
   return <Profile />;
