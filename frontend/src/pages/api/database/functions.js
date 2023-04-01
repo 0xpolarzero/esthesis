@@ -1,7 +1,15 @@
 import { PrismaClient } from '@prisma/client';
 import config from '@/data';
 
-const prisma = new PrismaClient();
+let prisma;
+if (process.env.NODE_ENV === 'production') {
+  prisma = new PrismaClient();
+} else {
+  if (!global.prisma) {
+    global.prisma = new PrismaClient();
+  }
+  prisma = global.prisma;
+}
 
 const returnError = (message) => {
   return { data: null, success: false, error: message };
@@ -31,8 +39,8 @@ const getUser = async (userAddress) => {
 };
 
 const functions = {
-  addFavorite: async (userAddress, favoriteId) => {
-    const user = await getUser(userAddress);
+  addFavorite: async (userAddress, favoriteId, userInstance = null) => {
+    const user = await (userInstance || (await getUser(userAddress)));
 
     const updatedFavorites = user?.favorites
       ? [...user.favorites, favoriteId]
@@ -47,8 +55,8 @@ const functions = {
     return returnSuccess(updatedFavorites);
   },
 
-  removeFavorite: async (userAddress, favoriteId) => {
-    const user = await getUser(userAddress);
+  removeFavorite: async (userAddress, favoriteId, userInstance = null) => {
+    const user = await (userInstance || (await getUser(userAddress)));
 
     const updatedFavorites =
       user?.favorites.filter((id) => id !== favoriteId) || null;
@@ -76,8 +84,8 @@ const functions = {
     );
   },
 
-  getFavorites: async (userAddress) => {
-    const user = await getUser(userAddress);
+  getFavorites: async (userAddress, userInstance = null) => {
+    const user = await (userInstance || (await getUser(userAddress)));
 
     if (!user) return returnError('error getting favorites');
     return returnSuccess(user.favorites);
@@ -100,6 +108,8 @@ const functions = {
     if (!urls) return returnError('error getting shortened urls');
     return returnSuccess(urls);
   },
+
+  getUser,
 };
 
 export default functions;

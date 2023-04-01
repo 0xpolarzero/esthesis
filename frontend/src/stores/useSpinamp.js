@@ -1,14 +1,18 @@
 import config from '@/data';
 import {
+  createPlaylist,
   fetchAllArtists,
   fetchAllPlatforms,
   fetchAllTracks,
   fetchArtistBySlug,
+  fetchCollectorPlaylists,
   fetchTrackById,
   fetchTrackBySlug,
   fetchTracksByIds,
 } from '@spinamp/spinamp-sdk';
+import { fetchSigner } from '@wagmi/core';
 import { matchSorter } from 'match-sorter';
+import { RiPlayListAddLine } from 'react-icons/ri';
 import { create } from 'zustand';
 import useAudio from './useAudio';
 import useInteract from './useInteract';
@@ -219,16 +223,83 @@ export default create((set, get) => ({
    * @param {array} trackIds
    * @returns {array} tracks
    */
-  retrieveMultipleTracks: async (trackIds) => {
-    const { loadingAllTracks, errorAllTracks, unpaginatedTracks } = get();
+  retrieveMultipleTracks: async (trackIds) => await fetchTracksByIds(trackIds),
 
-    if (loadingAllTracks || errorAllTracks) {
-      return await fetchTracksByIds(trackIds);
+  /// Playlists
+  playlists: [],
+  playlistsLoaded: false,
+  newPlaylistModalStatus: { open: false, trackId: null },
+  setNewPlaylistModalStatus: (open, trackId) =>
+    set({ newPlaylistModalStatus: { open, trackId } }),
+  initPlaylists: async () => {
+    const { address } = useInteract.getState();
+
+    if (address) {
+      const playlists = await fetchCollectorPlaylists(address);
+      set({ playlists, playlistsLoaded: true });
     } else {
-      return trackIds.map((id) =>
-        unpaginatedTracks.find((track) => track.id === id),
-      );
+      set({ playlists: [], playlistsLoaded: true });
     }
+  },
+  resetPlaylists: () => set({ playlists: [] }),
+
+  /**
+   * @notice Create a new playlist
+   */
+  createPlaylist: async (title) => {
+    const { newPlaylistModalStatus } = get();
+
+    try {
+      const signer = await fetchSigner();
+
+      const playlist = {
+        title,
+        trackIds: newPlaylistModalStatus.trackId
+          ? [newPlaylistModalStatus.trackId]
+          : [],
+      };
+      const { id } = await createPlaylist(playlist, signer);
+
+      if (id) {
+        set((state) => ({
+          playlists: [...state.playlists, { id, title }],
+        }));
+
+        return true;
+      }
+
+      return false;
+    } catch (err) {
+      console.error('err', err);
+      return false;
+    }
+  },
+
+  /**
+   * @notice Get playlists menu items
+   */
+  getPlaylistsMenu: () => {
+    const { playlists, setNewPlaylistModalStatus, filterBy } = get();
+
+    const baseItems = [
+      {
+        key: 'create',
+        label: 'new playlist',
+        icon: <RiPlayListAddLine size={20} />,
+        onClick: (e) => {
+          // TODO Find a way to identify the clicked track
+          setNewPlaylistModalStatus(true, null);
+        },
+      },
+    ];
+    const playlistItems = playlists.map((playlist) => ({
+      key: playlist.id,
+      label: playlist.title,
+      onClick: () => filterBy('playlist', playlist.title, playlist.id),
+    }));
+
+    if (playlistItems.length) return [...baseItems, ...playlistItems];
+    return baseItems;
   },
 
   /**
@@ -236,6 +307,7 @@ export default create((set, get) => ({
    */
   afterTracksFetched: () => {
     const { tracks } = get();
+    if (!tracks.items.length) return;
     const referrals = config.referrals;
 
     // Update tracks with referral links if needed

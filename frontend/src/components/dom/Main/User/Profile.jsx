@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { useAccount, useNetwork, useSignMessage } from 'wagmi';
+import { SiweMessage } from 'siwe';
 import { Dropdown, Tooltip } from 'antd';
 import {
   AiOutlineHeart,
@@ -8,16 +10,11 @@ import {
   AiOutlineUser,
 } from 'react-icons/ai';
 import { MdKeyboardArrowRight } from 'react-icons/md';
+import { RiExternalLinkLine, RiPlayListLine } from 'react-icons/ri';
+import LinksDrawer from './LinksDrawer';
+import NewPlaylistModal from './NewPlaylistModal';
 import stores from '@/stores';
 import hooks from '@/hooks';
-import LinksDrawer from './LinksDrawer';
-import { useAccount, useNetwork, useSignMessage } from 'wagmi';
-import { SiweMessage } from 'siwe';
-import {
-  RiExternalLinkLine,
-  RiPlayListAddLine,
-  RiPlayListLine,
-} from 'react-icons/ri';
 
 const Profile = () => {
   const { isSigned, setIsSigned, setAddress } = stores.useInteract((state) => ({
@@ -57,6 +54,7 @@ const Profile = () => {
     <>
       <Menu setLinksDrawerOpen={setLinksDrawerOpen} />
       <LinksDrawer open={linksDrawerOpen} setOpen={setLinksDrawerOpen} />
+      <NewPlaylistModal />
     </>
   );
 };
