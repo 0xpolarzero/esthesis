@@ -13,12 +13,12 @@ const NewPlaylistModal = () => {
   const [title, setTitle] = useState('');
 
   const handleOk = async () => {
-    const notif = toast.loading('Creating playlist...');
+    const notif = toast.loading('creating playlist...');
     const res = await createPlaylist(title);
 
     if (res) {
       toast.update(notif, {
-        render: 'Playlist created!',
+        render: 'playlist created!',
         type: 'success',
         isLoading: false,
         autoClose: 2000,
@@ -26,7 +26,7 @@ const NewPlaylistModal = () => {
       setNewPlaylistModalStatus(false, null);
     } else {
       toast.update(notif, {
-        render: 'An error occurred.',
+        render: 'an error occurred.',
         type: 'error',
         isLoading: false,
         autoClose: 2000,
@@ -40,13 +40,16 @@ const NewPlaylistModal = () => {
 
   return (
     <Modal
-      title='Create a new playlist'
+      title={`${
+        newPlaylistModalStatus.trackId ? 'add to' : 'create'
+      } a new playlist`}
       open={newPlaylistModalStatus.open}
       onOk={handleOk}
       onCancel={handleCancel}
-      okText='Create'>
+      okText='create'
+      cancelText='cancel'>
       <Input
-        placeholder='Playlist title'
+        placeholder='playlist title'
         value={title}
         onChange={(e) => setTitle(e.target.value)}
       />
