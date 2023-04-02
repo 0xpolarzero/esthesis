@@ -18,7 +18,8 @@ const More = () => {
   const { isMobile } = hooks.useWindowSize();
 
   useEffect(() => {
-    if (!document.querySelector('.ant-modal')) return;
+    if (!document.querySelector('.ant-modal') || !content?.lossyArtworkUrl)
+      return;
 
     document.querySelector(
       '.ant-modal',
