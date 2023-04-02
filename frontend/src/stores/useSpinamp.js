@@ -12,6 +12,7 @@ import {
 } from '@spinamp/spinamp-sdk';
 import { fetchSigner } from '@wagmi/core';
 import { matchSorter } from 'match-sorter';
+import { AiOutlinePlus } from 'react-icons/ai';
 import { RiPlayListAddLine } from 'react-icons/ri';
 import { create } from 'zustand';
 import useAudio from './useAudio';
@@ -278,18 +279,15 @@ export default create((set, get) => ({
   /**
    * @notice Get playlists menu items
    */
-  getPlaylistsMenu: () => {
+  getPlaylistsMenu: (trackId = null) => {
     const { playlists, setNewPlaylistModalStatus, filterBy } = get();
 
     const baseItems = [
       {
         key: 'create',
         label: 'new playlist',
-        icon: <RiPlayListAddLine size={20} />,
-        onClick: (e) => {
-          // TODO Find a way to identify the clicked track
-          setNewPlaylistModalStatus(true, null);
-        },
+        icon: <AiOutlinePlus size={20} />,
+        onClick: (e) => setNewPlaylistModalStatus(true, trackId),
       },
     ];
     const playlistItems = playlists.map((playlist) => ({
