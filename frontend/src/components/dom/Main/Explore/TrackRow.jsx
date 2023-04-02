@@ -2,7 +2,7 @@ import Image from 'next/image';
 import { Dropdown, Tooltip } from 'antd';
 import { AiOutlineFilter, AiOutlineInfoCircle } from 'react-icons/ai';
 import { CiCircleMore } from 'react-icons/ci';
-import { RiExternalLinkLine, RiPlayFill } from 'react-icons/ri';
+import { RiExternalLinkLine, RiPlayFill, RiPlayListLine } from 'react-icons/ri';
 import { RxDisc, RxPerson, RxRocket, RxTimer } from 'react-icons/rx';
 import ElapsedTime from '../../Utils/ElapsedTime';
 import stores from '@/stores';
@@ -15,10 +15,13 @@ const TrackRow = ({ track, onClick, setModalContent }) => {
     playing: state.playing,
     start: state.start,
   }));
-  const { filterBy, platforms } = stores.useSpinamp((state) => ({
-    filterBy: state.filterBy,
-    platforms: state.platforms,
-  }));
+  const { filterBy, platforms, getPlaylistsMenu } = stores.useSpinamp(
+    (state) => ({
+      filterBy: state.filterBy,
+      platforms: state.platforms,
+      getPlaylistsMenu: state.getPlaylistsMenu,
+    }),
+  );
   const { isAllowed, favoritesLoaded, toggleFavorite } = stores.useInteract(
     (state) => ({
       isAllowed: state.isAllowed,
@@ -90,6 +93,29 @@ const TrackRow = ({ track, onClick, setModalContent }) => {
       ),
       onClick: () => toggleFavorite(track.id),
       disabled: !isAllowed() || !favoritesLoaded,
+    },
+    {
+      key: '4',
+      label: (
+        <Dropdown menu={{ items: getPlaylistsMenu(track.id) }}>
+          <span>playlist</span>
+        </Dropdown>
+      ),
+      icon: <RiPlayListLine size={20} />,
+      mobile: (
+        <Dropdown menu={{ items: getPlaylistsMenu(track.id) }}>
+          <RiPlayListLine size={20} />
+        </Dropdown>
+      ),
+      large: (
+        <Tooltip title='playlist'>
+          <Dropdown menu={{ items: getPlaylistsMenu(track.id) }}>
+            <RiPlayListLine size={20} />
+          </Dropdown>
+        </Tooltip>
+      ),
+      onClick: null,
+      disabled: !isAllowed(),
     },
   ];
 
