@@ -7,6 +7,8 @@ import '@/styles/index.css';
 // Lib
 import '@rainbow-me/rainbowkit/styles.css';
 import 'react-toastify/dist/ReactToastify.css';
+import hooks from '@/hooks';
+import { toast } from 'react-toastify';
 
 const Scene = dynamic(() => import('@/components/canvas/Scene'), { ssr: true });
 
@@ -19,6 +21,7 @@ export default function App({ Component, pageProps = { title: 'polarzero' } }) {
     fetchTracks: state.fetchTracks,
     fetchPlatforms: state.fetchPlatforms,
   }));
+  const { isMobile } = hooks.useWindowSize();
 
   const layout = useRef();
   const loader = useRef();
@@ -31,9 +34,13 @@ export default function App({ Component, pageProps = { title: 'polarzero' } }) {
     fetchTracks().then(() => fetchPlatforms());
   }, [initTheme, fetchTracks, fetchPlatforms]);
 
-  // useEffect(() => {
-  //   setHighGraphics(!isMobile);
-  // }, [isMobile, setHighGraphics]);
+  useEffect(() => {
+    if (isMobile)
+      toast.info(
+        'please note that the app is currently not optimized for mobile and is highly prone to errors',
+        { autoClose: false, position: 'bottom-left' },
+      );
+  }, [isMobile]);
 
   return (
     <>
