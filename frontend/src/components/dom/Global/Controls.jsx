@@ -66,7 +66,7 @@ const Controls = ({ type }) => {
         } else {
           pause();
         }
-        e.preventDefault();
+        // e.preventDefault();
       }
     };
 
