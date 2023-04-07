@@ -6,13 +6,15 @@ import {
   fetchAllTracks,
   fetchArtistBySlug,
   fetchCollectorPlaylists,
+  fetchPlaylistById,
   fetchTrackById,
   fetchTrackBySlug,
   fetchTracksByIds,
+  updatePlaylist,
 } from '@spinamp/spinamp-sdk';
 import { fetchSigner } from '@wagmi/core';
 import { matchSorter } from 'match-sorter';
-import { AiOutlinePlus } from 'react-icons/ai';
+import { AiOutlineMinus, AiOutlinePlus } from 'react-icons/ai';
 import { RiPlayListAddLine } from 'react-icons/ri';
 import { create } from 'zustand';
 import useAudio from './useAudio';
@@ -127,7 +129,7 @@ export default create((set, get) => ({
    * @notice Filter tracks by artist or platform
    */
   filterBy: async (type, value, id) => {
-    const { afterTracksFetched } = get();
+    const { afterTracksFetched, playlists } = get();
     const { favorites } = useInteract.getState();
     set({ loadingTracks: true });
 
@@ -146,6 +148,13 @@ export default create((set, get) => ({
             filter: { id: { in: favorites } },
           })
         : { items: [], totalCount: 0 };
+    } else if (type === 'playlist') {
+      const tracks = await fetchPlaylistById(id);
+      console.log(tracks);
+      filtered = {
+        items: tracks.playlistTracks,
+        totalCount: tracks.playlistTracks.length,
+      };
     }
 
     // Create pages of 100 tracks with pagination info
@@ -229,9 +238,15 @@ export default create((set, get) => ({
   /// Playlists
   playlists: [],
   playlistsLoaded: false,
+  inPlaylist: (trackId, playlistId) => {
+    const { playlists } = get();
+    const playlist = playlists.find((p) => p.id === playlistId);
+    return playlist.trackIds.includes(trackId);
+  },
   newPlaylistModalStatus: { open: false, trackId: null },
   setNewPlaylistModalStatus: (open, trackId) =>
     set({ newPlaylistModalStatus: { open, trackId } }),
+
   initPlaylists: async () => {
     const { address } = useInteract.getState();
 
@@ -277,10 +292,66 @@ export default create((set, get) => ({
   },
 
   /**
+   * @notice Interact with a playlist (add/remove track)
+   */
+  interactPlaylist: async (playlist, trackId) => {
+    const { playlists } = get();
+    let updatedPlaylist = {};
+    console.log(playlist);
+
+    try {
+      const signer = await fetchSigner();
+
+      if (playlist.trackIds.find((t) => t === trackId)) {
+        const newPlaylist = {
+          id: playlist.id,
+          title: playlist.title,
+          trackIds: playlist.trackIds.filter((t) => t !== trackId),
+        };
+        // Remove track from playlist
+        updatedPlaylist = await updatePlaylist(
+          playlist.id,
+          newPlaylist,
+          signer,
+        );
+      } else {
+        const newPlaylist = {
+          // id: playlist.id,
+          // title: playlist.title,
+          ...playlist,
+          trackIds: [...playlist.trackIds, trackId],
+        };
+        console.log(playlist.id, newPlaylist, signer);
+        // Add track to playlist
+        updatedPlaylist = await updatePlaylist(
+          playlist.id,
+          newPlaylist,
+          signer,
+        );
+      }
+
+      if (updatedPlaylist) {
+        const newPlaylists = playlists.map((p) =>
+          p.id === updatedPlaylist.id ? updatedPlaylist : p,
+        );
+        set({ playlists: newPlaylists });
+      }
+    } catch (err) {
+      console.error('err', err);
+    }
+  },
+
+  /**
    * @notice Get playlists menu items
    */
   getPlaylistsMenu: (trackId = null) => {
-    const { playlists, setNewPlaylistModalStatus, filterBy } = get();
+    const {
+      playlists,
+      setNewPlaylistModalStatus,
+      filterBy,
+      interactPlaylist,
+      inPlaylist,
+    } = get();
 
     const baseItems = [
       {
@@ -293,7 +364,17 @@ export default create((set, get) => ({
     const playlistItems = playlists.map((playlist) => ({
       key: playlist.id,
       label: playlist.title,
-      onClick: () => filterBy('playlist', playlist.title, playlist.id),
+      onClick: () =>
+        trackId
+          ? interactPlaylist(playlist, trackId)
+          : filterBy('playlist', playlist.title, playlist.id),
+      icon: trackId ? (
+        inPlaylist(trackId, playlist.id) ? (
+          <AiOutlineMinus size={20} />
+        ) : (
+          <AiOutlinePlus size={20} />
+        )
+      ) : null,
     }));
 
     if (playlistItems.length) return [...baseItems, ...playlistItems];
@@ -305,7 +386,7 @@ export default create((set, get) => ({
    */
   afterTracksFetched: () => {
     const { tracks } = get();
-    if (!tracks.items.length) return;
+    if (!tracks?.items.length) return;
     const referrals = config.referrals;
 
     // Update tracks with referral links if needed

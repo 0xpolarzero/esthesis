@@ -51,7 +51,9 @@ const Navigation = () => {
               ? 'tracks by '
               : filteredBy.type === 'platform'
               ? 'tracks on '
-              : 'favorite tracks for '}
+              : filteredBy.type === 'favorites'
+              ? 'favorite tracks for '
+              : 'tracks in playlist '}
             <span className='emphasize'>{filteredBy.value}</span>
           </span>
           <button className='button-primary' onClick={filterAll}>
